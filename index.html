@@ -18,7 +18,7 @@
     href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
     rel="stylesheet"
   />
-  <title>Course Pricing Calculator</title>
+  <title>Income Calculator</title>
   <script src="pwa.js" defer></script>
   <style>
     :root {
@@ -1329,6 +1329,80 @@
       font-size: 0.75rem;
     }
 
+    .custom-costs {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px dashed var(--field-border);
+      background: var(--field-bg);
+    }
+
+    .custom-costs__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .custom-costs__form {
+      display: grid;
+      grid-template-columns: minmax(160px, 2fr) minmax(120px, 1fr) minmax(120px, 1fr) auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .custom-costs__form input,
+    .custom-costs__form select {
+      width: 100%;
+    }
+
+    .custom-costs__form button {
+      align-self: stretch;
+      padding: 10px 14px;
+    }
+
+    .custom-costs__list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .custom-costs__item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--field-border);
+      background: var(--field-bg);
+    }
+
+    .custom-costs__item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .custom-costs__item button {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--field-border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .custom-costs__item button:hover,
+    .custom-costs__item button:focus-visible {
+      color: var(--text-primary);
+      border-color: var(--secondary-button-border);
+      background: var(--secondary-button-bg);
+    }
+
     .fixed-cost-total {
       display: flex;
       flex-direction: column;
@@ -1612,6 +1686,32 @@
       min-width: 0;
     }
 
+    .variable-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+      margin-bottom: 4px;
+    }
+
+    .variable-controls .variable-control {
+      flex: 1 1 220px;
+      min-width: 200px;
+    }
+
+    .variable-controls .variable-control select {
+      width: 100%;
+    }
+
+    .variable-controls__reset {
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .variable-controls__reset button {
+      padding: 10px 16px;
+    }
+
     .table-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1663,9 +1763,9 @@
     }
 
     tbody td {
-      text-align: center;
+      text-align: left;
       line-height: 1.5;
-      white-space: nowrap;
+      white-space: normal;
     }
 
     .price-pair {
@@ -1673,6 +1773,39 @@
       flex-direction: column;
       gap: 8px;
       align-items: flex-start;
+    }
+
+    .price-cell-empty {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .income-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 12px;
+      width: 100%;
+      margin-top: 6px;
+    }
+
+    .income-grid__item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-start;
+    }
+
+    .income-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .income-value {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-primary);
     }
 
     .price-line {
@@ -1960,7 +2093,7 @@
     </nav>
     <header>
       <div class="header-text">
-        <h1>Course Pricing Calculator</h1>
+        <h1>Income Calculator</h1>
         <p>Estimate per-student pricing to reach your target income. All calculations stay on this page.</p>
       </div>
       <div class="header-actions">
@@ -2465,6 +2598,32 @@
                     </div>
                   </div>
                 </div>
+                <div class="custom-costs" id="custom-costs" aria-live="polite">
+                  <div class="custom-costs__header">
+                    <span class="label-text">Add your own costs</span>
+                    <span
+                      class="info-icon"
+                      tabindex="0"
+                      role="button"
+                      aria-expanded="false"
+                      aria-label="Track extra monthly or annual costs such as subscriptions or memberships."
+                      data-tooltip="Track extra monthly or annual costs such as subscriptions or memberships."
+                    >ℹ️</span>
+                  </div>
+                  <div class="custom-costs__form">
+                    <label for="custom-cost-name" class="visually-hidden">Cost name</label>
+                    <input type="text" id="custom-cost-name" placeholder="Description" />
+                    <label for="custom-cost-amount" class="visually-hidden">Cost amount</label>
+                    <input type="number" id="custom-cost-amount" placeholder="Amount" min="0" step="0.01" inputmode="decimal" />
+                    <label for="custom-cost-frequency" class="visually-hidden">Cost frequency</label>
+                    <select id="custom-cost-frequency">
+                      <option value="monthly" selected>Monthly</option>
+                      <option value="annual">Annual</option>
+                    </select>
+                    <button type="button" id="add-custom-cost">Add</button>
+                  </div>
+                  <div class="custom-costs__list" id="custom-cost-list" role="list"></div>
+                </div>
                 <p class="field-note">
                   Need benchmarks? Visit the <a href="resources.html">helpful resources</a> page.
                 </p>
@@ -2673,9 +2832,9 @@
           </fieldset>
 
           <fieldset class="control-section" data-collapsible>
-            <legend class="section-legend visually-hidden" id="section-time-off-legend">Time-off planner</legend>
+            <legend class="section-legend visually-hidden" id="section-time-off-legend">Time planning</legend>
             <div class="section-header">
-              <span class="section-title" aria-hidden="true">Time-off planner</span>
+              <span class="section-title" aria-hidden="true">Time planning</span>
               <button
                 type="button"
                 class="section-toggle section-toggle--top"
@@ -2689,21 +2848,37 @@
             </div>
             <div class="section-body" id="section-time-off">
               <div class="control">
-                <label for="months-off">
-                  <span class="label-text">Months off per year</span>
-                  <span class="info-icon" tabindex="0" role="button" aria-expanded="false" aria-label="Total months you plan to take completely off." data-tooltip="Total months you plan to take completely off.">ℹ️</span>
+                <label for="active-months">
+                  <span class="label-text">Active months per year</span>
+                  <span
+                    class="info-icon"
+                    tabindex="0"
+                    role="button"
+                    aria-expanded="false"
+                    aria-label="Enter the number of months you expect to be actively working."
+                    data-tooltip="Enter the number of months you expect to be actively working. Use commas for specific values or a dash for ranges (e.g. 8,10,11 or 6-10)."
+                  >ℹ️</span>
                 </label>
-                <input type="number" id="months-off" value="2" min="0" max="12" step="0.5" inputmode="decimal" />
+                <input type="text" id="active-months" value="10" inputmode="decimal" />
+                <p class="field-note">Separate multiple options with commas or use a range with a dash.</p>
               </div>
               <div class="control">
-                <label for="weeks-off-cycle">
-                  <span class="label-text">Weeks off per 4-week cycle</span>
-                  <span class="info-icon" tabindex="0" role="button" aria-expanded="false" aria-label="For example, 1 week off means working 3 weeks out of every 4." data-tooltip="For example, 1 week off means working 3 weeks out of every 4.">ℹ️</span>
+                <label for="weeks-off-per-month">
+                  <span class="label-text">Weeks off per active month</span>
+                  <span
+                    class="info-icon"
+                    tabindex="0"
+                    role="button"
+                    aria-expanded="false"
+                    aria-label="Specify how many weeks you typically take off within an active month."
+                    data-tooltip="Specify how many weeks you typically take off within an active month. Use commas or ranges like 0-1."
+                  >ℹ️</span>
                 </label>
-                <input type="number" id="weeks-off-cycle" value="1" min="0" max="4" step="0.25" inputmode="decimal" />
+                <input type="text" id="weeks-off-per-month" value="1" inputmode="decimal" />
+                <p class="field-note">Use commas or a dash to explore different options.</p>
               </div>
               <div class="control">
-                <label for="days-off-week">
+                <label for="days-off-per-week">
                   <span class="label-text">Days off per 7-day week</span>
                   <span
                     class="info-icon"
@@ -2711,10 +2886,11 @@
                     role="button"
                     aria-expanded="false"
                     aria-label="Defaults to a typical weekend off in a 7-day week but supports partial-day values."
-                    data-tooltip="Defaults to a typical weekend off in a 7-day week but supports partial-day values."
+                    data-tooltip="Defaults to a typical weekend off in a 7-day week but supports partial-day values. Use commas or ranges for alternatives."
                   >ℹ️</span>
                 </label>
-                <input type="number" id="days-off-week" value="2" min="0" max="7" step="0.25" inputmode="decimal" />
+                <input type="text" id="days-off-per-week" value="2" inputmode="decimal" />
+                <p class="field-note">Separate multiple day-off scenarios with commas or ranges.</p>
               </div>
               <div class="control">
                 <label>
@@ -2757,6 +2933,7 @@
       </section>
 
       <section class="tables" aria-live="polite">
+        <div class="variable-controls" id="variable-controls" hidden aria-live="polite"></div>
         <div class="table-grid" id="tables-container">
           <!-- Tables injected here -->
         </div>
@@ -2773,15 +2950,15 @@
         <p>
           This calculator runs entirely in your browser. There are no sign-ins, accounts, or background network calls. Everything
           you type stays on this page. By default the only thing saved between visits is your light/dark mode preference
-          (<code>course-pricing-theme</code>). If you turn on “Remember my inputs,” the calculator also stores your latest form values
-          (<code>course-pricing-saved-inputs</code>) plus a small flag (<code>course-pricing-save-enabled</code>) in local storage. Switch it
+          (<code>income-calculator-theme</code>). If you turn on “Remember my inputs,” the calculator also stores your latest form values
+          (<code>income-calculator-saved-inputs</code>) plus a small flag (<code>income-calculator-save-enabled</code>) in local storage. Switch it
           off or press “Reset to defaults” to remove them instantly.
         </p>
         <p>
           When you export results, the CSV file is generated on your device: the app assembles the rows, wraps them in a
           <code>Blob</code>, spawns a temporary download link, clicks it for you, and immediately cleans it up again, so nothing
           leaves your device. Want to dig deeper? The full source code is available on
-          <a href="https://github.com/jd-d/course-pricing-calculator" target="_blank" rel="noreferrer noopener">GitHub</a>, review it yourself or with a
+          <a href="https://github.com/jd-d/income-calc" target="_blank" rel="noreferrer noopener">GitHub</a>, review it yourself or with a
           developer you trust to confirm exactly how the site works.
         </p>
       </div>
@@ -2794,8 +2971,8 @@
           </li>
           <li>
             <strong>Inspect local storage.</strong> In the same panel, open “Local Storage,” select the site origin, and confirm
-            you see <code>course-pricing-theme</code>, plus <code>course-pricing-saved-inputs</code> and
-            <code>course-pricing-save-enabled</code> only if you enabled “Remember my inputs.” Toggle it off or use “Reset to
+            you see <code>income-calculator-theme</code>, plus <code>income-calculator-saved-inputs</code> and
+            <code>income-calculator-save-enabled</code> only if you enabled “Remember my inputs.” Toggle it off or use “Reset to
             defaults” to clear the extra entries.
           </li>
           <li>
@@ -2809,7 +2986,7 @@
             preference and the optional saved inputs toggle.
           </li>
           <li>
-            <strong>Browse the GitHub repository.</strong> Inspect the project files directly on <a href="https://github.com/jd-d/course-pricing-calculator" target="_blank" rel="noreferrer noopener">GitHub</a> to confirm exactly what
+            <strong>Browse the GitHub repository.</strong> Inspect the project files directly on <a href="https://github.com/jd-d/income-calc" target="_blank" rel="noreferrer noopener">GitHub</a> to confirm exactly what
             the site ships and how it behaves.
           </li>
         </ol>
@@ -3010,9 +3187,9 @@
       lessonCost: document.getElementById('lesson-cost'),
       lessonPriceMin: document.getElementById('lesson-price-min'),
       lessonPriceMax: document.getElementById('lesson-price-max'),
-      monthsOff: document.getElementById('months-off'),
-      weeksOffCycle: document.getElementById('weeks-off-cycle'),
-      daysOffWeek: document.getElementById('days-off-week'),
+      activeMonthsInput: document.getElementById('active-months'),
+      weeksOffPerMonthInput: document.getElementById('weeks-off-per-month'),
+      daysOffPerWeekInput: document.getElementById('days-off-per-week'),
       buffer: document.getElementById('buffer'),
       currencySymbol: document.getElementById('currency-symbol'),
       recalcButton: document.getElementById('recalculate'),
@@ -3021,6 +3198,11 @@
       statusMessage: document.getElementById('status-message'),
       workingWeeksDisplay: document.getElementById('working-weeks-display'),
       workingDaysDisplay: document.getElementById('working-days-display'),
+      customCostName: document.getElementById('custom-cost-name'),
+      customCostAmount: document.getElementById('custom-cost-amount'),
+      customCostFrequency: document.getElementById('custom-cost-frequency'),
+      addCustomCostButton: document.getElementById('add-custom-cost'),
+      customCostList: document.getElementById('custom-cost-list'),
       rememberInputs: document.getElementById('remember-inputs'),
       resetSavedInputs: document.getElementById('reset-saved-inputs')
     };
@@ -3374,7 +3556,7 @@
 
     const README_SOURCES = [
       new URL('README.md', document.baseURI).toString(),
-      'https://raw.githubusercontent.com/jd-d/course-pricing-calculator/main/README.md'
+      'https://raw.githubusercontent.com/jd-d/income-calc/main/README.md'
     ];
 
     function fetchReadmeFromSources(sources, index = 0) {
@@ -3752,6 +3934,26 @@
       accountingForm.addEventListener('submit', handleAccountingSubmit);
     }
 
+    if (controls.addCustomCostButton instanceof HTMLButtonElement) {
+      controls.addCustomCostButton.addEventListener('click', handleAddCustomCost);
+    }
+
+    if (controls.customCostList instanceof HTMLElement) {
+      controls.customCostList.addEventListener('click', event => {
+        const target =
+          event.target instanceof HTMLElement ? event.target.closest('button[data-cost-id]') : null;
+        if (!target) {
+          return;
+        }
+        const costId = target.getAttribute('data-cost-id');
+        if (typeof costId === 'string' && costId) {
+          removeCustomCost(costId);
+        }
+      });
+    }
+
+    renderCustomCostList();
+
     [accountingStudentsInput, accountingClassesInput, accountingHoursInput].forEach(input => {
       if (input instanceof HTMLInputElement) {
         input.addEventListener('input', () => {
@@ -3780,7 +3982,7 @@
 
     const themeToggleButton = document.getElementById('theme-toggle');
     const themeToggleLabel = themeToggleButton ? themeToggleButton.querySelector('.toggle-label') : null;
-    const THEME_STORAGE_KEY = 'course-pricing-theme';
+    const THEME_STORAGE_KEY = 'income-calculator-theme';
     const prefersDarkScheme = typeof window.matchMedia === 'function'
       ? window.matchMedia('(prefers-color-scheme: dark)')
       : { matches: true };
@@ -3871,9 +4073,51 @@
     let latestPricingMode = PRICING_MODE_TARGET;
     let latestBufferPercent = 0;
     let latestInputsSnapshot = null;
+    let customCosts = [];
+    let customCostIdCounter = 0;
     const PERSISTED_TARGET_NET_BASIS_KEY = '__targetNetBasis';
     const PERSISTED_DESIRED_INCOME_DISPLAY_KEY = '__desiredIncomeDisplay';
     const PERSISTED_DESIRED_INCOME_LOCK_KEY = '__desiredIncomeLock';
+    const VARIABLE_META = {
+      studentsPerClass: {
+        key: 'studentsPerClass',
+        label: 'Students per class',
+        axisLabel: 'Students per class',
+        fractionDigits: 0
+      },
+      classesPerWeek: {
+        key: 'classesPerWeek',
+        label: 'Classes per week',
+        axisLabel: 'Classes per week',
+        fractionDigits: 0
+      },
+      activeMonths: {
+        key: 'activeMonths',
+        label: 'Active months per year',
+        axisLabel: 'Active months per year',
+        fractionDigits: 0
+      },
+      weeksOffPerMonth: {
+        key: 'weeksOffPerMonth',
+        label: 'Weeks off per active month',
+        axisLabel: 'Weeks off per active month',
+        fractionDigits: 0
+      },
+      daysOffPerWeek: {
+        key: 'daysOffPerWeek',
+        label: 'Days off per 7-day week',
+        axisLabel: 'Days off per 7-day week',
+        fractionDigits: 0
+      }
+    };
+    const VARIABLE_ORDER = [
+      'studentsPerClass',
+      'classesPerWeek',
+      'activeMonths',
+      'weeksOffPerMonth',
+      'daysOffPerWeek'
+    ];
+    let variableSelection = { axes: [null, null], fixedValues: {} };
     const PERSISTED_ACCEPTABLE_INCOME_MIN_KEY = '__acceptableIncomeMinAnnualNet';
     const PERSISTED_ACCEPTABLE_INCOME_MAX_KEY = '__acceptableIncomeMaxAnnualNet';
     const PERSISTED_ACCEPTABLE_INCOME_BASIS_KEY = '__acceptableIncomeBasis';
@@ -4451,8 +4695,8 @@
 
     const rememberInputsToggle = controls.rememberInputs instanceof HTMLInputElement ? controls.rememberInputs : null;
     const resetSavedInputsButton = controls.resetSavedInputs instanceof HTMLButtonElement ? controls.resetSavedInputs : null;
-    const PERSISTENCE_ENABLED_KEY = 'course-pricing-save-enabled';
-    const PERSISTENCE_VALUES_KEY = 'course-pricing-saved-inputs';
+    const PERSISTENCE_ENABLED_KEY = 'income-calculator-save-enabled';
+    const PERSISTENCE_VALUES_KEY = 'income-calculator-saved-inputs';
     let persistenceEnabled = false;
     let persistableInputsCache = null;
 
@@ -4499,6 +4743,12 @@
         : null;
       values[PERSISTED_ACCEPTABLE_INCOME_BASIS_KEY] = acceptableIncomeBasis;
       values[PERSISTED_COLLAPSED_SECTIONS_KEY] = captureCollapsibleSectionStates();
+      values.__customCosts = customCosts.map(cost => ({
+        id: cost.id,
+        name: cost.name,
+        amount: Number(cost.amount),
+        frequency: cost.frequency
+      }));
       Object.keys(desiredIncomeFieldMap).forEach(key => {
         const netValue = readDesiredIncomeNet(key, null);
         values[`__desiredIncomeNet_${key}`] = Number.isFinite(netValue) ? netValue : null;
@@ -4634,6 +4884,37 @@
       updateDesiredIncomeTitle();
       updateDesiredIncomeLabels();
       updateAcceptableIncomeBasisLabel();
+      const storedCustomCosts = Array.isArray(values.__customCosts) ? values.__customCosts : [];
+      customCostIdCounter = 0;
+      customCosts = storedCustomCosts
+        .filter(entry => entry && typeof entry.name === 'string')
+        .map(entry => {
+          const amountValue = Number(entry.amount);
+          const frequencyValue = entry.frequency === 'annual' ? 'annual' : 'monthly';
+          const parsedAmount = Number.isFinite(amountValue) ? Math.max(amountValue, 0) : 0;
+          let idValue = null;
+          if (typeof entry.id === 'string') {
+            const idMatch = entry.id.match(/custom-(\d+)/);
+            if (idMatch) {
+              const parsedId = Number(idMatch[1]);
+              if (Number.isFinite(parsedId)) {
+                customCostIdCounter = Math.max(customCostIdCounter, parsedId);
+                idValue = entry.id;
+              }
+            }
+          }
+          if (!idValue) {
+            customCostIdCounter += 1;
+            idValue = `custom-${customCostIdCounter}`;
+          }
+          return {
+            id: idValue,
+            name: entry.name,
+            amount: parsedAmount,
+            frequency: frequencyValue
+          };
+        });
+      renderCustomCostList();
       updateFixedCostTotalDisplay();
       if (!skipRender) {
         render();
@@ -4653,6 +4934,12 @@
         if (rememberInputsToggle) {
           rememberInputsToggle.checked = false;
         }
+      }
+    }
+
+    function persistCustomCosts() {
+      if (persistenceEnabled) {
+        savePersistedInputs();
       }
     }
 
@@ -4710,6 +4997,7 @@
     }
 
     const tablesContainer = document.getElementById('tables-container');
+    const variableControlsContainer = document.getElementById('variable-controls');
     let tablesLayoutUpdateScheduled = false;
     const assumptionsList = document.getElementById('assumptions-list');
 
@@ -4923,6 +5211,59 @@
       return percent / 100;
     }
 
+    function parseNumberList(value, { min = -Infinity, max = Infinity, allowZero = false } = {}) {
+      if (!value) {
+        return [];
+      }
+
+      const values = new Set();
+      const tokens = value
+        .split(',')
+        .map(token => token.trim())
+        .filter(token => token.length > 0);
+
+      tokens.forEach(token => {
+        const rangeMatch = token.match(/^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/);
+        if (rangeMatch) {
+          const startValue = Number(rangeMatch[1]);
+          const endValue = Number(rangeMatch[2]);
+          if (!Number.isFinite(startValue) || !Number.isFinite(endValue)) {
+            return;
+          }
+
+          const rangeStart = Math.min(startValue, endValue);
+          const rangeEnd = Math.max(startValue, endValue);
+          for (let current = rangeStart; current <= rangeEnd + 1e-9; current += 1) {
+            const normalized = Number(current.toFixed(6));
+            const meetsZeroRule = allowZero ? normalized >= 0 : normalized > 0;
+            if (!meetsZeroRule) {
+              continue;
+            }
+            if (normalized < min || normalized > max) {
+              continue;
+            }
+            values.add(normalized);
+          }
+          return;
+        }
+
+        const parsed = Number(token);
+        if (!Number.isFinite(parsed)) {
+          return;
+        }
+        const meetsZeroRule = allowZero ? parsed >= 0 : parsed > 0;
+        if (!meetsZeroRule) {
+          return;
+        }
+        if (parsed < min || parsed > max) {
+          return;
+        }
+        values.add(parsed);
+      });
+
+      return Array.from(values).sort((a, b) => a - b);
+    }
+
     function parseList(value) {
       if (!value) {
         return [];
@@ -4993,13 +5334,150 @@
     }
 
     function getFixedCostTotal() {
-      return Object.values(fixedCostFields).reduce((sum, fieldSet) => {
+      const fixedTotal = Object.values(fixedCostFields).reduce((sum, fieldSet) => {
         if (!(fieldSet.annual instanceof HTMLInputElement)) {
           return sum;
         }
         const annualValue = Math.max(parseNumber(fieldSet.annual.value, 0), 0);
         return sum + annualValue;
       }, 0);
+      const customTotal = customCosts.reduce((sum, cost) => {
+        const annualAmount = computeCustomCostAnnualAmount(cost);
+        return sum + annualAmount;
+      }, 0);
+      return fixedTotal + customTotal;
+    }
+
+    function computeCustomCostAnnualAmount(cost) {
+      if (!cost || typeof cost !== 'object') {
+        return 0;
+      }
+      const amount = Number(cost.amount);
+      if (!Number.isFinite(amount) || amount <= 0) {
+        return 0;
+      }
+      return cost.frequency === 'annual' ? amount : amount * 12;
+    }
+
+    function renderCustomCostList() {
+      const list = controls.customCostList;
+      if (!(list instanceof HTMLElement)) {
+        return;
+      }
+
+      if (!customCosts.length) {
+        list.innerHTML = '<p class="field-note">No additional costs added yet.</p>';
+        return;
+      }
+
+      const symbol = controls.currencySymbol?.value?.trim() || '€';
+
+      list.innerHTML = customCosts
+        .map(cost => {
+          const annualAmount = computeCustomCostAnnualAmount(cost);
+          const amountDisplay = cost.frequency === 'annual'
+            ? `${formatCurrencyDetailed(symbol, cost.amount)} per year`
+            : `${formatCurrencyDetailed(symbol, cost.amount)} per month`;
+          const annualDisplay = `${formatCurrencyDetailed(symbol, annualAmount)} annually`;
+          const safeName = escapeHtml(cost.name || 'Custom cost');
+          return `
+            <div class="custom-costs__item" role="listitem">
+              <div class="custom-costs__item-info">
+                <strong>${safeName}</strong>
+                <span>${amountDisplay} · ${annualDisplay}</span>
+              </div>
+              <button type="button" data-cost-id="${escapeHtml(cost.id)}">Remove</button>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function showStatusMessage(message, timeout = 2500) {
+      if (!(controls.statusMessage instanceof HTMLElement)) {
+        return;
+      }
+      controls.statusMessage.textContent = message;
+      if (timeout > 0) {
+        window.setTimeout(() => {
+          if (controls.statusMessage && controls.statusMessage.textContent === message) {
+            controls.statusMessage.textContent = '';
+          }
+        }, timeout);
+      }
+    }
+
+    function clearStatusMessage() {
+      if (controls.statusMessage instanceof HTMLElement) {
+        controls.statusMessage.textContent = '';
+      }
+    }
+
+    function resetCustomCostInputs() {
+      if (controls.customCostName instanceof HTMLInputElement) {
+        controls.customCostName.value = '';
+      }
+      if (controls.customCostAmount instanceof HTMLInputElement) {
+        controls.customCostAmount.value = '';
+      }
+      if (controls.customCostFrequency instanceof HTMLSelectElement) {
+        controls.customCostFrequency.value = 'monthly';
+      }
+    }
+
+    function handleAddCustomCost() {
+      const nameInput = controls.customCostName;
+      const amountInput = controls.customCostAmount;
+      const frequencySelect = controls.customCostFrequency;
+      if (
+        !(nameInput instanceof HTMLInputElement) ||
+        !(amountInput instanceof HTMLInputElement) ||
+        !(frequencySelect instanceof HTMLSelectElement)
+      ) {
+        return;
+      }
+
+      const name = nameInput.value.trim();
+      const amountValue = Number(amountInput.value);
+      const frequency = frequencySelect.value === 'annual' ? 'annual' : 'monthly';
+
+      if (!name) {
+        showStatusMessage('Enter a description for the cost.');
+        return;
+      }
+
+      if (!Number.isFinite(amountValue) || amountValue < 0) {
+        showStatusMessage('Enter a valid amount for the custom cost.');
+        return;
+      }
+
+      customCostIdCounter += 1;
+      const costEntry = {
+        id: `custom-${customCostIdCounter}`,
+        name,
+        amount: amountValue,
+        frequency
+      };
+
+      customCosts.push(costEntry);
+      resetCustomCostInputs();
+      renderCustomCostList();
+      updateFixedCostTotalDisplay();
+      clearStatusMessage();
+      persistCustomCosts();
+      render();
+    }
+
+    function removeCustomCost(costId) {
+      const nextCosts = customCosts.filter(cost => cost.id !== costId);
+      if (nextCosts.length === customCosts.length) {
+        return;
+      }
+      customCosts = nextCosts;
+      renderCustomCostList();
+      updateFixedCostTotalDisplay();
+      persistCustomCosts();
+      render();
     }
 
     function updateFixedCostTotalDisplay() {
@@ -5070,14 +5548,62 @@
     });
 
     function getInputs() {
-      const monthsOff = parseNumber(controls.monthsOff.value, 2, { min: 0, max: 12 });
-      const weeksOffPerCycle = parseNumber(controls.weeksOffCycle.value, 1, { min: 0, max: 4 });
-      const daysOffPerWeek = parseNumber(controls.daysOffWeek.value, 2, { min: 0, max: BASE_WORK_DAYS_PER_WEEK });
+      const activeMonthsRaw = parseNumberList(controls.activeMonthsInput?.value, {
+        min: 0,
+        max: 12,
+        allowZero: false
+      });
+      const activeMonthsValues = activeMonthsRaw.length ? activeMonthsRaw : [10];
+      if (controls.activeMonthsInput instanceof HTMLInputElement && !activeMonthsRaw.length) {
+        controls.activeMonthsInput.value = String(activeMonthsValues[0]);
+      }
+
+      const weeksOffPerMonthRaw = parseNumberList(controls.weeksOffPerMonthInput?.value, {
+        min: 0,
+        max: 4,
+        allowZero: true
+      });
+      const weeksOffPerMonthValues = weeksOffPerMonthRaw.length ? weeksOffPerMonthRaw : [1];
+      if (controls.weeksOffPerMonthInput instanceof HTMLInputElement && !weeksOffPerMonthRaw.length) {
+        controls.weeksOffPerMonthInput.value = String(weeksOffPerMonthValues[0]);
+      }
+
+      const daysOffPerWeekRaw = parseNumberList(controls.daysOffPerWeekInput?.value, {
+        min: 0,
+        max: BASE_WORK_DAYS_PER_WEEK,
+        allowZero: true
+      });
+      const daysOffPerWeekValues = daysOffPerWeekRaw.length ? daysOffPerWeekRaw : [2];
+      if (controls.daysOffPerWeekInput instanceof HTMLInputElement && !daysOffPerWeekRaw.length) {
+        controls.daysOffPerWeekInput.value = String(daysOffPerWeekValues[0]);
+      }
+
+      const defaultActiveMonths = activeMonthsValues[0];
+      const defaultWeeksOffPerMonth = weeksOffPerMonthValues[0];
+      const defaultDaysOffPerWeek = daysOffPerWeekValues[0];
+
+      const activeMonths = Number.isFinite(defaultActiveMonths) ? defaultActiveMonths : 0;
+      const weeksOffPerMonth = Number.isFinite(defaultWeeksOffPerMonth) ? defaultWeeksOffPerMonth : 0;
+      const daysOffPerWeek = Number.isFinite(defaultDaysOffPerWeek) ? defaultDaysOffPerWeek : 0;
+
+      const activeMonthShare = Number.isFinite(defaultActiveMonths)
+        ? Math.min(Math.max(defaultActiveMonths / 12, 0), 1)
+        : 0;
+      const weeksShare = Number.isFinite(defaultWeeksOffPerMonth)
+        ? Math.min(Math.max((4 - defaultWeeksOffPerMonth) / 4, 0), 1)
+        : 1;
+      const workingWeeks = WEEKS_PER_YEAR * activeMonthShare * weeksShare;
+      const workingDaysPerWeek = Math.max(BASE_WORK_DAYS_PER_WEEK - daysOffPerWeek, 0);
+      const workingDaysPerYear = workingWeeks * workingDaysPerWeek;
+
+      lastActiveMonths = Number.isFinite(defaultActiveMonths) ? defaultActiveMonths : MONTHS_PER_YEAR;
+      lastWorkingWeeks = Number.isFinite(workingWeeks) ? workingWeeks : WEEKS_PER_YEAR;
 
       const taxRatePercent = Math.min(Math.max(parseNumber(controls.taxRate.value, 40), 0), 99.9);
       const taxRate = taxRatePercent / 100;
       if (desiredIncomeLockedAsGross) {
         synchronizeLockedDesiredIncomeNetValues(taxRate);
+        synchronizeLockedAcceptableIncomeNetValues(taxRate, activeMonths);
       }
       const fixedCosts = updateFixedCostTotalDisplay();
       const variableCostPerClass = Math.max(parseNumber(controls.variableCostPerClass.value, 0), 0);
@@ -5127,22 +5653,6 @@
         const tempMin = lessonPriceMax;
         lessonPriceMax = lessonPriceMin;
         lessonPriceMin = tempMin;
-      }
-
-      const activeMonthShare = Math.min(Math.max((12 - monthsOff) / 12, 0), 1);
-      const activeMonths = 12 * activeMonthShare;
-      const weeksShare = Math.min(Math.max((4 - weeksOffPerCycle) / 4, 0), 1);
-      const workingWeeks = WEEKS_PER_YEAR * activeMonthShare * weeksShare;
-      const workingDaysPerWeek = Math.max(
-        0,
-        Math.min(BASE_WORK_DAYS_PER_WEEK, BASE_WORK_DAYS_PER_WEEK - daysOffPerWeek)
-      );
-      const workingDaysPerYear = workingWeeks * workingDaysPerWeek;
-
-      lastActiveMonths = activeMonths;
-      lastWorkingWeeks = workingWeeks;
-      if (desiredIncomeLockedAsGross) {
-        synchronizeLockedAcceptableIncomeNetValues(taxRate, activeMonths);
       }
 
       const defaultTargetNetWeek = workingWeeks > 0 ? TARGET_NET_DEFAULT / workingWeeks : TARGET_NET_DEFAULT;
@@ -5245,9 +5755,6 @@
             ? ''
             : formatFixed(lessonPriceMax, 2);
       }
-      controls.monthsOff.value = formatFixed(monthsOff, 2);
-      controls.weeksOffCycle.value = formatFixed(weeksOffPerCycle, 2);
-      controls.daysOffWeek.value = formatFixed(daysOffPerWeek, 2);
       controls.buffer.value = formatFixed(buffer * 100, 1);
       controls.currencySymbol.value = currencySymbol;
       if (controls.lessonCost instanceof HTMLInputElement) {
@@ -5283,12 +5790,14 @@
         buffer,
         bufferPercent,
         currencySymbol,
-        monthsOff,
-        weeksOffPerCycle,
+        activeMonths,
+        activeMonthsValues,
+        weeksOffPerMonth,
+        weeksOffPerMonthValues,
         daysOffPerWeek,
+        daysOffPerWeekValues,
         workingDaysPerWeek,
         workingDaysPerYear,
-        activeMonths,
         activeMonthShare,
         weeksShare
       };
@@ -5316,17 +5825,254 @@
     }
 
     function formatCurrencyOrDash(symbol, value, digits = 2) {
-      return Number.isFinite(value) ? formatCurrencyDetailed(symbol, value, digits) : '—';
+      return Number.isFinite(value) ? formatCurrencyDetailed(symbol, value, digits) : '–';
     }
 
     function formatNumberValue(value, maximumFractionDigits = 2) {
       if (!Number.isFinite(value)) {
-        return '—';
+        return '–';
       }
       return value.toLocaleString(undefined, {
         minimumFractionDigits: 0,
         maximumFractionDigits
       });
+    }
+
+    function areValuesEqual(a, b) {
+      if (!Number.isFinite(a) || !Number.isFinite(b)) {
+        return false;
+      }
+      return Math.abs(a - b) < 1e-6;
+    }
+
+    function formatVariableValue(key, value) {
+      if (!Number.isFinite(value)) {
+        return '0';
+      }
+      const meta = VARIABLE_META[key];
+      const digits = typeof meta?.fractionDigits === 'number' ? meta.fractionDigits : 2;
+      if (digits === 0) {
+        return value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      }
+      return formatFixed(value, digits);
+    }
+
+    function summarizeVariableValues(key, values) {
+      if (!Array.isArray(values) || !values.length) {
+        return 'n/a';
+      }
+      const unique = Array.from(new Set(values.map(value => Number(value))))
+        .filter(Number.isFinite)
+        .sort((a, b) => a - b);
+      if (!unique.length) {
+        return 'n/a';
+      }
+      if (unique.length === 1) {
+        return formatVariableValue(key, unique[0]);
+      }
+      const digits = typeof VARIABLE_META[key]?.fractionDigits === 'number' ? VARIABLE_META[key].fractionDigits : 2;
+      const isIntegerSequence = digits === 0;
+      const isConsecutive = isIntegerSequence && unique.every((value, index) => {
+        if (index === 0) {
+          return true;
+        }
+        return Math.abs(value - unique[index - 1] - 1) < 1e-6;
+      });
+      if (isConsecutive) {
+        return `${formatVariableValue(key, unique[0])}-${formatVariableValue(key, unique[unique.length - 1])}`;
+      }
+      if (unique.length <= 4) {
+        return unique.map(value => formatVariableValue(key, value)).join(', ');
+      }
+      return `${formatVariableValue(key, unique[0])}-${formatVariableValue(key, unique[unique.length - 1])}`;
+    }
+
+    function buildVariableDefinitions(inputs) {
+      const definitions = {};
+      VARIABLE_ORDER.forEach(key => {
+        const meta = VARIABLE_META[key] || { key, label: key, axisLabel: key, fractionDigits: 2 };
+        let rawValues;
+        if (key === 'studentsPerClass') {
+          rawValues = Array.isArray(inputs.studentsPerClass) ? inputs.studentsPerClass : [];
+        } else if (key === 'classesPerWeek') {
+          rawValues = Array.isArray(inputs.classesPerWeek) ? inputs.classesPerWeek : [];
+        } else if (key === 'activeMonths') {
+          rawValues = Array.isArray(inputs.activeMonthsValues) ? inputs.activeMonthsValues : [];
+        } else if (key === 'weeksOffPerMonth') {
+          rawValues = Array.isArray(inputs.weeksOffPerMonthValues) ? inputs.weeksOffPerMonthValues : [];
+        } else if (key === 'daysOffPerWeek') {
+          rawValues = Array.isArray(inputs.daysOffPerWeekValues) ? inputs.daysOffPerWeekValues : [];
+        } else {
+          rawValues = [];
+        }
+        const values = Array.from(new Set(rawValues.map(value => Number(value))))
+          .filter(Number.isFinite)
+          .sort((a, b) => a - b);
+        definitions[key] = {
+          key,
+          label: meta.label,
+          axisLabel: meta.axisLabel,
+          values,
+          summary: summarizeVariableValues(key, values)
+        };
+      });
+      return definitions;
+    }
+
+    function updateVariableSelectionState(definitions) {
+      const axisCandidates = VARIABLE_ORDER.filter(key => {
+        const values = definitions[key]?.values || [];
+        return values.length > 1;
+      });
+      const fallbackCandidates = VARIABLE_ORDER.filter(key => {
+        const values = definitions[key]?.values || [];
+        return values.length > 0;
+      });
+
+      variableSelection.axes = variableSelection.axes.map(key => {
+        if (!key) {
+          return null;
+        }
+        if (axisCandidates.includes(key)) {
+          return key;
+        }
+        return null;
+      });
+
+      if (!variableSelection.axes[0]) {
+        variableSelection.axes[0] = axisCandidates[0] || fallbackCandidates[0] || null;
+      }
+      if (!variableSelection.axes[1]) {
+        const firstChoice = variableSelection.axes[0];
+        const alternative = axisCandidates.find(key => key !== firstChoice) || fallbackCandidates.find(key => key !== firstChoice);
+        variableSelection.axes[1] = alternative || null;
+      }
+      if (variableSelection.axes[0] && variableSelection.axes[0] === variableSelection.axes[1]) {
+        const alternative = axisCandidates.find(key => key !== variableSelection.axes[0]) || null;
+        variableSelection.axes[1] = alternative;
+      }
+
+      Object.keys(variableSelection.fixedValues).forEach(key => {
+        const values = definitions[key]?.values || [];
+        if (!values.length || variableSelection.axes.includes(key)) {
+          delete variableSelection.fixedValues[key];
+        }
+      });
+    }
+
+    function renderVariableControls(definitions) {
+      if (!(variableControlsContainer instanceof HTMLElement)) {
+        return;
+      }
+
+      const options = VARIABLE_ORDER.filter(key => definitions[key]?.values.length > 1);
+      if (!options.length) {
+        variableControlsContainer.hidden = true;
+        variableControlsContainer.innerHTML = '';
+        return;
+      }
+
+      variableControlsContainer.hidden = false;
+      const fragment = document.createDocumentFragment();
+
+      variableSelection.axes.forEach((selectedKey, index) => {
+        const control = document.createElement('div');
+        control.className = 'variable-control control';
+        const label = document.createElement('label');
+        label.innerHTML = `<span class="label-text">${index === 0 ? 'Table variable 1' : 'Table variable 2'}</span>`;
+        const select = document.createElement('select');
+        select.dataset.axisIndex = String(index);
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = 'Select variable';
+        select.appendChild(placeholder);
+        options.forEach(optionKey => {
+          if (index === 1 && variableSelection.axes[0] === optionKey) {
+            return;
+          }
+          const option = document.createElement('option');
+          option.value = optionKey;
+          option.textContent = `${definitions[optionKey].label} (${definitions[optionKey].summary})`;
+          select.appendChild(option);
+        });
+        if (selectedKey && select.querySelector(`option[value="${selectedKey}"]`)) {
+          select.value = selectedKey;
+        }
+        select.addEventListener('change', () => {
+          const nextKey = select.value || null;
+          if (index === 0) {
+            variableSelection.axes[0] = nextKey;
+            if (nextKey && variableSelection.axes[1] === nextKey) {
+              variableSelection.axes[1] = null;
+            }
+          } else {
+            variableSelection.axes[1] = nextKey;
+            if (nextKey && variableSelection.axes[0] === nextKey) {
+              variableSelection.axes[0] = null;
+            }
+          }
+          render();
+        });
+        label.appendChild(select);
+        control.appendChild(label);
+        fragment.appendChild(control);
+      });
+
+      const extraKeys = options.filter(key => !variableSelection.axes.includes(key));
+      extraKeys.forEach(key => {
+        const definition = definitions[key];
+        const control = document.createElement('div');
+        control.className = 'variable-control control';
+        const label = document.createElement('label');
+        label.innerHTML = `<span class="label-text">${definition.label}</span>`;
+        const select = document.createElement('select');
+        select.dataset.variableKey = key;
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = 'Pick a value';
+        select.appendChild(placeholder);
+        definition.values.forEach(value => {
+          const option = document.createElement('option');
+          option.value = String(value);
+          option.textContent = formatVariableValue(key, value);
+          select.appendChild(option);
+        });
+        const selectedValue = variableSelection.fixedValues[key];
+        if (Number.isFinite(selectedValue) && definition.values.includes(Number(selectedValue))) {
+          select.value = String(selectedValue);
+        }
+        select.addEventListener('change', () => {
+          if (select.value === '') {
+            delete variableSelection.fixedValues[key];
+          } else {
+            const parsed = Number(select.value);
+            if (Number.isFinite(parsed)) {
+              variableSelection.fixedValues[key] = parsed;
+            } else {
+              delete variableSelection.fixedValues[key];
+            }
+          }
+          render();
+        });
+        label.appendChild(select);
+        control.appendChild(label);
+        fragment.appendChild(control);
+      });
+
+      const resetWrapper = document.createElement('div');
+      resetWrapper.className = 'variable-controls__reset';
+      const resetButton = document.createElement('button');
+      resetButton.type = 'button';
+      resetButton.textContent = 'Reset selections';
+      resetButton.addEventListener('click', () => {
+        variableSelection = { axes: [null, null], fixedValues: {} };
+        render();
+      });
+      resetWrapper.appendChild(resetButton);
+      fragment.appendChild(resetWrapper);
+
+      variableControlsContainer.innerHTML = '';
+      variableControlsContainer.appendChild(fragment);
     }
 
     function escapeHtml(value) {
@@ -5360,17 +6106,25 @@
         bufferPercent: inputs.bufferPercent,
         lessonCostInclVat: inputs.lessonCostInclVat,
         activeMonths: inputs.activeMonths,
+        activeMonthsValues: Array.isArray(inputs.activeMonthsValues) ? [...inputs.activeMonthsValues] : [],
+        weeksOffPerMonth: inputs.weeksOffPerMonth,
+        weeksOffPerMonthValues: Array.isArray(inputs.weeksOffPerMonthValues)
+          ? [...inputs.weeksOffPerMonthValues]
+          : [],
+        daysOffPerWeek: inputs.daysOffPerWeek,
+        daysOffPerWeekValues: Array.isArray(inputs.daysOffPerWeekValues)
+          ? [...inputs.daysOffPerWeekValues]
+          : [],
         workingWeeks: inputs.workingWeeks,
+        workingDaysPerWeek: inputs.workingDaysPerWeek,
         workingDaysPerYear: inputs.workingDaysPerYear,
         currencySymbol: inputs.currencySymbol,
-        monthsOff: inputs.monthsOff,
-        weeksOffPerCycle: inputs.weeksOffPerCycle,
-        daysOffPerWeek: inputs.daysOffPerWeek,
-        workingDaysPerWeek: inputs.workingDaysPerWeek,
         targetNetPerWeek: inputs.targetNetPerWeek,
         targetNetPerMonth: inputs.targetNetPerMonth,
         targetNetAveragePerWeek: inputs.targetNetAveragePerWeek,
-        targetNetAveragePerMonth: inputs.targetNetAveragePerMonth
+        targetNetAveragePerMonth: inputs.targetNetAveragePerMonth,
+        activeMonthShare: inputs.activeMonthShare,
+        weeksShare: inputs.weeksShare
       };
     }
 
@@ -5391,7 +6145,7 @@
     }
 
     function formatBreakdownCurrency(value) {
-      return Number.isFinite(value) ? formatCurrency(latestCurrencySymbol, value) : '—';
+      return Number.isFinite(value) ? formatCurrency(latestCurrencySymbol, value) : '–';
     }
 
     function findBestPricingCombination(studentsTarget, classesPerWeekTarget, pricingData = latestPricingData) {
@@ -5407,11 +6161,11 @@
         if (!row || !Array.isArray(row.columns)) {
           return;
         }
-        const studentsValue = Number.isFinite(row.students) ? row.students : null;
         row.columns.forEach(column => {
           if (!column) {
             return;
           }
+          const studentsValue = Number.isFinite(column.students) ? column.students : null;
           const classesValue = Number.isFinite(column.classesPerWeek) ? column.classesPerWeek : null;
           if (studentsValue === null || classesValue === null) {
             return;
@@ -5809,17 +6563,17 @@
               <td class="numeric">${escapeHtml(formatCurrencyOrDash(currency, monthlyVat))}</td>
             </tr>
             <tr>
-              <th scope="row">Variable costs — per class</th>
+              <th scope="row">Variable costs – per class</th>
               <td class="numeric">${escapeHtml(formatCurrencyOrDash(currency, perLessonVariableClass))}</td>
               <td class="numeric">${escapeHtml(formatCurrencyOrDash(currency, monthlyVariableClass))}</td>
             </tr>
             <tr>
-              <th scope="row">Variable costs — per student per class</th>
+              <th scope="row">Variable costs – per student per class</th>
               <td class="numeric">${escapeHtml(formatCurrencyOrDash(currency, perLessonVariableStudent))}</td>
               <td class="numeric">${escapeHtml(formatCurrencyOrDash(currency, monthlyVariableStudent))}</td>
             </tr>
             <tr>
-              <th scope="row">Variable costs — per student per month</th>
+              <th scope="row">Variable costs – per student per month</th>
               <td class="numeric">${escapeHtml(formatCurrencyOrDash(currency, perLessonVariableMonthly))}</td>
               <td class="numeric">${escapeHtml(formatCurrencyOrDash(currency, monthlyVariableStudentMonthly))}</td>
             </tr>
@@ -5861,15 +6615,15 @@
             </tr>
             <tr>
               <th scope="row">Net margin (on ex-VAT revenue)</th>
-              <td class="numeric">${Number.isFinite(netMargin) ? escapeHtml(`${formatFixed(netMargin, 1)}%`) : '—'}</td>
+              <td class="numeric">${Number.isFinite(netMargin) ? escapeHtml(`${formatFixed(netMargin, 1)}%`) : '–'}</td>
             </tr>
             <tr>
               <th scope="row">Gross hourly revenue</th>
-              <td class="numeric">${Number.isFinite(effectiveHourlyGross) ? escapeHtml(formatCurrencyDetailed(currency, effectiveHourlyGross)) : '—'}</td>
+              <td class="numeric">${Number.isFinite(effectiveHourlyGross) ? escapeHtml(formatCurrencyDetailed(currency, effectiveHourlyGross)) : '–'}</td>
             </tr>
             <tr>
               <th scope="row">Net hourly pay</th>
-              <td class="numeric">${Number.isFinite(effectiveHourlyNet) ? escapeHtml(formatCurrencyDetailed(currency, effectiveHourlyNet)) : '—'}</td>
+              <td class="numeric">${Number.isFinite(effectiveHourlyNet) ? escapeHtml(formatCurrencyDetailed(currency, effectiveHourlyNet)) : '–'}</td>
             </tr>
             <tr>
               <th scope="row">Net income per lesson</th>
@@ -5879,7 +6633,7 @@
         </table>
       </section>
       ${notesMarkup}
-      <p class="report-footer">Generated with the Course Pricing Calculator.</p>
+      <p class="report-footer">Generated with the Income Calculator.</p>
     </main>
   </body>
 </html>`;
@@ -5921,23 +6675,23 @@
       }
 
       const breakdown = pricingVariant.breakdown;
-      const perStudentInclVat = formatCurrency(latestCurrencySymbol, pricingVariant.priceInclVat);
-      const perStudentExVat = formatCurrency(latestCurrencySymbol, pricingVariant.priceExVat);
-      const perLessonInclVat = formatCurrency(latestCurrencySymbol, breakdown.totals.priceInclVatPerLesson);
-      const perLessonExVat = formatCurrency(latestCurrencySymbol, breakdown.totals.priceExVatPerLesson);
+      const perStudentInclVat = formatCurrencyOrDash(latestCurrencySymbol, pricingVariant.price?.inclVat, 2);
+      const perStudentExVat = formatCurrencyOrDash(latestCurrencySymbol, pricingVariant.price?.exVat, 2);
+      const perLessonInclVat = formatCurrencyOrDash(latestCurrencySymbol, breakdown.totals.priceInclVatPerLesson, 2);
+      const perLessonExVat = formatCurrencyOrDash(latestCurrencySymbol, breakdown.totals.priceExVatPerLesson, 2);
 
-      const studentsDisplay = Number.isFinite(row.students)
-        ? numberFormatter.format(row.students)
-        : '—';
+      const studentsDisplay = Number.isFinite(column.students)
+        ? numberFormatter.format(column.students)
+        : '–';
       const classesPerWeekValue = column.classesPerWeek;
       const classesPerWeekDisplay = Number.isFinite(classesPerWeekValue)
         ? (Number.isInteger(classesPerWeekValue)
             ? numberFormatter.format(classesPerWeekValue)
             : formatFixed(classesPerWeekValue, 2))
-        : '—';
+        : '–';
       const classesPerYearDisplay = Number.isFinite(column.classesPerYear)
         ? numberFormatter.format(Math.round(column.classesPerYear))
-        : '—';
+        : '–';
 
       let variantLabel;
       if (isLessonMode) {
@@ -6219,7 +6973,7 @@
     }
 
     function buildPricingTable(data, symbol, bufferPercent, options = {}) {
-      if (!data.length) {
+      if (!Array.isArray(data) || !data.length) {
         return `<div class="card"><p class="status-message">No valid combinations available.</p></div>`;
       }
 
@@ -6232,255 +6986,79 @@
         desiredIncomeDisplayMode: incomeDisplayMode = 'net',
         taxRate: incomeTaxRate = 0,
         activeMonths: incomeActiveMonths = MONTHS_PER_YEAR,
-        hoursPerLesson: lessonHours = 1
+        hoursPerLesson: lessonHours = 1,
+        axisMeta = null,
+        axisInfo = null,
+        axisKeys = null
       } = options;
+
       const formattedBuffer = formatFixed(bufferPercent, 1);
-      const showBasePricesActive = mode === PRICING_MODE_TARGET && showBase;
+      const showBasePricesActive = mode === PRICING_MODE_TARGET ? showBase : true;
       const cardClasses = ['card', 'pricing-card'];
       if (showBasePricesActive) {
         cardClasses.push('show-base-prices');
       }
 
-      const hasPreferredRange =
-        Number.isFinite(minLessonPrice) || Number.isFinite(maxLessonPrice);
-
-      const convertNetIncomeForDisplay = value => {
-        if (!Number.isFinite(value)) {
-          return null;
-        }
-        return incomeDisplayMode === 'gross'
-          ? convertNetToGross(value, incomeTaxRate)
-          : value;
-      };
-
-      const formatIncomeForDisplay = value => {
-        const converted = convertNetIncomeForDisplay(value);
-        return Number.isFinite(converted) ? formatCurrency(symbol, converted) : '—';
-      };
-
-      const monthlyIncomeLabel = incomeDisplayMode === 'gross' ? 'Monthly gross' : 'Monthly net';
-      const annualIncomeLabel = incomeDisplayMode === 'gross' ? 'Annual gross' : 'Annual net';
-
-      const isPriceOutOfRange = value => {
-        if (!hasPreferredRange || !Number.isFinite(value)) {
-          return false;
-        }
-        if (Number.isFinite(minLessonPrice) && value < minLessonPrice) {
-          return true;
-        }
-        if (Number.isFinite(maxLessonPrice) && value > maxLessonPrice) {
-          return true;
-        }
-        return false;
-      };
-
+      const hasPreferredRange = Number.isFinite(minLessonPrice) || Number.isFinite(maxLessonPrice);
       const normalizedLessonHours = Number.isFinite(lessonHours) && lessonHours > 0 ? lessonHours : null;
-      const hourlyRateLabel = incomeDisplayMode === 'gross' ? 'Hourly gross' : 'Hourly net';
-
-      const computeHourlyRate = breakdown => {
-        if (!normalizedLessonHours) {
-          return null;
+      const rowAxisLabel = axisMeta?.rows?.axisLabel || axisMeta?.rows?.label || 'Rows';
+      const columnAxisLabel = axisMeta?.columns?.axisLabel || axisMeta?.columns?.label || 'Columns';
+      const columnDescriptors = Array.isArray(axisInfo?.columns?.values) && axisInfo.columns.values.length
+        ? axisInfo.columns.values
+        : data[0].columns.map((_, index) => ({ value: index + 1, label: String(index + 1) }));
+      const columnSamples = columnDescriptors.map((_, columnIndex) => {
+        for (let rowIndex = 0; rowIndex < data.length; rowIndex += 1) {
+          const candidate = data[rowIndex]?.columns?.[columnIndex];
+          if (candidate) {
+            return candidate;
+          }
         }
-        const netPerLesson = breakdown?.perLesson?.netIncome;
-        if (!Number.isFinite(netPerLesson)) {
-          return null;
-        }
-        const lessonValue = incomeDisplayMode === 'gross'
-          ? convertNetToGross(netPerLesson, incomeTaxRate)
-          : netPerLesson;
-        if (!Number.isFinite(lessonValue)) {
-          return null;
-        }
-        const perHour = lessonValue / normalizedLessonHours;
-        return Number.isFinite(perHour) ? perHour : null;
-      };
-
-      const formatHourlyRateDisplay = breakdown => {
-        const rate = computeHourlyRate(breakdown);
-        return Number.isFinite(rate) ? formatCurrency(symbol, rate) : '—';
-      };
+        return null;
+      });
 
       const toggleMarkup = mode === PRICING_MODE_TARGET
         ? `<div class="price-toggle-row">
             <button type="button" class="price-reveal-toggle secondary" aria-expanded="${showBasePricesActive}">
-              ${showBasePricesActive ? 'Hide base price' : 'Show base price'}
+              ${showBasePricesActive ? 'Hide base results' : 'Show base results'}
             </button>
           </div>`
         : '';
 
-      const columnHeaders = data[0].columns
-        .map(col => {
-          return `<th scope="col">${col.classesPerWeek}/week<span class="sub-label">≈ ${numberFormatter.format(col.classesPerYear)} / yr</span></th>`;
+      const columnHeaders = columnDescriptors
+        .map((descriptor, columnIndex) => {
+          const label = descriptor?.label != null ? String(descriptor.label) : String(descriptor?.value ?? '');
+          const subLabel = axisKeys?.columns === 'classesPerWeek'
+            ? buildClassesPerYearLabel(columnSamples[columnIndex])
+            : '';
+          return `<th scope="col">${escapeHtml(label)}${subLabel}</th>`;
         })
         .join('');
 
       const rowsHtml = data
         .map((row, rowIndex) => {
+          const rowLabel = row?.label != null
+            ? String(row.label)
+            : formatAxisValue(axisKeys?.rows || axisInfo?.rows?.key || null, row?.value);
           const cells = row.columns
-            .map((col, columnIndex) => {
-              if (mode === PRICING_MODE_LESSON && col.manualNet) {
-                const monthlyDisplay = formatIncomeForDisplay(col.manualNet.monthly);
-                const annualDisplay = formatIncomeForDisplay(col.manualNet.annual);
-                const bufferedMonthlyDisplay = formatIncomeForDisplay(col.manualNet.bufferedMonthly);
-                const bufferedAnnualDisplay = formatIncomeForDisplay(col.manualNet.bufferedAnnual);
-                const bufferedHourlyDisplay = formatHourlyRateDisplay(col.buffered.breakdown);
-                const baseHourlyDisplay = formatHourlyRateDisplay(col.base.breakdown);
-
-                const highlightBase = shouldHighlightIncome(
-                  { monthlyNet: col.manualNet.monthly, annualNet: col.manualNet.annual },
-                  {
-                    acceptableIncome: acceptableIncomeRange,
-                    displayMode: incomeDisplayMode,
-                    taxRate: incomeTaxRate,
-                    activeMonths: incomeActiveMonths
-                  }
-                );
-                const highlightBuffered = shouldHighlightIncome(
-                  {
-                    monthlyNet: col.manualNet.bufferedMonthly,
-                    annualNet: col.manualNet.bufferedAnnual
-                  },
-                  {
-                    acceptableIncome: acceptableIncomeRange,
-                    displayMode: incomeDisplayMode,
-                    taxRate: incomeTaxRate,
-                    activeMonths: incomeActiveMonths
-                  }
-                );
-
-                const baseButtonClass = highlightBase ? 'price-line price-line--acceptable' : 'price-line';
-                const bufferedButtonClass = highlightBuffered
-                  ? 'price-line buffered price-line--acceptable'
-                  : 'price-line buffered';
-
-                return `
-                <td>
-                  <div class="price-pair">
-                    <button
-                      type="button"
-                      class="${baseButtonClass}"
-                      data-row="${rowIndex}"
-                      data-column="${columnIndex}"
-                      data-variant="base"
-                    >
-                      <span class="price-label">${monthlyIncomeLabel}</span>
-                      <strong>${monthlyDisplay}</strong>
-                      <span class="price-secondary">${annualIncomeLabel} ${annualDisplay}</span>
-                      <span class="price-tertiary">${hourlyRateLabel} ${baseHourlyDisplay}</span>
-                    </button>
-                    <button
-                      type="button"
-                      class="${bufferedButtonClass}"
-                      data-row="${rowIndex}"
-                      data-column="${columnIndex}"
-                      data-variant="buffered"
-                    >
-                      <span class="price-label">${monthlyIncomeLabel} with ${formattedBuffer}% shortfall</span>
-                      <strong>${bufferedMonthlyDisplay}</strong>
-                      <span class="price-secondary">${annualIncomeLabel} ${bufferedAnnualDisplay}</span>
-                      <span class="price-tertiary">${hourlyRateLabel} ${bufferedHourlyDisplay}</span>
-                    </button>
-                  </div>
-                </td>
-              `;
-              }
-
-              const bufferedExVat = formatCurrency(symbol, col.buffered.priceExVat);
-              const bufferedInclVat = formatCurrency(symbol, col.buffered.priceInclVat);
-              const baseExVat = formatCurrency(symbol, col.base.priceExVat);
-              const baseInclVat = formatCurrency(symbol, col.base.priceInclVat);
-              const bufferedOutOfRange = isPriceOutOfRange(col.buffered.priceInclVat);
-              const baseOutOfRange = isPriceOutOfRange(col.base.priceInclVat);
-              const highlightBaseIncome = shouldHighlightIncome(
-                { monthlyNet: col.base.monthlyNet, annualNet: col.base.annualNet },
-                {
-                  acceptableIncome: acceptableIncomeRange,
-                  displayMode: incomeDisplayMode,
-                  taxRate: incomeTaxRate,
-                  activeMonths: incomeActiveMonths
-                }
-              );
-              const highlightBufferedIncome = shouldHighlightIncome(
-                { monthlyNet: col.buffered.monthlyNet, annualNet: col.buffered.annualNet },
-                {
-                  acceptableIncome: acceptableIncomeRange,
-                  displayMode: incomeDisplayMode,
-                  taxRate: incomeTaxRate,
-                  activeMonths: incomeActiveMonths
-                }
-              );
-              const bufferedClasses = ['price-line', 'buffered'];
-              if (bufferedOutOfRange) {
-                bufferedClasses.push('price-line--out-of-range');
-              }
-              if (highlightBufferedIncome) {
-                bufferedClasses.push('price-line--acceptable');
-              }
-              const baseClasses = ['price-line', 'base'];
-              if (baseOutOfRange) {
-                baseClasses.push('price-line--out-of-range');
-              }
-              if (highlightBaseIncome) {
-                baseClasses.push('price-line--acceptable');
-              }
-              const bufferedButtonClass = bufferedClasses.join(' ');
-              const baseButtonClass = baseClasses.join(' ');
-              const bufferedAnnualIncomeDisplay = formatIncomeForDisplay(col.buffered.annualNet);
-              const baseAnnualIncomeDisplay = formatIncomeForDisplay(col.base.annualNet);
-              const bufferedHourlyDisplay = formatHourlyRateDisplay(col.buffered.breakdown);
-              const baseHourlyDisplay = formatHourlyRateDisplay(col.base.breakdown);
-              const bufferedValueClass = bufferedOutOfRange
-                ? 'price-value price-value--out-of-range'
-                : 'price-value';
-              const baseValueClass = baseOutOfRange
-                ? 'price-value price-value--out-of-range'
-                : 'price-value';
-              return `
-                <td>
-                  <button
-                    type="button"
-                    class="${bufferedButtonClass}"
-                    data-row="${rowIndex}"
-                    data-column="${columnIndex}"
-                    data-variant="buffered"
-                  >
-                    <span class="price-label">Buffered +${formattedBuffer}%</span>
-                    <strong class="${bufferedValueClass}">${bufferedInclVat}</strong>
-                    <span class="price-secondary">${annualIncomeLabel} ${bufferedAnnualIncomeDisplay}</span>
-                    <span class="price-secondary">ex VAT ${bufferedExVat}</span>
-                    <span class="price-tertiary">${hourlyRateLabel} ${bufferedHourlyDisplay}</span>
-                  </button>
-                  <button
-                    type="button"
-                    class="${baseButtonClass}"
-                    aria-hidden="${showBasePricesActive ? 'false' : 'true'}"
-                    data-row="${rowIndex}"
-                    data-column="${columnIndex}"
-                    data-variant="base"
-                  >
-                    <span class="price-label">Base (no buffer)</span>
-                    <strong class="${baseValueClass}">${baseInclVat}</strong>
-                    <span class="price-secondary">${annualIncomeLabel} ${baseAnnualIncomeDisplay}</span>
-                    <span class="price-secondary">ex VAT ${baseExVat}</span>
-                    <span class="price-tertiary">${hourlyRateLabel} ${baseHourlyDisplay}</span>
-                  </button>
-                </td>
-              `;
-            })
+            .map((columnResult, columnIndex) => renderCell(columnResult, rowIndex, columnIndex))
             .join('');
-          return `<tr><th scope="row">${row.students}<span class="sub-label">students</span></th>${cells}</tr>`;
+          return `<tr><th scope="row">${escapeHtml(rowLabel)}</th>${cells}</tr>`;
         })
         .join('');
+
+      const caption = axisMeta
+        ? `<caption>${escapeHtml(rowAxisLabel)} × ${escapeHtml(columnAxisLabel)} income table</caption>`
+        : '<caption>Income table</caption>';
 
       return `
         <div class="${cardClasses.join(' ')}">
           ${toggleMarkup}
           <div class="card-scroll">
             <table>
-              <caption>Per-student pricing (includes optional extra safety margin)</caption>
+              ${caption}
               <thead>
                 <tr>
-                  <th scope="col">Students / class</th>
+                  <th scope="col">${escapeHtml(rowAxisLabel)}</th>
                   ${columnHeaders}
                 </tr>
               </thead>
@@ -6491,6 +7069,207 @@
           </div>
         </div>
       `;
+
+      function formatAxisValue(key, value) {
+        if (Number.isFinite(value) && key) {
+          return formatVariableValue(key, value);
+        }
+        if (Number.isFinite(value)) {
+          return value.toString();
+        }
+        return value == null ? '–' : String(value);
+      }
+
+      function buildClassesPerYearLabel(sample) {
+        if (!sample) {
+          return '';
+        }
+        const classesPerYear = Number.isFinite(sample.classesPerYear)
+          ? Math.round(sample.classesPerYear)
+          : null;
+        if (!Number.isFinite(classesPerYear)) {
+          return '';
+        }
+        return `<span class="sub-label">≈ ${numberFormatter.format(classesPerYear)} / yr</span>`;
+      }
+
+      function formatIncomeValue(value) {
+        return Number.isFinite(value) ? formatCurrency(symbol, value) : '–';
+      }
+
+      function computeHourlyIncome(variant) {
+        if (!variant || !normalizedLessonHours) {
+          return { net: null, gross: null };
+        }
+        const netPerLesson = variant?.breakdown?.perLesson?.netIncome;
+        if (!Number.isFinite(netPerLesson)) {
+          return { net: null, gross: null };
+        }
+        const grossPerLesson = convertNetToGross(netPerLesson, incomeTaxRate);
+        const netHourly = netPerLesson / normalizedLessonHours;
+        const grossHourly = Number.isFinite(grossPerLesson)
+          ? grossPerLesson / normalizedLessonHours
+          : null;
+        return {
+          net: Number.isFinite(netHourly) ? netHourly : null,
+          gross: Number.isFinite(grossHourly) ? grossHourly : null
+        };
+      }
+
+      function renderIncomeGrid(variant) {
+        const entries = [
+          { label: 'Monthly net', value: variant?.net?.monthly },
+          { label: 'Monthly gross', value: variant?.gross?.monthly },
+          { label: 'Annual net', value: variant?.net?.annual },
+          { label: 'Annual gross', value: variant?.gross?.annual }
+        ];
+        return `
+          <div class="income-grid">
+            ${entries
+              .map(entry => `
+                <div class="income-grid__item">
+                  <span class="income-label">${escapeHtml(entry.label)}</span>
+                  <span class="income-value">${formatIncomeValue(entry.value)}</span>
+                </div>
+              `)
+              .join('')}
+          </div>
+        `;
+      }
+
+      function renderPriceLines(variant) {
+        if (mode !== PRICING_MODE_TARGET) {
+          return '';
+        }
+        return `
+          <span class="price-secondary">Lesson price incl VAT ${formatCurrencyOrDash(symbol, variant?.price?.inclVat, 2)}</span>
+          <span class="price-secondary">Lesson price ex VAT ${formatCurrencyOrDash(symbol, variant?.price?.exVat, 2)}</span>
+        `;
+      }
+
+      function renderHourlyLine(hourly) {
+        if (!Number.isFinite(hourly.net) && !Number.isFinite(hourly.gross)) {
+          return '';
+        }
+        return `<span class="price-tertiary">Hourly net ${formatCurrencyOrDash(symbol, hourly.net, 2)} · Hourly gross ${formatCurrencyOrDash(symbol, hourly.gross, 2)}</span>`;
+      }
+
+      function isPriceOutOfRange(value) {
+        if (!hasPreferredRange || !Number.isFinite(value)) {
+          return false;
+        }
+        if (Number.isFinite(minLessonPrice) && value < minLessonPrice) {
+          return true;
+        }
+        if (Number.isFinite(maxLessonPrice) && value > maxLessonPrice) {
+          return true;
+        }
+        return false;
+      }
+
+      function renderCell(result, rowIndex, columnIndex) {
+        if (!result) {
+          return '<td class="price-cell-empty">–</td>';
+        }
+
+        const baseVariant = result.base || null;
+        const bufferedVariant = result.buffered || null;
+
+        const highlightBase = shouldHighlightIncome(
+          { monthlyNet: baseVariant?.net?.monthly, annualNet: baseVariant?.net?.annual },
+          {
+            acceptableIncome: acceptableIncomeRange,
+            displayMode: incomeDisplayMode,
+            taxRate: incomeTaxRate,
+            activeMonths: incomeActiveMonths
+          }
+        );
+        const highlightBuffered = shouldHighlightIncome(
+          { monthlyNet: bufferedVariant?.net?.monthly, annualNet: bufferedVariant?.net?.annual },
+          {
+            acceptableIncome: acceptableIncomeRange,
+            displayMode: incomeDisplayMode,
+            taxRate: incomeTaxRate,
+            activeMonths: incomeActiveMonths
+          }
+        );
+
+        const baseOutOfRange = mode === PRICING_MODE_TARGET && isPriceOutOfRange(baseVariant?.price?.inclVat);
+        const bufferedOutOfRange = mode === PRICING_MODE_TARGET && isPriceOutOfRange(bufferedVariant?.price?.inclVat);
+
+        const baseClasses = ['price-line', 'base'];
+        if (baseOutOfRange) {
+          baseClasses.push('price-line--out-of-range');
+        }
+        if (highlightBase) {
+          baseClasses.push('price-line--acceptable');
+        }
+
+        const bufferedClasses = ['price-line', 'buffered'];
+        if (bufferedOutOfRange) {
+          bufferedClasses.push('price-line--out-of-range');
+        }
+        if (highlightBuffered) {
+          bufferedClasses.push('price-line--acceptable');
+        }
+
+        const bufferedMarkup = renderVariantButton({
+          variant: bufferedVariant,
+          label: `Buffered +${formattedBuffer}%`,
+          classes: bufferedClasses,
+          rowIndex,
+          columnIndex,
+          variantKey: 'buffered'
+        });
+
+        const baseMarkup = renderVariantButton({
+          variant: baseVariant,
+          label: 'Base (no buffer)',
+          classes: baseClasses,
+          rowIndex,
+          columnIndex,
+          variantKey: 'base'
+        });
+
+        return `
+          <td>
+            <div class="price-pair">
+              ${bufferedMarkup}
+              ${baseMarkup}
+            </div>
+          </td>
+        `;
+      }
+
+      function renderVariantButton({ variant, label, classes, rowIndex, columnIndex, variantKey }) {
+        if (!variant) {
+          return `<div class="${classes.join(' ')}">${escapeHtml(label)}</div>`;
+        }
+
+        const hourly = computeHourlyIncome(variant);
+        const incomeGrid = renderIncomeGrid(variant);
+        const priceLines = renderPriceLines(variant);
+        const hourlyLine = renderHourlyLine(hourly);
+
+        const hiddenAttr = mode === PRICING_MODE_TARGET && !showBasePricesActive && variantKey === 'base'
+          ? ' aria-hidden="true"'
+          : '';
+
+        return `
+          <button
+            type="button"
+            class="${classes.join(' ')}"
+            data-row="${rowIndex}"
+            data-column="${columnIndex}"
+            data-variant="${variantKey}"${hiddenAttr}
+          >
+            <span class="price-label">${escapeHtml(label)}</span>
+            ${incomeGrid}
+            ${priceLines}
+            ${hourlyLine}
+          </button>
+        `;
+      }
     }
 
     function buildActiveTargetsTable({
@@ -6528,10 +7307,10 @@
           const amount = hasBasis ? revenueNeeded / target.basis : null;
           const amountDisplay = hasBasis && Number.isFinite(amount)
             ? formatCurrency(currencySymbol, amount)
-            : '—';
+            : '–';
           const basisDisplay = hasBasis
             ? `Based on ≈ ${formatFixed(target.basis, 2)} ${target.suffix}`
-            : '—';
+            : '–';
 
           return `
             <tr>
@@ -6574,7 +7353,7 @@
       `;
     }
 
-    function computeTables(inputs) {
+    function computeTables(inputs, selection, variableDefinitions) {
       const {
         targetNet,
         taxRate,
@@ -6586,48 +7365,525 @@
         classesPerWeek,
         studentsPerClass,
         hoursPerLesson,
-        workingWeeks,
         buffer,
         bufferPercent,
         lessonCostInclVat,
-        activeMonths
+        activeMonths,
+        activeMonthsValues,
+        weeksOffPerMonthValues,
+        daysOffPerWeekValues,
+        currencySymbol
       } = inputs;
 
       latestResults = [];
 
       const manualMode = Number.isFinite(lessonCostInclVat);
       const mode = manualMode ? PRICING_MODE_LESSON : PRICING_MODE_TARGET;
-
-      const pricingData = [];
       const effectiveTaxRate = Math.min(taxRate, 0.99);
-      const hasSchedule =
-        classesPerWeek.length &&
-        studentsPerClass.length &&
-        Number.isFinite(workingWeeks) &&
-        workingWeeks > 0;
+      const axisKeys = Array.isArray(selection?.axes) ? selection.axes : [null, null];
+      const axisKeyA = axisKeys[0] || null;
+      const axisKeyB = axisKeys[1] || null;
+      const definitions = variableDefinitions || {};
+      const missingSelections = [];
 
-      const hasWorkingWeeks = Number.isFinite(workingWeeks) && workingWeeks > 0;
-      const hasActiveMonths = Number.isFinite(activeMonths) && activeMonths > 0;
+      if (!axisKeyA || !axisKeyB || axisKeyA === axisKeyB) {
+        latestResultsMode = mode;
+        return {
+          pricingData: [],
+          bufferPercent,
+          revenueNeeded: null,
+          mode,
+          manualNetSummary: null,
+          axisMeta: null,
+          axisKeys: null,
+          axisInfo: null,
+          missingSelections,
+          missingAxes: true
+        };
+      }
+
+      const valueSets = {
+        studentsPerClass: Array.isArray(studentsPerClass) ? studentsPerClass : [],
+        classesPerWeek: Array.isArray(classesPerWeek) ? classesPerWeek : [],
+        activeMonths: Array.isArray(activeMonthsValues) ? activeMonthsValues : [],
+        weeksOffPerMonth: Array.isArray(weeksOffPerMonthValues) ? weeksOffPerMonthValues : [],
+        daysOffPerWeek: Array.isArray(daysOffPerWeekValues) ? daysOffPerWeekValues : []
+      };
+
+      const iterationValues = {};
+      let invalidAxis = false;
+      VARIABLE_ORDER.forEach(key => {
+        const values = Array.isArray(valueSets[key]) ? valueSets[key] : [];
+        const normalized = Array.from(new Set(values.map(value => Number(value))))
+          .filter(Number.isFinite)
+          .sort((a, b) => a - b);
+        if (!normalized.length) {
+          iterationValues[key] = [];
+          if (key === axisKeyA || key === axisKeyB) {
+            invalidAxis = true;
+          }
+          return;
+        }
+        if (key === axisKeyA || key === axisKeyB) {
+          iterationValues[key] = normalized;
+          return;
+        }
+        if (normalized.length === 1) {
+          iterationValues[key] = normalized;
+          return;
+        }
+        const selected = Number(selection?.fixedValues?.[key]);
+        if (Number.isFinite(selected) && normalized.includes(selected)) {
+          iterationValues[key] = [selected];
+        } else {
+          iterationValues[key] = [];
+          missingSelections.push(key);
+        }
+      });
+
+      if (invalidAxis || missingSelections.length) {
+        latestResultsMode = mode;
+        return {
+          pricingData: [],
+          bufferPercent,
+          revenueNeeded: null,
+          mode,
+          manualNetSummary: null,
+          axisMeta: null,
+          axisKeys: null,
+          axisInfo: null,
+          missingSelections,
+          missingAxes: invalidAxis
+        };
+      }
+
+      const axisValuesA = iterationValues[axisKeyA] || [];
+      const axisValuesB = iterationValues[axisKeyB] || [];
+      if (!axisValuesA.length || !axisValuesB.length) {
+        latestResultsMode = mode;
+        return {
+          pricingData: [],
+          bufferPercent,
+          revenueNeeded: null,
+          mode,
+          manualNetSummary: null,
+          axisMeta: null,
+          axisKeys: null,
+          axisInfo: null,
+          missingSelections: [],
+          missingAxes: true
+        };
+      }
+
+      const orderedKeys = VARIABLE_ORDER.filter(key => (iterationValues[key] || []).length);
+      if (!orderedKeys.length) {
+        latestResultsMode = mode;
+        return {
+          pricingData: [],
+          bufferPercent,
+          revenueNeeded: null,
+          mode,
+          manualNetSummary: null,
+          axisMeta: null,
+          axisKeys: null,
+          axisInfo: null,
+          missingSelections: [],
+          missingAxes: true
+        };
+      }
+
+      const combinations = [];
+      (function buildCombination(index, current) {
+        if (index >= orderedKeys.length) {
+          combinations.push({ ...current });
+          return;
+        }
+        const key = orderedKeys[index];
+        const values = iterationValues[key];
+        if (!values || !values.length) {
+          return;
+        }
+        values.forEach(value => {
+          current[key] = value;
+          buildCombination(index + 1, current);
+        });
+      })(0, {});
+
+      if (!combinations.length) {
+        latestResultsMode = mode;
+        return {
+          pricingData: [],
+          bufferPercent,
+          revenueNeeded: null,
+          mode,
+          manualNetSummary: null,
+          axisMeta: null,
+          axisKeys: null,
+          axisInfo: null,
+          missingSelections: [],
+          missingAxes: true
+        };
+      }
 
       let manualNetSummary = null;
       let revenueNeeded = null;
-
-      if (!hasSchedule) {
-        latestResultsMode = mode;
-        return { pricingData, bufferPercent, revenueNeeded, mode, manualNetSummary };
+      if (!manualMode) {
+        const denominator = Math.max(1 - effectiveTaxRate, 0.0001);
+        const profitBeforeTax = targetNet / denominator;
+        revenueNeeded = profitBeforeTax + fixedCosts;
+        if (!Number.isFinite(revenueNeeded) || revenueNeeded <= 0) {
+          revenueNeeded = null;
+        }
       }
 
-      const sortedStudents = [...studentsPerClass];
-      sortedStudents.sort((a, b) => a - b);
+      const axisMeta = {
+        rows: definitions[axisKeyA] || VARIABLE_META[axisKeyA] || { label: axisKeyA, axisLabel: axisKeyA },
+        columns: definitions[axisKeyB] || VARIABLE_META[axisKeyB] || { label: axisKeyB, axisLabel: axisKeyB }
+      };
 
-      const normalizedActiveMonths = Number.isFinite(activeMonths) && activeMonths > 0 ? activeMonths : 0;
+      const axisInfo = {
+        rows: {
+          key: axisKeyA,
+          values: axisValuesA.map(value => ({
+            value,
+            label: formatVariableValue(axisKeyA, value)
+          }))
+        },
+        columns: {
+          key: axisKeyB,
+          values: axisValuesB.map(value => ({
+            value,
+            label: formatVariableValue(axisKeyB, value)
+          }))
+        }
+      };
 
-      const columnsMeta = classesPerWeek.map(classes => {
-        const classesPerYear = classes * workingWeeks;
-        return { classesPerWeek: classes, classesPerYear };
+      const combinationResults = combinations
+        .map(combination => computeCombinationResult(combination))
+        .filter(Boolean);
+
+      if (!combinationResults.length) {
+        latestResultsMode = mode;
+        return {
+          pricingData: [],
+          bufferPercent,
+          revenueNeeded,
+          mode,
+          manualNetSummary,
+          axisMeta,
+          axisKeys: { rows: axisKeyA, columns: axisKeyB },
+          axisInfo,
+          missingSelections: [],
+          missingAxes: false
+        };
+      }
+
+      const pricingData = axisValuesA.map(rowValue => {
+        const rowResults = combinationResults.filter(result =>
+          areValuesEqual(result.combination[axisKeyA], rowValue)
+        );
+        const columns = axisValuesB.map(columnValue => {
+          return (
+            rowResults.find(result => areValuesEqual(result.combination[axisKeyB], columnValue)) ||
+            null
+          );
+        });
+        return {
+          axisKey: axisKeyA,
+          value: rowValue,
+          label: formatVariableValue(axisKeyA, rowValue),
+          columns
+        };
       });
 
-      function buildPriceBreakdown({ priceExVatValue, priceInclVatValue, studentCount, classesPerYearValue }) {
+      latestResultsMode = mode;
+      latestResults = combinationResults.flatMap(result => buildLatestResultRows(result, bufferPercent));
+
+      return {
+        pricingData,
+        bufferPercent,
+        revenueNeeded,
+        mode,
+        manualNetSummary,
+        axisMeta,
+        axisKeys: { rows: axisKeyA, columns: axisKeyB },
+        axisInfo,
+        missingSelections: []
+      };
+
+      function computeCombinationResult(combination) {
+        const students = Number(combination.studentsPerClass);
+        const classesPerWeekValue = Number(combination.classesPerWeek);
+        if (!Number.isFinite(students) || students <= 0 || !Number.isFinite(classesPerWeekValue) || classesPerWeekValue <= 0) {
+          return null;
+        }
+
+        const activeMonthsValue = Number(combination.activeMonths);
+        const weeksOffValue = Number(combination.weeksOffPerMonth);
+        const daysOffValue = Number(combination.daysOffPerWeek);
+        const activeMonthShareValue = Math.min(Math.max(activeMonthsValue / 12, 0), 1);
+        const weeksShareValue = Math.min(Math.max((4 - weeksOffValue) / 4, 0), 1);
+        const workingWeeksValue = WEEKS_PER_YEAR * activeMonthShareValue * weeksShareValue;
+        if (!Number.isFinite(workingWeeksValue) || workingWeeksValue <= 0) {
+          return null;
+        }
+
+        const workingDaysPerWeekValue = Math.max(BASE_WORK_DAYS_PER_WEEK - daysOffValue, 0);
+        const workingDaysPerYearValue = workingWeeksValue * workingDaysPerWeekValue;
+        const classesPerYearValue = classesPerWeekValue * workingWeeksValue;
+        const effectiveClassesPerYear = Math.max(classesPerYearValue, 1);
+
+        const monthlyStudentCost = variableCostPerStudentMonthly * students * activeMonthsValue;
+        const annualVariableCosts =
+          variableCostPerClass * classesPerYearValue +
+          variableCostPerStudent * students * classesPerYearValue +
+          monthlyStudentCost;
+
+        if (manualMode) {
+          const vatDivisor = Math.max(1 + vatRate, 0.0001);
+          const priceInclVatPerStudent = lessonCostInclVat;
+          const priceExVatPerStudent = lessonCostInclVat / vatDivisor;
+          const attendanceMultiplier = Math.max(1 - buffer, 0);
+
+          const annualRevenue = priceExVatPerStudent * students * classesPerYearValue;
+          const bufferedRevenue = annualRevenue * attendanceMultiplier;
+
+          const annualNet = computeNetIncomeFromRevenue(
+            annualRevenue,
+            fixedCosts,
+            effectiveTaxRate,
+            annualVariableCosts
+          );
+          const bufferedAnnualNet = computeNetIncomeFromRevenue(
+            bufferedRevenue,
+            fixedCosts,
+            effectiveTaxRate,
+            annualVariableCosts
+          );
+
+          const baseBreakdown = buildPriceBreakdown({
+            priceExVatValue: priceExVatPerStudent,
+            priceInclVatValue: priceInclVatPerStudent,
+            studentCount: students,
+            classesPerYearValue,
+            activeMonthsValue
+          });
+
+          const monthlyNet = Number.isFinite(annualNet) && activeMonthsValue > 0 ? annualNet / activeMonthsValue : null;
+          const bufferedMonthlyNet =
+            Number.isFinite(bufferedAnnualNet) && activeMonthsValue > 0 ? bufferedAnnualNet / activeMonthsValue : null;
+          const weeklyNet = Number.isFinite(annualNet) && workingWeeksValue > 0 ? annualNet / workingWeeksValue : null;
+          const bufferedWeeklyNet =
+            Number.isFinite(bufferedAnnualNet) && workingWeeksValue > 0 ? bufferedAnnualNet / workingWeeksValue : null;
+          const averageNetMonthly = Number.isFinite(annualNet) ? annualNet / MONTHS_PER_YEAR : null;
+          const averageNetWeekly = Number.isFinite(annualNet) ? annualNet / WEEKS_PER_YEAR : null;
+          const averageBufferedNetMonthly = Number.isFinite(bufferedAnnualNet) ? bufferedAnnualNet / MONTHS_PER_YEAR : null;
+          const averageBufferedNetWeekly = Number.isFinite(bufferedAnnualNet) ? bufferedAnnualNet / WEEKS_PER_YEAR : null;
+
+          const grossAnnual = convertNetToGross(annualNet, effectiveTaxRate);
+          const bufferedGrossAnnual = convertNetToGross(bufferedAnnualNet, effectiveTaxRate);
+          const grossMonthly = Number.isFinite(grossAnnual) && activeMonthsValue > 0 ? grossAnnual / activeMonthsValue : null;
+          const bufferedGrossMonthly =
+            Number.isFinite(bufferedGrossAnnual) && activeMonthsValue > 0 ? bufferedGrossAnnual / activeMonthsValue : null;
+          const grossWeekly = Number.isFinite(grossAnnual) && workingWeeksValue > 0 ? grossAnnual / workingWeeksValue : null;
+          const bufferedGrossWeekly =
+            Number.isFinite(bufferedGrossAnnual) && workingWeeksValue > 0 ? bufferedGrossAnnual / workingWeeksValue : null;
+          const grossAverageMonthly = Number.isFinite(grossAnnual) ? grossAnnual / MONTHS_PER_YEAR : null;
+          const grossAverageWeekly = Number.isFinite(grossAnnual) ? grossAnnual / WEEKS_PER_YEAR : null;
+          const bufferedGrossAverageMonthly = Number.isFinite(bufferedGrossAnnual)
+            ? bufferedGrossAnnual / MONTHS_PER_YEAR
+            : null;
+          const bufferedGrossAverageWeekly = Number.isFinite(bufferedGrossAnnual)
+            ? bufferedGrossAnnual / WEEKS_PER_YEAR
+            : null;
+
+          if (!manualNetSummary && Number.isFinite(annualNet)) {
+            manualNetSummary = {
+              annual: annualNet,
+              monthly: monthlyNet,
+              weekly: weeklyNet,
+              averageWeekly: averageNetWeekly,
+              averageMonthly: averageNetMonthly
+            };
+          }
+
+          return {
+            combination,
+            students,
+            classesPerWeek: classesPerWeekValue,
+            classesPerYear: classesPerYearValue,
+            workingWeeks: workingWeeksValue,
+            workingDaysPerWeek: workingDaysPerWeekValue,
+            workingDaysPerYear: workingDaysPerYearValue,
+            activeMonths: activeMonthsValue,
+            base: {
+              net: {
+                annual: annualNet,
+                monthly: monthlyNet,
+                weekly: weeklyNet,
+                averageMonthly: averageNetMonthly,
+                averageWeekly: averageNetWeekly
+              },
+              gross: {
+                annual: grossAnnual,
+                monthly: grossMonthly,
+                weekly: grossWeekly,
+                averageMonthly: grossAverageMonthly,
+                averageWeekly: grossAverageWeekly
+              },
+              price: {
+                inclVat: lessonCostInclVat,
+                exVat: priceExVatPerStudent
+              },
+              breakdown: baseBreakdown
+            },
+            buffered: {
+              net: {
+                annual: bufferedAnnualNet,
+                monthly: bufferedMonthlyNet,
+                weekly: bufferedWeeklyNet,
+                averageMonthly: averageBufferedNetMonthly,
+                averageWeekly: averageBufferedNetWeekly
+              },
+              gross: {
+                annual: bufferedGrossAnnual,
+                monthly: bufferedGrossMonthly,
+                weekly: bufferedGrossWeekly,
+                averageMonthly: bufferedGrossAverageMonthly,
+                averageWeekly: bufferedGrossAverageWeekly
+              },
+              price: {
+                inclVat: lessonCostInclVat,
+                exVat: priceExVatPerStudent
+              },
+              breakdown: baseBreakdown
+            }
+          };
+        }
+
+        if (!Number.isFinite(revenueNeeded) || revenueNeeded === null) {
+          return null;
+        }
+
+        const revenueNeededForCombo = revenueNeeded + annualVariableCosts;
+        const revenuePerClass = revenueNeededForCombo / Math.max(effectiveClassesPerYear, 1);
+        const priceExVat = revenuePerClass / Math.max(students, 1);
+        const bufferedExVat = priceExVat * (1 + buffer);
+        const priceInclVat = priceExVat * (1 + vatRate);
+        const bufferedInclVat = bufferedExVat * (1 + vatRate);
+
+        const baseBreakdown = buildPriceBreakdown({
+          priceExVatValue: priceExVat,
+          priceInclVatValue: priceInclVat,
+          studentCount: students,
+          classesPerYearValue,
+          activeMonthsValue
+        });
+        const bufferedBreakdown = buildPriceBreakdown({
+          priceExVatValue: bufferedExVat,
+          priceInclVatValue: bufferedInclVat,
+          studentCount: students,
+          classesPerYearValue,
+          activeMonthsValue
+        });
+
+        const baseAnnualNet = Number.isFinite(baseBreakdown?.perLesson?.netIncome)
+          ? baseBreakdown.perLesson.netIncome * classesPerYearValue
+          : null;
+        const bufferedAnnualNet = Number.isFinite(bufferedBreakdown?.perLesson?.netIncome)
+          ? bufferedBreakdown.perLesson.netIncome * classesPerYearValue
+          : null;
+
+        const baseMonthlyNet = Number.isFinite(baseAnnualNet) && activeMonthsValue > 0 ? baseAnnualNet / activeMonthsValue : null;
+        const bufferedMonthlyNet =
+          Number.isFinite(bufferedAnnualNet) && activeMonthsValue > 0 ? bufferedAnnualNet / activeMonthsValue : null;
+        const baseWeeklyNet = Number.isFinite(baseAnnualNet) && workingWeeksValue > 0 ? baseAnnualNet / workingWeeksValue : null;
+        const bufferedWeeklyNet =
+          Number.isFinite(bufferedAnnualNet) && workingWeeksValue > 0 ? bufferedAnnualNet / workingWeeksValue : null;
+
+        const baseAverageNetMonthly = Number.isFinite(baseAnnualNet) ? baseAnnualNet / MONTHS_PER_YEAR : null;
+        const baseAverageNetWeekly = Number.isFinite(baseAnnualNet) ? baseAnnualNet / WEEKS_PER_YEAR : null;
+        const bufferedAverageNetMonthly = Number.isFinite(bufferedAnnualNet) ? bufferedAnnualNet / MONTHS_PER_YEAR : null;
+        const bufferedAverageNetWeekly = Number.isFinite(bufferedAnnualNet) ? bufferedAnnualNet / WEEKS_PER_YEAR : null;
+
+        const baseGrossAnnual = convertNetToGross(baseAnnualNet, effectiveTaxRate);
+        const bufferedGrossAnnual = convertNetToGross(bufferedAnnualNet, effectiveTaxRate);
+        const baseGrossMonthly = Number.isFinite(baseGrossAnnual) && activeMonthsValue > 0 ? baseGrossAnnual / activeMonthsValue : null;
+        const bufferedGrossMonthly =
+          Number.isFinite(bufferedGrossAnnual) && activeMonthsValue > 0 ? bufferedGrossAnnual / activeMonthsValue : null;
+        const baseGrossWeekly = Number.isFinite(baseGrossAnnual) && workingWeeksValue > 0 ? baseGrossAnnual / workingWeeksValue : null;
+        const bufferedGrossWeekly =
+          Number.isFinite(bufferedGrossAnnual) && workingWeeksValue > 0 ? bufferedGrossAnnual / workingWeeksValue : null;
+        const baseGrossAverageMonthly = Number.isFinite(baseGrossAnnual) ? baseGrossAnnual / MONTHS_PER_YEAR : null;
+        const baseGrossAverageWeekly = Number.isFinite(baseGrossAnnual) ? baseGrossAnnual / WEEKS_PER_YEAR : null;
+        const bufferedGrossAverageMonthly = Number.isFinite(bufferedGrossAnnual)
+          ? bufferedGrossAnnual / MONTHS_PER_YEAR
+          : null;
+        const bufferedGrossAverageWeekly = Number.isFinite(bufferedGrossAnnual)
+          ? bufferedGrossAnnual / WEEKS_PER_YEAR
+          : null;
+
+        return {
+          combination,
+          students,
+          classesPerWeek: classesPerWeekValue,
+          classesPerYear: classesPerYearValue,
+          workingWeeks: workingWeeksValue,
+          workingDaysPerWeek: workingDaysPerWeekValue,
+          workingDaysPerYear: workingDaysPerYearValue,
+          activeMonths: activeMonthsValue,
+          base: {
+            net: {
+              annual: baseAnnualNet,
+              monthly: baseMonthlyNet,
+              weekly: baseWeeklyNet,
+              averageMonthly: baseAverageNetMonthly,
+              averageWeekly: baseAverageNetWeekly
+            },
+            gross: {
+              annual: baseGrossAnnual,
+              monthly: baseGrossMonthly,
+              weekly: baseGrossWeekly,
+              averageMonthly: baseGrossAverageMonthly,
+              averageWeekly: baseGrossAverageWeekly
+            },
+            price: {
+              inclVat: priceInclVat,
+              exVat: priceExVat
+            },
+            breakdown: baseBreakdown
+          },
+          buffered: {
+            net: {
+              annual: bufferedAnnualNet,
+              monthly: bufferedMonthlyNet,
+              weekly: bufferedWeeklyNet,
+              averageMonthly: bufferedAverageNetMonthly,
+              averageWeekly: bufferedAverageNetWeekly
+            },
+            gross: {
+              annual: bufferedGrossAnnual,
+              monthly: bufferedGrossMonthly,
+              weekly: bufferedGrossWeekly,
+              averageMonthly: bufferedGrossAverageMonthly,
+              averageWeekly: bufferedGrossAverageWeekly
+            },
+            price: {
+              inclVat: bufferedInclVat,
+              exVat: bufferedExVat
+            },
+            breakdown: bufferedBreakdown
+          }
+        };
+      }
+
+      function buildPriceBreakdown({
+        priceExVatValue,
+        priceInclVatValue,
+        studentCount,
+        classesPerYearValue,
+        activeMonthsValue
+      }) {
         const normalizedPriceExVat = Number.isFinite(priceExVatValue) ? priceExVatValue : 0;
         const normalizedPriceInclVat = Number.isFinite(priceInclVatValue) ? priceInclVatValue : 0;
         const actualStudents = Number.isFinite(studentCount) ? studentCount : 0;
@@ -6636,7 +7892,7 @@
         const fixedAllocationPerLesson = actualClassesPerYear > 0 ? fixedCosts / actualClassesPerYear : 0;
         const vatPerStudent = normalizedPriceInclVat - normalizedPriceExVat;
         const vatPerLesson = vatPerStudent * actualStudents;
-        const monthlyCostTotal = variableCostPerStudentMonthly * actualStudents * normalizedActiveMonths;
+        const monthlyCostTotal = variableCostPerStudentMonthly * actualStudents * Math.max(activeMonthsValue, 0);
         const monthlyCostPerLesson = actualClassesPerYear > 0 ? monthlyCostTotal / actualClassesPerYear : 0;
         const variableCostsPerLesson =
           variableCostPerClass + variableCostPerStudent * actualStudents + monthlyCostPerLesson;
@@ -6671,214 +7927,58 @@
         };
       }
 
-      if (mode === PRICING_MODE_LESSON) {
-        const vatDivisor = Math.max(1 + vatRate, 0.0001);
-        const priceInclVatPerStudent = lessonCostInclVat;
-        const priceExVatPerStudent = lessonCostInclVat / vatDivisor;
-        const attendanceMultiplier = Math.max(1 - buffer, 0);
-        const formattedBuffer = formatFixed(bufferPercent, 1);
-
-        for (const students of sortedStudents) {
-          const row = { students, columns: [] };
-
-          for (const column of columnsMeta) {
-            const classesPerYear = column.classesPerYear;
-            const annualRevenue = priceExVatPerStudent * students * classesPerYear;
-            const bufferedRevenue = annualRevenue * attendanceMultiplier;
-            const annualVariableCosts =
-              variableCostPerClass * classesPerYear +
-              variableCostPerStudent * students * classesPerYear +
-              variableCostPerStudentMonthly * students * normalizedActiveMonths;
-
-            const annualNet = computeNetIncomeFromRevenue(
-              annualRevenue,
-              fixedCosts,
-              effectiveTaxRate,
-              annualVariableCosts
-            );
-            const bufferedAnnualNet = computeNetIncomeFromRevenue(
-              bufferedRevenue,
-              fixedCosts,
-              effectiveTaxRate,
-              annualVariableCosts
-            );
-
-            const monthlyNet = Number.isFinite(annualNet) && hasActiveMonths
-              ? annualNet / activeMonths
-              : null;
-            const bufferedMonthlyNet = Number.isFinite(bufferedAnnualNet) && hasActiveMonths
-              ? bufferedAnnualNet / activeMonths
-              : null;
-
-            if (!manualNetSummary && Number.isFinite(annualNet)) {
-              manualNetSummary = {
-                annual: annualNet,
-                monthly: Number.isFinite(monthlyNet) ? monthlyNet : null,
-                weekly: hasWorkingWeeks ? annualNet / workingWeeks : null,
-                averageWeekly: annualNet / WEEKS_PER_YEAR,
-                averageMonthly: annualNet / MONTHS_PER_YEAR
-              };
-            }
-
-            const baseBreakdown = buildPriceBreakdown({
-              priceExVatValue: priceExVatPerStudent,
-              priceInclVatValue: priceInclVatPerStudent,
-              studentCount: students,
-              classesPerYearValue: classesPerYear
-            });
-
-            row.columns.push({
-              classesPerWeek: column.classesPerWeek,
-              classesPerYear,
-              manualNet: {
-                monthly: monthlyNet,
-                annual: annualNet,
-                bufferedMonthly: bufferedMonthlyNet,
-                bufferedAnnual: bufferedAnnualNet
-              },
-              base: {
-                priceExVat: priceExVatPerStudent,
-                priceInclVat: priceInclVatPerStudent,
-                breakdown: baseBreakdown
-              },
-              buffered: {
-                priceExVat: priceExVatPerStudent,
-                priceInclVat: priceInclVatPerStudent,
-                breakdown: baseBreakdown
-              }
-            });
-
-            latestResults.push({
-              variant: 'Full attendance',
-              students,
-              classesPerWeek: column.classesPerWeek,
-              classesPerYear: Math.round(classesPerYear),
-              monthlyNet,
-              annualNet
-            });
-            latestResults.push({
-              variant: `With ${formattedBuffer}% shortfall`,
-              students,
-              classesPerWeek: column.classesPerWeek,
-              classesPerYear: Math.round(classesPerYear),
-              monthlyNet: bufferedMonthlyNet,
-              annualNet: bufferedAnnualNet
-            });
-          }
-
-          pricingData.push(row);
-        }
-
-        latestResultsMode = mode;
-        return { pricingData, bufferPercent, revenueNeeded, mode, manualNetSummary };
+      function buildLatestResultRows(result, bufferPercentValue) {
+        const axisValues = {
+          [axisKeyA]: result.combination[axisKeyA],
+          [axisKeyB]: result.combination[axisKeyB]
+        };
+        const baseRow = {
+          variant: 'Base (no buffer)',
+          axis: axisValues,
+          students: result.students,
+          classesPerWeek: result.classesPerWeek,
+          netAnnual: result.base.net.annual,
+          grossAnnual: result.base.gross.annual,
+          netMonthly: result.base.net.monthly,
+          grossMonthly: result.base.gross.monthly,
+          priceInclVat: result.base.price?.inclVat ?? null,
+          priceExVat: result.base.price?.exVat ?? null
+        };
+        const bufferedRow = {
+          variant: `Buffered +${formatFixed(bufferPercentValue, 1)}%`,
+          axis: axisValues,
+          students: result.students,
+          classesPerWeek: result.classesPerWeek,
+          netAnnual: result.buffered.net.annual,
+          grossAnnual: result.buffered.gross.annual,
+          netMonthly: result.buffered.net.monthly,
+          grossMonthly: result.buffered.gross.monthly,
+          priceInclVat: result.buffered.price?.inclVat ?? null,
+          priceExVat: result.buffered.price?.exVat ?? null
+        };
+        return [baseRow, bufferedRow];
       }
-
-      const denominator = Math.max(1 - effectiveTaxRate, 0.0001);
-      const profitBeforeTax = targetNet / denominator;
-      revenueNeeded = profitBeforeTax + fixedCosts;
-
-      if (!Number.isFinite(revenueNeeded) || revenueNeeded <= 0) {
-        latestResultsMode = mode;
-        return { pricingData, bufferPercent, revenueNeeded, mode, manualNetSummary };
-      }
-
-      for (const students of sortedStudents) {
-        const row = { students, columns: [] };
-
-        for (const column of columnsMeta) {
-          const classesPerYear = column.classesPerYear;
-          const effectiveClassesPerYear = Math.max(classesPerYear, 1);
-          const annualVariableCosts =
-            variableCostPerClass * classesPerYear +
-            variableCostPerStudent * students * classesPerYear +
-            variableCostPerStudentMonthly * students * normalizedActiveMonths;
-          const revenueNeededForCombo = revenueNeeded + annualVariableCosts;
-          const revenuePerClass = revenueNeededForCombo / effectiveClassesPerYear;
-          const priceExVat = revenuePerClass / Math.max(students, 1);
-          const bufferedExVat = priceExVat * (1 + buffer);
-          const priceInclVat = priceExVat * (1 + vatRate);
-          const bufferedInclVat = bufferedExVat * (1 + vatRate);
-
-          const roundedBaseExVat = Math.round(priceExVat);
-          const roundedBaseInclVat = Math.round(priceInclVat);
-          const roundedBufferedExVat = Math.round(bufferedExVat);
-          const roundedBufferedInclVat = Math.round(bufferedInclVat);
-
-          const baseBreakdown = buildPriceBreakdown({
-            priceExVatValue: priceExVat,
-            priceInclVatValue: priceInclVat,
-            studentCount: students,
-            classesPerYearValue: classesPerYear
-          });
-          const bufferedBreakdown = buildPriceBreakdown({
-            priceExVatValue: bufferedExVat,
-            priceInclVatValue: bufferedInclVat,
-            studentCount: students,
-            classesPerYearValue: classesPerYear
-          });
-
-          const baseAnnualNet = Number.isFinite(baseBreakdown?.perLesson?.netIncome)
-            ? baseBreakdown.perLesson.netIncome * classesPerYear
-            : null;
-          const bufferedAnnualNet = Number.isFinite(bufferedBreakdown?.perLesson?.netIncome)
-            ? bufferedBreakdown.perLesson.netIncome * classesPerYear
-            : null;
-          const baseMonthlyNet = Number.isFinite(baseAnnualNet) && hasActiveMonths
-            ? baseAnnualNet / activeMonths
-            : null;
-          const bufferedMonthlyNet = Number.isFinite(bufferedAnnualNet) && hasActiveMonths
-            ? bufferedAnnualNet / activeMonths
-            : null;
-
-          row.columns.push({
-            classesPerWeek: column.classesPerWeek,
-            classesPerYear,
-            base: {
-              priceExVat,
-              priceInclVat,
-              breakdown: baseBreakdown,
-              annualNet: baseAnnualNet,
-              monthlyNet: baseMonthlyNet
-            },
-            buffered: {
-              priceExVat: bufferedExVat,
-              priceInclVat: bufferedInclVat,
-              breakdown: bufferedBreakdown,
-              annualNet: bufferedAnnualNet,
-              monthlyNet: bufferedMonthlyNet
-            }
-          });
-
-          latestResults.push({
-            variant: 'Base (no buffer)',
-            students,
-            classesPerWeek: column.classesPerWeek,
-            classesPerYear: Math.round(classesPerYear),
-            priceExVat: roundedBaseExVat,
-            priceInclVat: roundedBaseInclVat
-          });
-
-          latestResults.push({
-            variant: `Buffered +${bufferPercent}%`,
-            students,
-            classesPerWeek: column.classesPerWeek,
-            classesPerYear: Math.round(classesPerYear),
-            priceExVat: roundedBufferedExVat,
-            priceInclVat: roundedBufferedInclVat
-          });
-        }
-
-        pricingData.push(row);
-      }
-
-      latestResultsMode = mode;
-      return { pricingData, bufferPercent, revenueNeeded, mode, manualNetSummary };
     }
 
     function render() {
       const inputs = getInputs();
       latestInputsSnapshot = cloneInputs(inputs);
-      const { pricingData, bufferPercent, revenueNeeded, mode, manualNetSummary } = computeTables(inputs);
+      const variableDefinitions = buildVariableDefinitions(inputs);
+      updateVariableSelectionState(variableDefinitions);
+      renderVariableControls(variableDefinitions);
+
+      const {
+        pricingData,
+        bufferPercent,
+        revenueNeeded,
+        mode,
+        manualNetSummary,
+        axisMeta,
+        axisKeys,
+        axisInfo,
+        missingSelections = [],
+        missingAxes = false
+      } = computeTables(inputs, variableSelection, variableDefinitions);
 
       if (mode === PRICING_MODE_LESSON && manualNetSummary) {
         if (Number.isFinite(manualNetSummary.annual)) {
@@ -6939,11 +8039,28 @@
       closeActiveInfoIcon();
 
       if (!pricingData.length) {
+        let emptyMessage;
+        if (missingAxes) {
+          emptyMessage = 'Choose two table variables above to generate results.';
+        } else if (Array.isArray(missingSelections) && missingSelections.length) {
+          const labels = missingSelections
+            .map(key => variableDefinitions[key]?.label || VARIABLE_META[key]?.label || key);
+          if (labels.length === 1) {
+            emptyMessage = `Select a value for ${labels[0]} to generate the table.`;
+          } else {
+            const lastLabel = labels.pop();
+            emptyMessage = `Select values for ${labels.join(', ')} and ${lastLabel} to generate the table.`;
+          }
+        } else {
+          emptyMessage = 'No valid combinations available for the current inputs.';
+        }
+
         tablesContainer.innerHTML = `
           <div class="card">
-            <p class="status-message">Enter at least one valid class count and student count to see the pricing table.</p>
+            <p class="status-message">${escapeHtml(emptyMessage)}</p>
           </div>
         `;
+        latestPricingData = null;
         scheduleTablesLayoutUpdate();
       } else {
         const pricingTable = buildPricingTable(pricingData, inputs.currencySymbol, bufferPercent, {
@@ -6959,7 +8076,10 @@
           desiredIncomeDisplayMode,
           taxRate: inputs.taxRate,
           activeMonths: inputs.activeMonths,
-          hoursPerLesson: inputs.hoursPerLesson
+          hoursPerLesson: inputs.hoursPerLesson,
+          axisMeta,
+          axisInfo,
+          axisKeys
         });
         const targetsTable = mode === PRICING_MODE_LESSON
           ? ''
@@ -7007,12 +8127,14 @@
         workingWeeks,
         bufferPercent,
         currencySymbol,
-        monthsOff,
-        weeksOffPerCycle,
         daysOffPerWeek,
         workingDaysPerWeek,
         workingDaysPerYear,
         activeMonths,
+        activeMonthsValues,
+        weeksOffPerMonth,
+        weeksOffPerMonthValues,
+        daysOffPerWeekValues,
         activeMonthShare,
         weeksShare,
         lessonCostInclVat,
@@ -7022,20 +8144,44 @@
 
       const activeMonthPercentage = activeMonthShare * 100;
       const activeWeeksPercentage = weeksShare * 100;
-      const workingWeeksPerCycle = 4 * weeksShare;
+      const monthsOff = MONTHS_PER_YEAR - activeMonths;
+
+      const defaultActiveMonthsValue = Array.isArray(activeMonthsValues) && activeMonthsValues.length
+        ? activeMonthsValues[0]
+        : activeMonths;
+      const defaultWeeksOffPerMonthValue = Array.isArray(weeksOffPerMonthValues) && weeksOffPerMonthValues.length
+        ? weeksOffPerMonthValues[0]
+        : weeksOffPerMonth;
+      const defaultDaysOffPerWeekValue = Array.isArray(daysOffPerWeekValues) && daysOffPerWeekValues.length
+        ? daysOffPerWeekValues[0]
+        : daysOffPerWeek;
+
+      const activeMonthsSummaryRaw = summarizeVariableValues('activeMonths', activeMonthsValues);
+      const weeksOffSummaryRaw = summarizeVariableValues('weeksOffPerMonth', weeksOffPerMonthValues);
+      const daysOffSummaryRaw = summarizeVariableValues('daysOffPerWeek', daysOffPerWeekValues);
+
+      const activeMonthsSummary = activeMonthsSummaryRaw === 'n/a'
+        ? formatFixed(activeMonths, 0)
+        : activeMonthsSummaryRaw;
+      const weeksOffSummary = weeksOffSummaryRaw === 'n/a'
+        ? formatFixed(weeksOffPerMonth, 0)
+        : weeksOffSummaryRaw;
+      const daysOffSummary = daysOffSummaryRaw === 'n/a'
+        ? formatFixed(daysOffPerWeek, 0)
+        : daysOffSummaryRaw;
 
       const targetPerWeekDisplay = Number.isFinite(targetNetPerWeek)
         ? formatCurrency(currencySymbol, targetNetPerWeek)
-        : '—';
+        : '–';
       const targetPerMonthDisplay = Number.isFinite(targetNetPerMonth)
         ? formatCurrency(currencySymbol, targetNetPerMonth)
-        : '—';
+        : '–';
       const targetAveragePerWeekDisplay = Number.isFinite(targetNetAveragePerWeek)
         ? formatCurrency(currencySymbol, targetNetAveragePerWeek)
-        : '—';
+        : '–';
       const targetAveragePerMonthDisplay = Number.isFinite(targetNetAveragePerMonth)
         ? formatCurrency(currencySymbol, targetNetAveragePerMonth)
-        : '—';
+        : '–';
 
       const manualLessonLine = Number.isFinite(lessonCostInclVat)
         ? `Preferred lesson price (incl. VAT): ${currencySymbol}${formatFixed(lessonCostInclVat, 2)}`
@@ -7061,9 +8207,10 @@
         `Variable cost per class: ${formatCurrency(currencySymbol, variableCostPerClass)} (per scheduled class)`,
         `Variable cost per student: ${formatCurrency(currencySymbol, variableCostPerStudent)} (per student per class)`,
         `Variable monthly cost per student: ${formatCurrency(currencySymbol, variableCostPerStudentMonthly)} (multiplied by class size each active month)`,
-        `Months off per year: ${formatFixed(monthsOff, 2)} (≈ ${formatFixed(activeMonths, 2)} active months; ${formatFixed(activeMonthPercentage, 1)}% of the year)`,
-        `Weeks off per 4-week cycle: ${formatFixed(weeksOffPerCycle, 2)} (≈ ${formatFixed(workingWeeksPerCycle, 2)} working weeks each cycle; ${formatFixed(activeWeeksPercentage, 1)}% active weeks)`,
-        `Days off per 7-day week: ${formatFixed(daysOffPerWeek, 2)} (≈ ${formatFixed(workingDaysPerWeek, 2)} working days when active)`,
+        `Active months per year considered: ${activeMonthsSummary} (default ${formatFixed(defaultActiveMonthsValue, 0)}; ${formatFixed(activeMonthPercentage, 1)}% of the year active)`,
+        `Weeks off per active month considered: ${weeksOffSummary} (default ${formatFixed(defaultWeeksOffPerMonthValue, 0)}; ${formatFixed(activeWeeksPercentage, 1)}% active weeks)`,
+        `Days off per 7-day week considered: ${daysOffSummary} (default ${formatFixed(defaultDaysOffPerWeekValue, 0)}; ≈ ${formatFixed(workingDaysPerWeek, 2)} working days when active)`,
+        `Months off per year (based on defaults): ${formatFixed(monthsOff, 2)}`,
         `Estimated working weeks per year: ${formatFixed(workingWeeks, 2)}`,
         `Estimated working days per year: ${formatFixed(workingDaysPerYear, 2)}`,
         `Classes per week considered: ${classesPerWeek.length ? classesPerWeek.join(', ') : 'none'}`,
@@ -7090,29 +8237,53 @@
       let header;
       let rows;
 
+      const formatCsvNumber = value => (Number.isFinite(value) ? Math.round(value) : '');
+
       if (latestResultsMode === PRICING_MODE_LESSON) {
-        header = 'Variant,Students,Classes per week,Classes per year,Monthly net income,Annual net income';
-        rows = latestResults.map(entry => {
-          const monthly = Number.isFinite(entry.monthlyNet) ? Math.round(entry.monthlyNet) : '';
-          const annual = Number.isFinite(entry.annualNet) ? Math.round(entry.annualNet) : '';
-          return [
-            entry.variant,
-            entry.students,
-            entry.classesPerWeek,
-            entry.classesPerYear,
-            monthly,
-            annual
-          ].join(',');
-        });
-      } else {
-        header = 'Variant,Students,Classes per week,Classes per year,Price incl VAT,Price ex VAT';
+        header = [
+          'Variant',
+          'Students',
+          'Classes per week',
+          'Classes per year',
+          'Monthly net income',
+          'Monthly gross income',
+          'Annual net income',
+          'Annual gross income'
+        ].join(',');
         rows = latestResults.map(entry => [
           entry.variant,
           entry.students,
           entry.classesPerWeek,
           entry.classesPerYear,
-          entry.priceInclVat,
-          entry.priceExVat
+          formatCsvNumber(entry.netMonthly),
+          formatCsvNumber(entry.grossMonthly),
+          formatCsvNumber(entry.netAnnual),
+          formatCsvNumber(entry.grossAnnual)
+        ].join(','));
+      } else {
+        header = [
+          'Variant',
+          'Students',
+          'Classes per week',
+          'Classes per year',
+          'Monthly net income',
+          'Monthly gross income',
+          'Annual net income',
+          'Annual gross income',
+          'Lesson price incl VAT',
+          'Lesson price ex VAT'
+        ].join(',');
+        rows = latestResults.map(entry => [
+          entry.variant,
+          entry.students,
+          entry.classesPerWeek,
+          entry.classesPerYear,
+          formatCsvNumber(entry.netMonthly),
+          formatCsvNumber(entry.grossMonthly),
+          formatCsvNumber(entry.netAnnual),
+          formatCsvNumber(entry.grossAnnual),
+          Number.isFinite(entry.priceInclVat) ? formatFixed(entry.priceInclVat, 2) : '',
+          Number.isFinite(entry.priceExVat) ? formatFixed(entry.priceExVat, 2) : ''
         ].join(','));
       }
 
@@ -7122,14 +8293,14 @@
       const link = document.createElement('a');
       link.href = url;
       const timestamp = new Date().toISOString().slice(0, 10);
-      link.download = `course-pricing-${timestamp}.csv`;
+      link.download = `income-calculator-${timestamp}.csv`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       controls.statusMessage.textContent = latestResultsMode === PRICING_MODE_LESSON
-        ? 'CSV download started. File lists monthly and annual net income for each combination.'
-        : 'CSV download started. File lists base and buffered prices including and excluding VAT.';
+        ? 'CSV download started. File lists monthly and annual net and gross income for each combination.'
+        : 'CSV download started. File lists net and gross incomes plus lesson prices for each combination.';
       setTimeout(() => {
         controls.statusMessage.textContent = '';
       }, 2500);

@@ -1,5 +1,5 @@
 const CACHE_VERSION = 'v1';
-const CACHE_NAME = `course-pricing-calculator-${CACHE_VERSION}`;
+const CACHE_NAME = `income-calculator-${CACHE_VERSION}`;
 const PRECACHE_URLS = [
   './',
   './index.html',
@@ -22,7 +22,7 @@ self.addEventListener('activate', event => {
     caches.keys().then(cacheNames =>
       Promise.all(
         cacheNames
-          .filter(cacheName => cacheName.startsWith('course-pricing-calculator-') && cacheName !== CACHE_NAME)
+          .filter(cacheName => cacheName.startsWith('income-calculator-') && cacheName !== CACHE_NAME)
           .map(cacheName => caches.delete(cacheName))
       )
     )
