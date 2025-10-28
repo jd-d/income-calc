@@ -1,7 +1,7 @@
 {
-  "name": "Course Pricing Calculator",
-  "short_name": "Course Pricing",
-  "description": "Plan class pricing targets with offline-ready calculations and resources.",
+  "name": "Income Calculator",
+  "short_name": "Income Calc",
+  "description": "Plan flexible schedules, custom costs, and see gross and net income outcomes offline.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
