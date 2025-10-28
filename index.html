@@ -5961,10 +5961,6 @@
         const values = definitions[key]?.values || [];
         return values.length > 1;
       });
-      const fallbackCandidates = VARIABLE_ORDER.filter(key => {
-        const values = definitions[key]?.values || [];
-        return values.length > 0;
-      });
 
       variableSelection.axes = variableSelection.axes.map(key => {
         if (!key) {
@@ -5976,17 +5972,8 @@
         return null;
       });
 
-      if (!variableSelection.axes[0]) {
-        variableSelection.axes[0] = axisCandidates[0] || fallbackCandidates[0] || null;
-      }
-      if (!variableSelection.axes[1]) {
-        const firstChoice = variableSelection.axes[0];
-        const alternative = axisCandidates.find(key => key !== firstChoice) || fallbackCandidates.find(key => key !== firstChoice);
-        variableSelection.axes[1] = alternative || null;
-      }
       if (variableSelection.axes[0] && variableSelection.axes[0] === variableSelection.axes[1]) {
-        const alternative = axisCandidates.find(key => key !== variableSelection.axes[0]) || null;
-        variableSelection.axes[1] = alternative;
+        variableSelection.axes[1] = null;
       }
 
       Object.keys(variableSelection.fixedValues).forEach(key => {
@@ -6012,16 +5999,34 @@
       variableControlsContainer.hidden = false;
       const fragment = document.createDocumentFragment();
 
+      const axisPlaceholderText = 'Choose table variable';
+      const buildAxisLabelText = key => {
+        if (!key || !definitions[key]) {
+          return axisPlaceholderText;
+        }
+        const definition = definitions[key];
+        const summary = definition.summary;
+        if (summary && summary !== 'n/a') {
+          return `${definition.label} (${summary})`;
+        }
+        return definition.label;
+      };
+
       variableSelection.axes.forEach((selectedKey, index) => {
         const control = document.createElement('div');
         control.className = 'variable-control control';
+
         const label = document.createElement('label');
-        label.innerHTML = `<span class="label-text">${index === 0 ? 'Table variable 1' : 'Table variable 2'}</span>`;
+        const labelText = document.createElement('span');
+        labelText.className = 'label-text';
+        labelText.textContent = buildAxisLabelText(selectedKey);
+        label.appendChild(labelText);
+
         const select = document.createElement('select');
         select.dataset.axisIndex = String(index);
         const placeholder = document.createElement('option');
         placeholder.value = '';
-        placeholder.textContent = 'Select variable';
+        placeholder.textContent = axisPlaceholderText;
         select.appendChild(placeholder);
         options.forEach(optionKey => {
           if (index === 1 && variableSelection.axes[0] === optionKey) {
@@ -6029,12 +6034,17 @@
           }
           const option = document.createElement('option');
           option.value = optionKey;
-          option.textContent = `${definitions[optionKey].label} (${definitions[optionKey].summary})`;
+          option.textContent = buildAxisLabelText(optionKey);
           select.appendChild(option);
         });
         if (selectedKey && select.querySelector(`option[value="${selectedKey}"]`)) {
           select.value = selectedKey;
         }
+
+        const updateAxisLabel = () => {
+          labelText.textContent = buildAxisLabelText(select.value || null);
+        };
+
         select.addEventListener('change', () => {
           const nextKey = select.value || null;
           if (index === 0) {
@@ -6048,8 +6058,10 @@
               variableSelection.axes[0] = null;
             }
           }
+          updateAxisLabel();
           render();
         });
+
         label.appendChild(select);
         control.appendChild(label);
         fragment.appendChild(control);
@@ -6061,7 +6073,14 @@
         const control = document.createElement('div');
         control.className = 'variable-control control';
         const label = document.createElement('label');
-        label.innerHTML = `<span class="label-text">${definition.label}</span>`;
+        const labelText = document.createElement('span');
+        labelText.className = 'label-text';
+        if (definition.summary && definition.summary !== 'n/a') {
+          labelText.textContent = `${definition.label} (${definition.summary})`;
+        } else {
+          labelText.textContent = definition.label;
+        }
+        label.appendChild(labelText);
         const select = document.createElement('select');
         select.dataset.variableKey = key;
         const placeholder = document.createElement('option');
