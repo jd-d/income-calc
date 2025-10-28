@@ -1,0 +1,22 @@
+{
+  "name": "Course Pricing Calculator",
+  "short_name": "Course Pricing",
+  "description": "Plan class pricing targets with offline-ready calculations and resources.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0c12",
+  "theme_color": "#0a0c12",
+  "icons": [
+    {
+      "src": "assets/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
