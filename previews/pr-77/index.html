@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0a0c12" />
+  <link rel="icon" href="assets/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="assets/favicon.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <title>Course Pricing Calculator</title>
+  <script>
+    (function ensureBaseHref() {
+      if (document.querySelector('base')) {
+        return;
+      }
+      const { origin, pathname } = window.location;
+      let basePath = pathname;
+      if (!pathname.endsWith('/')) {
+        const lastSegmentIndex = pathname.lastIndexOf('/') + 1;
+        const lastSegment = pathname.slice(lastSegmentIndex);
+        if (lastSegment && lastSegment.includes('.')) {
+          basePath = pathname.slice(0, lastSegmentIndex);
+        } else if (lastSegment) {
+          basePath = `${pathname}/`;
+        } else {
+          basePath = '/';
+        }
+      }
+      if (!basePath.endsWith('/')) {
+        basePath += '/';
+      }
+      const base = document.createElement('base');
+      base.href = `${origin}${basePath}`;
+      document.head.insertBefore(base, document.head.firstChild);
+    })();
+  </script>
+  <script src="pwa.js" defer></script>
+  <link rel="stylesheet" href="styles/main.css" />
+
+</head>
+<body data-theme="dark">
+  <div class="page">
+    <nav class="top-nav">
+      <a href="resources.html" class="top-link">Helpful Resources</a>
+      <a href="#" id="how-to-link" class="top-link">How To Use This Tool</a>
+    </nav>
+    <header>
+      <div class="header-text">
+        <h1>Course Pricing Calculator</h1>
+        <p>Estimate per-student pricing to reach your target income. All calculations stay on this page.</p>
+      </div>
+      <div class="header-actions">
+        <a class="header-link" href="#privacy-info">Your Info Is Safe</a>
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="true">
+          <span class="toggle-track" aria-hidden="true">
+            <span class="toggle-thumb"></span>
+          </span>
+          <span class="toggle-label">Dark mode</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <section class="card controls" aria-labelledby="inputs-heading">
+        <h2 id="inputs-heading" style="font-size: 1.1rem;">Inputs</h2>
+        <fieldset class="control-sections">
+          <legend class="visually-hidden">Calculator inputs</legend>
+
+          <fieldset class="control-section" data-collapsible>
+            <legend class="section-legend visually-hidden" id="section-settings-legend">Settings</legend>
+            <div class="section-header">
+              <span class="section-title" aria-hidden="true">Settings</span>
+              <button
+                type="button"
+                class="section-toggle section-toggle--top"
+                data-expanded-text="Collapse"
+                data-collapsed-text="Expand"
+                aria-expanded="true"
+                aria-controls="section-settings"
+              >
+                <span class="toggle-label">Collapse</span>
+              </button>
+            </div>
+            <div class="section-body" id="section-settings">
+              <div class="persist-controls" role="group" aria-labelledby="persist-settings-label">
+                <div class="persist-controls__primary">
+                  <label class="persist-checkbox" id="persist-settings-label" for="remember-inputs">
+                    <input type="checkbox" id="remember-inputs" />
+                    <span>Remember my inputs on this device</span>
+                  </label>
+                  <p class="persist-description">
+                    Stores your latest calculator values in local storage so they're ready the next time you visit from this browser.
+                  </p>
+                </div>
+                <button type="button" id="reset-saved-inputs" class="secondary">Reset to defaults</button>
+              </div>
+              <div class="control">
+                <label for="currency-symbol">
+                  <span class="label-text">Currency symbol</span>
+                  <span class="info-icon" tabindex="0" role="button" aria-expanded="false" aria-label="Displayed before amounts." data-tooltip="Displayed before amounts.">ℹ️</span>
+                </label>
+                <input type="text" id="currency-symbol" value="€" maxlength="3" />
+              </div>
+            </div>
+            <div class="section-footer">
+              <button
+                type="button"
+                class="section-toggle section-toggle--bottom"
+                data-expanded-text="Collapse section"
+                data-collapsed-text="Expand section"
+                aria-expanded="true"
+                aria-controls="section-settings"
+              >
+                <span class="toggle-label">Collapse section</span>
+              </button>
+            </div>
+          </fieldset>
+
+          <fieldset class="control-section" data-collapsible>
+            <legend class="section-legend visually-hidden" id="section-desired-income-legend">Desired income</legend>
+            <div class="section-header">
+              <span class="section-title" aria-hidden="true">
+                <span id="desired-income-title">Desired Net Income</span>
+              </span>
+              <button
+                type="button"
+                class="section-toggle section-toggle--top"
+                data-expanded-text="Collapse"
+                data-collapsed-text="Expand"
+                aria-expanded="true"
+                aria-controls="section-desired-income"
+              >
+                <span class="toggle-label">Collapse</span>
+              </button>
+            </div>
+            <div class="section-body" id="section-desired-income">
+              <div class="desired-income-actions" role="group" aria-label="Income display options">
+                <button type="button" class="secondary" id="desired-income-toggle-display">
+                  Toggle Gross/Net
+                </button>
+                <button type="button" class="secondary" id="desired-income-toggle-interpretation">
+                  Toggle Gross/Net (lock amount)
+                </button>
+              </div>
+              <div class="control-group">
+                <p class="field-note">Entering an income value will update the lesson cost automatically.</p>
+                <div class="control">
+                  <label for="target-net">
+                    <span
+                      class="label-text"
+                      data-net-label="Net income per year"
+                      data-gross-label="Gross income per year"
+                    >Net income per year</span>
+                    <span
+                      class="info-icon"
+                      tabindex="0"
+                      role="button"
+                      aria-expanded="false"
+                      data-net-tooltip="Amount you want to take home after income taxes."
+                      data-gross-tooltip="Income before income taxes needed to reach your desired take-home pay."
+                      data-tooltip="Amount you want to take home after income taxes."
+                      aria-label="Amount you want to take home after income taxes."
+                    >ℹ️</span>
+                  </label>
+                  <input type="number" id="target-net" value="50000" min="0" step="100" inputmode="decimal" />
+                </div>
+                <div class="control">
+                  <label for="target-net-week">
+                    <span
+                      class="label-text"
+                      data-net-label="Net income per active week"
+                      data-gross-label="Gross income per active week"
+                    >Net income per active week</span>
+                    <span
+                      class="info-icon"
+                      tabindex="0"
+                      role="button"
+                      aria-expanded="false"
+                      data-net-tooltip="Take-home pay for each active teaching week after income taxes."
+                      data-gross-tooltip="Income before taxes earned during each active teaching week."
+                      data-tooltip="Take-home pay for each active teaching week after income taxes."
+                      aria-label="Take-home pay for each active teaching week after income taxes."
+                    >ℹ️</span>
+                  </label>
+                  <input type="number" id="target-net-week" value="2000" min="0" step="50" inputmode="decimal" />
+                </div>
+                <div class="control">
+                  <label for="target-net-month">
+                    <span
+                      class="label-text"
+                      data-net-label="Net income per active month"
+                      data-gross-label="Gross income per active month"
+                    >Net income per active month</span>
+                    <span
+                      class="info-icon"
+                      tabindex="0"
+                      role="button"
+                      aria-expanded="false"
+                      data-net-tooltip="Take-home pay for each month you actively teach after income taxes."
+                      data-gross-tooltip="Income before taxes for each month you actively teach."
+                      data-tooltip="Take-home pay for each month you actively teach after income taxes."
+                      aria-label="Take-home pay for each month you actively teach after income taxes."
+                    >ℹ️</span>
+                  </label>
+                  <input type="number" id="target-net-month" value="5000" min="0" step="100" inputmode="decimal" />
+                </div>
+                <div class="control">
+                  <label for="target-net-average-week">
+                    <span
+                      class="label-text"
+                      data-net-label="Average weekly net income"
+                      data-gross-label="Average weekly gross income"
+                    >Average weekly net income</span>
+                    <span
+                      class="info-icon"
+                      tabindex="0"
+                      role="button"
+                      aria-expanded="false"
+                      data-net-tooltip="Average weekly take-home pay spread across the full year."
+                      data-gross-tooltip="Average weekly income before taxes spread across the full year."
+                      data-tooltip="Average weekly take-home pay spread across the full year."
+                      aria-label="Average weekly take-home pay spread across the full year."
+                    >ℹ️</span>
+                  </label>
+                  <input type="number" id="target-net-average-week" value="961.54" min="0" step="10" inputmode="decimal" />
+                </div>
+                <div class="control">
+                  <label for="target-net-average-month">
+                    <span
+                      class="label-text"
+                      data-net-label="Average monthly net income"
+                      data-gross-label="Average monthly gross income"
+                    >Average monthly net income</span>
+                    <span
+                      class="info-icon"
+                      tabindex="0"
+                      role="button"
+                      aria-expanded="false"
+                      data-net-tooltip="Average monthly take-home pay spread across the full year."
+                      data-gross-tooltip="Average monthly income before taxes spread across the full year."
+                      data-tooltip="Average monthly take-home pay spread across the full year."
+                      aria-label="Average monthly take-home pay spread across the full year."
+                    >ℹ️</span>
+                </label>
+                <input type="number" id="target-net-average-month" value="4166.67" min="0" step="50" inputmode="decimal" />
+              </div>
+            </div>
+            <div class="control-group acceptable-income-group">
+              <div class="acceptable-income-header">
+                <span class="label-text">Acceptable income range (optional)</span>
+                <span class="sub-label" id="acceptable-income-current-basis">Monthly</span>
+              </div>
+              <div class="acceptable-income-basis" role="radiogroup" aria-label="Acceptable income period">
+                <label class="acceptable-income-basis__option" for="acceptable-income-basis-monthly">
+                  <input
+                    type="radio"
+                    name="acceptable-income-basis"
+                    id="acceptable-income-basis-monthly"
+                    value="monthly"
+                    checked
+                  />
+                  <span>Monthly</span>
+                </label>
+                <label class="acceptable-income-basis__option" for="acceptable-income-basis-annual">
+                  <input
+                    type="radio"
+                    name="acceptable-income-basis"
+                    id="acceptable-income-basis-annual"
+                    value="annual"
+                  />
+                  <span>Annual</span>
+                </label>
+              </div>
+              <div class="inline-field-pair acceptable-income-inputs">
+                <div class="control control--nested">
+                  <label for="acceptable-income-min">
+                    <span class="label-text">Minimum income</span>
+                  </label>
+                  <input
+                    type="number"
+                    id="acceptable-income-min"
+                    inputmode="decimal"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                <div class="control control--nested">
+                  <label for="acceptable-income-max">
+                    <span class="label-text">Maximum income</span>
+                  </label>
+                  <input
+                    type="number"
+                    id="acceptable-income-max"
+                    inputmode="decimal"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+              <p class="field-note">Leave either value blank if you do not have a minimum or maximum target.</p>
+            </div>
+            <div class="section-footer">
+              <button
+                type="button"
+                class="section-toggle section-toggle--bottom"
+                data-expanded-text="Collapse section"
+                data-collapsed-text="Expand section"
+                aria-expanded="true"
+                aria-controls="section-desired-income"
+              >
+                  <span class="toggle-label">Collapse section</span>
+                </button>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="control-section" data-collapsible>
+            <legend class="section-legend visually-hidden" id="section-safety-margin-legend">Extra safety margin</legend>
+            <div class="section-header">
+              <span class="section-title" aria-hidden="true">EXTRA SAFETY MARGIN</span>
+              <button
+                type="button"
+                class="section-toggle section-toggle--top"
+                data-expanded-text="Collapse"
+                data-collapsed-text="Expand"
+                aria-expanded="true"
+                aria-controls="section-safety-margin"
+              >
+                <span class="toggle-label">Collapse</span>
+              </button>
+            </div>
+            <div class="section-body" id="section-safety-margin">
+              <p class="field-note">
+                This % adds an extra percentage cushion <strong>on top of your desired specified income</strong>. The "buffered" row in the results table uses this value to suggest a lesson price that covers surprises.
+              </p>
+              <div class="control">
+                <label for="buffer">
+                  <span class="label-text">Extra safety margin (%)</span>
+                  <span
+                    class="info-icon"
+                    tabindex="0"
+                    role="button"
+                    aria-expanded="false"
+                    aria-label="Adds an extra cushion on top of your desired income. The buffered pricing line uses this percentage."
+                    data-tooltip="Adds an extra cushion on top of your desired income. The buffered pricing line uses this percentage."
+                  >ℹ️</span>
+                </label>
+                <input type="number" id="buffer" value="15" min="0" step="1" inputmode="decimal" />
+              </div>
+            </div>
+            <div class="section-footer">
+              <button
+                type="button"
+                class="section-toggle section-toggle--bottom"
+                data-expanded-text="Collapse section"
+                data-collapsed-text="Expand section"
+                aria-expanded="true"
+                aria-controls="section-safety-margin"
+              >
+                <span class="toggle-label">Collapse section</span>
+              </button>
+            </div>
+          </fieldset>
+
+          <fieldset class="control-section" data-collapsible>
+            <legend class="section-legend visually-hidden" id="section-taxes-costs-legend">Taxes and costs</legend>
+            <div class="section-header">
+              <span class="section-title" aria-hidden="true">Taxes and costs</span>
+              <button
+                type="button"
+                class="section-toggle section-toggle--top"
+                data-expanded-text="Collapse"
+                data-collapsed-text="Expand"
+                aria-expanded="true"
+                aria-controls="section-taxes-costs"
+              >
+                <span class="toggle-label">Collapse</span>
+              </button>
+            </div>
+            <div class="section-body" id="section-taxes-costs">
+              <div
+                class="control control-panel control--taxes"
+                role="group"
+                aria-labelledby="taxes-group-label"
+              >
+                <div class="panel-header" id="taxes-group-label">
+                  <span class="label-text">Tax rates</span>
+                </div>
+                <div class="inline-field-pair">
+                  <div class="control control--nested">
+                    <label for="tax-rate">
+                      <span class="label-text">Effective income tax rate (%)</span>
+                      <span
+                        class="info-icon"
+                        tabindex="0"
+                        role="button"
+                        aria-expanded="false"
+                        aria-label="Share of profit paid in taxes and social charges."
+                        data-tooltip="Share of profit paid in taxes and social charges."
+                      >ℹ️</span>
+                    </label>
+                    <input type="number" id="tax-rate" value="40" min="0" max="99" step="1" inputmode="decimal" />
+                  </div>
+                  <div class="control control--nested">
+                    <label for="vat-rate">
+                      <span class="label-text">VAT/ BTW (%)</span>
+                      <span
+                        class="info-icon"
+                        tabindex="0"
+                        role="button"
+                        aria-expanded="false"
+                        aria-label="Modify if the services you offer fall into a lower VAT band."
+                        data-tooltip="Modify if the services you offer fall into a lower VAT band."
+                      >ℹ️</span>
+                    </label>
+                    <input type="number" id="vat-rate" value="21" min="0" step="0.1" inputmode="decimal" />
+                  </div>
+                </div>
+              </div>
+              <div class="control control--fixed-costs">
+                <div class="fixed-costs-header">
+                  <span class="label-text">Fixed costs</span>
+                  <span
+                    class="info-icon"
+                    tabindex="0"
+                    role="button"
+                    aria-expanded="false"
+                    aria-label="Break down ongoing expenses like venue, insurance, pension, health cover, marketing, materials, and admin."
+                    data-tooltip="Break down ongoing expenses like venue, insurance, pension, health cover, marketing, materials, and admin."
+                  >ℹ️</span>
+                </div>
+                <p class="field-note">
+                  Enter either the monthly or annual amount for each category. The other column updates automatically. Think about rent, business insurance, disability cover (AOV), pension contributions, health insurance, marketing, materials, software, and training.
+                </p>
+                <div class="fixed-costs-grid">
+                  <div class="fixed-cost-row">
+                    <div class="fixed-cost-label">Location / venue</div>
+                    <div class="fixed-cost-inputs">
+                      <label for="fixed-cost-location-monthly">
+                        <span class="input-label">Monthly</span>
+                        <input type="number" id="fixed-cost-location-monthly" value="650" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                      <label for="fixed-cost-location-annual">
+                        <span class="input-label">Annual</span>
+                        <input type="number" id="fixed-cost-location-annual" value="7800" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                    </div>
+                  </div>
+                  <div class="fixed-cost-row">
+                    <div class="fixed-cost-label">Business insurance</div>
+                    <div class="fixed-cost-inputs">
+                      <label for="fixed-cost-insurance-monthly">
+                        <span class="input-label">Monthly</span>
+                        <input type="number" id="fixed-cost-insurance-monthly" value="100" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                      <label for="fixed-cost-insurance-annual">
+                        <span class="input-label">Annual</span>
+                        <input type="number" id="fixed-cost-insurance-annual" value="1200" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                    </div>
+                  </div>
+                  <div class="fixed-cost-row">
+                    <div class="fixed-cost-label">Disability insurance (AOV)</div>
+                    <div class="fixed-cost-inputs">
+                      <label for="fixed-cost-disability-monthly">
+                        <span class="input-label">Monthly</span>
+                        <input type="number" id="fixed-cost-disability-monthly" value="220" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                      <label for="fixed-cost-disability-annual">
+                        <span class="input-label">Annual</span>
+                        <input type="number" id="fixed-cost-disability-annual" value="2640" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                    </div>
+                  </div>
+                  <div class="fixed-cost-row">
+                    <div class="fixed-cost-label">Health insurance premium</div>
+                    <div class="fixed-cost-inputs">
+                      <label for="fixed-cost-health-monthly">
+                        <span class="input-label">Monthly</span>
+                        <input type="number" id="fixed-cost-health-monthly" value="150" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                      <label for="fixed-cost-health-annual">
+                        <span class="input-label">Annual</span>
+                        <input type="number" id="fixed-cost-health-annual" value="1800" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                    </div>
+                  </div>
+                  <div class="fixed-cost-row">
+                    <div class="fixed-cost-label">Pension contributions</div>
+                    <div class="fixed-cost-inputs">
+                      <label for="fixed-cost-pension-monthly">
+                        <span class="input-label">Monthly</span>
+                        <input type="number" id="fixed-cost-pension-monthly" value="250" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                      <label for="fixed-cost-pension-annual">
+                        <span class="input-label">Annual</span>
+                        <input type="number" id="fixed-cost-pension-annual" value="3000" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                    </div>
+                  </div>
+                  <div class="fixed-cost-row">
+                    <div class="fixed-cost-label">Marketing</div>
+                    <div class="fixed-cost-inputs">
+                      <label for="fixed-cost-marketing-monthly">
+                        <span class="input-label">Monthly</span>
+                        <input type="number" id="fixed-cost-marketing-monthly" value="300" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                      <label for="fixed-cost-marketing-annual">
+                        <span class="input-label">Annual</span>
+                        <input type="number" id="fixed-cost-marketing-annual" value="3600" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                    </div>
+                  </div>
+                  <div class="fixed-cost-row">
+                    <div class="fixed-cost-label">Materials</div>
+                    <div class="fixed-cost-inputs">
+                      <label for="fixed-cost-materials-monthly">
+                        <span class="input-label">Monthly</span>
+                        <input type="number" id="fixed-cost-materials-monthly" value="150" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                      <label for="fixed-cost-materials-annual">
+                        <span class="input-label">Annual</span>
+                        <input type="number" id="fixed-cost-materials-annual" value="1800" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                    </div>
+                  </div>
+                  <div class="fixed-cost-row">
+                    <div class="fixed-cost-label">Admin / software</div>
+                    <div class="fixed-cost-inputs">
+                      <label for="fixed-cost-admin-monthly">
+                        <span class="input-label">Monthly</span>
+                        <input type="number" id="fixed-cost-admin-monthly" value="175" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                      <label for="fixed-cost-admin-annual">
+                        <span class="input-label">Annual</span>
+                        <input type="number" id="fixed-cost-admin-annual" value="2100" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                    </div>
+                  </div>
+                  <div class="fixed-cost-row">
+                    <div class="fixed-cost-label">Professional development</div>
+                    <div class="fixed-cost-inputs">
+                      <label for="fixed-cost-development-monthly">
+                        <span class="input-label">Monthly</span>
+                        <input type="number" id="fixed-cost-development-monthly" value="100" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                      <label for="fixed-cost-development-annual">
+                        <span class="input-label">Annual</span>
+                        <input type="number" id="fixed-cost-development-annual" value="1200" min="0" step="0.01" inputmode="decimal" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <p class="field-note">
+                  Need benchmarks? Visit the <a href="resources.html">helpful resources</a> page.
+                </p>
+                <div class="fixed-cost-total">
+                  <label for="fixed-costs">
+                    <span class="label-text">Total fixed annual costs</span>
+                  </label>
+                  <input type="number" id="fixed-costs" value="25140" min="0" step="0.01" inputmode="decimal" readonly />
+                  <p class="field-note">Calculated automatically from the breakdown above.</p>
+                </div>
+              </div>
+              <div
+                class="control control-panel control--variable-costs"
+                role="group"
+                aria-labelledby="variable-costs-label"
+              >
+                <div class="panel-header" id="variable-costs-label">
+                  <span class="label-text">Variable costs</span>
+                </div>
+                <div class="panel-grid">
+                  <div class="control control--nested">
+                    <label for="variable-cost-class">
+                      <span class="label-text">Variable cost per class</span>
+                      <span
+                        class="info-icon"
+                        tabindex="0"
+                        role="button"
+                        aria-expanded="false"
+                        aria-label="Expenses that apply each time you run a class, such as room hire or transport."
+                        data-tooltip="Expenses that apply each time you run a class, such as room hire or transport."
+                      >ℹ️</span>
+                    </label>
+                    <input type="number" id="variable-cost-class" value="0" min="0" step="0.01" inputmode="decimal" />
+                  </div>
+                  <div class="control control--nested">
+                    <label for="variable-cost-student">
+                      <span class="label-text">Variable cost per student</span>
+                      <span
+                        class="info-icon"
+                        tabindex="0"
+                        role="button"
+                        aria-expanded="false"
+                        aria-label="Per-student expenses like materials or refreshments."
+                        data-tooltip="Per-student expenses like materials or refreshments."
+                      >ℹ️</span>
+                    </label>
+                    <input type="number" id="variable-cost-student" value="0" min="0" step="0.01" inputmode="decimal" />
+                  </div>
+                  <div class="control control--nested">
+                    <label for="variable-cost-student-monthly">
+                      <span class="label-text">Variable monthly cost per student</span>
+                      <span
+                        class="info-icon"
+                        tabindex="0"
+                        role="button"
+                        aria-expanded="false"
+                        aria-label="Monthly expenses applied per student and scaled by class size (e.g. software licences)."
+                        data-tooltip="Monthly expenses applied per student and scaled by class size (e.g. software licences)."
+                      >ℹ️</span>
+                    </label>
+                    <input type="number" id="variable-cost-student-monthly" value="0" min="0" step="0.01" inputmode="decimal" />
+                  </div>
+                </div>
+              </div>
+              <div class="section-footer">
+                <button
+                  type="button"
+                  class="section-toggle section-toggle--bottom"
+                  data-expanded-text="Collapse section"
+                  data-collapsed-text="Expand section"
+                  aria-expanded="true"
+                  aria-controls="section-taxes-costs"
+                >
+                  <span class="toggle-label">Collapse section</span>
+                </button>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="control-section" data-collapsible>
+            <legend class="section-legend visually-hidden" id="section-schedule-capacity-legend">Schedule and capacity</legend>
+            <div class="section-header">
+              <span class="section-title" aria-hidden="true">Schedule and capacity</span>
+              <button
+                type="button"
+                class="section-toggle section-toggle--top"
+                data-expanded-text="Collapse"
+                data-collapsed-text="Expand"
+                aria-expanded="true"
+                aria-controls="section-schedule-capacity"
+              >
+                <span class="toggle-label">Collapse</span>
+              </button>
+            </div>
+            <div class="section-body" id="section-schedule-capacity">
+              <div class="control">
+                <label for="classes-per-week">
+                  <span class="label-text">Classes per week</span>
+                  <span class="info-icon" tabindex="0" role="button" aria-expanded="false" aria-label="Comma-separated integers or ranges (e.g. 4,5 or 3-8)." data-tooltip="Comma-separated integers or ranges (e.g. 4,5 or 3-8).">ℹ️</span>
+                </label>
+                <input type="text" id="classes-per-week" value="4,5" autocomplete="off" />
+              </div>
+              <div class="control">
+                <label for="students-per-class">
+                  <span class="label-text">Students per class</span>
+                  <span class="info-icon" tabindex="0" role="button" aria-expanded="false" aria-label="Comma-separated integers or ranges (e.g. 5-12)." data-tooltip="Comma-separated integers or ranges (e.g. 5-12).">ℹ️</span>
+                </label>
+                <input type="text" id="students-per-class" value="4,6,8" autocomplete="off" />
+              </div>
+              <div class="control">
+                <label for="hours-per-lesson">
+                  <span class="label-text">Hours per lesson</span>
+                  <span
+                    class="info-icon"
+                    tabindex="0"
+                    role="button"
+                    aria-expanded="false"
+                    aria-label="Length of each lesson in hours (e.g. 1.5)."
+                    data-tooltip="Length of each lesson in hours (e.g. 1.5)."
+                  >ℹ️</span>
+                </label>
+                <input type="number" id="hours-per-lesson" value="1" min="0.25" step="0.25" inputmode="decimal" />
+              </div>
+              <div class="section-footer">
+                <button
+                  type="button"
+                  class="section-toggle section-toggle--bottom"
+                  data-expanded-text="Collapse section"
+                  data-collapsed-text="Expand section"
+                  aria-expanded="true"
+                  aria-controls="section-schedule-capacity"
+                >
+                  <span class="toggle-label">Collapse section</span>
+                </button>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="control-section" data-collapsible>
+            <legend class="section-legend visually-hidden" id="section-manual-override-legend">
+              Lesson price preferences
+            </legend>
+            <div class="section-header">
+              <span class="section-title" aria-hidden="true">Lesson price preferences</span>
+              <button
+                type="button"
+                class="section-toggle section-toggle--top"
+                data-expanded-text="Collapse"
+                data-collapsed-text="Expand"
+                aria-expanded="true"
+                aria-controls="section-manual-override"
+              >
+                <span class="toggle-label">Collapse</span>
+              </button>
+            </div>
+            <div class="section-body" id="section-manual-override">
+              <div class="control">
+                <label for="lesson-cost">
+                  <span class="label-text">Set a specific lesson price (incl. VAT)</span>
+                  <span
+                    class="info-icon"
+                    tabindex="0"
+                    role="button" aria-expanded="false"
+                    aria-label="Set a fixed per-student lesson price including VAT."
+                    data-tooltip="Set a fixed per-student lesson price including VAT."
+                  >ℹ️</span>
+                </label>
+                <input type="number" id="lesson-cost" min="0" step="0.01" inputmode="decimal" />
+                <p class="field-note">Entering a lesson price updates the net income values above.</p>
+              </div>
+              <div
+                class="control control-panel control--lesson-price-range"
+                role="group"
+                aria-labelledby="lesson-price-range-label"
+              >
+                <div class="panel-header" id="lesson-price-range-label">
+                  <span class="label-text">Preferred price range (incl. VAT)</span>
+                </div>
+                <div class="inline-field-pair">
+                  <label for="lesson-price-min">
+                    <span class="input-label">Minimum</span>
+                    <input type="number" id="lesson-price-min" min="0" step="0.01" inputmode="decimal" />
+                  </label>
+                  <label for="lesson-price-max">
+                    <span class="input-label">Maximum</span>
+                    <input type="number" id="lesson-price-max" min="0" step="0.01" inputmode="decimal" />
+                  </label>
+                </div>
+                <p class="field-note">
+                  Prices outside this range are highlighted in the pricing table. Leave blank to skip highlighting.
+                </p>
+              </div>
+              <div class="section-footer">
+                <button
+                  type="button"
+                  class="section-toggle section-toggle--bottom"
+                  data-expanded-text="Collapse section"
+                  data-collapsed-text="Expand section"
+                  aria-expanded="true"
+                  aria-controls="section-manual-override"
+                >
+                  <span class="toggle-label">Collapse section</span>
+                </button>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="control-section" data-collapsible>
+            <legend class="section-legend visually-hidden" id="section-time-off-legend">Time-off planner</legend>
+            <div class="section-header">
+              <span class="section-title" aria-hidden="true">Time-off planner</span>
+              <button
+                type="button"
+                class="section-toggle section-toggle--top"
+                data-expanded-text="Collapse"
+                data-collapsed-text="Expand"
+                aria-expanded="true"
+                aria-controls="section-time-off"
+              >
+                <span class="toggle-label">Collapse</span>
+              </button>
+            </div>
+            <div class="section-body" id="section-time-off">
+              <div class="control">
+                <label for="months-off">
+                  <span class="label-text">Months off per year</span>
+                  <span class="info-icon" tabindex="0" role="button" aria-expanded="false" aria-label="Total months you plan to take completely off." data-tooltip="Total months you plan to take completely off.">ℹ️</span>
+                </label>
+                <input type="number" id="months-off" value="2" min="0" max="12" step="0.5" inputmode="decimal" />
+              </div>
+              <div class="control">
+                <label for="weeks-off-cycle">
+                  <span class="label-text">Weeks off per 4-week cycle</span>
+                  <span class="info-icon" tabindex="0" role="button" aria-expanded="false" aria-label="For example, 1 week off means working 3 weeks out of every 4." data-tooltip="For example, 1 week off means working 3 weeks out of every 4.">ℹ️</span>
+                </label>
+                <input type="number" id="weeks-off-cycle" value="1" min="0" max="4" step="0.25" inputmode="decimal" />
+              </div>
+              <div class="control">
+                <label for="days-off-week">
+                  <span class="label-text">Days off per 7-day week</span>
+                  <span
+                    class="info-icon"
+                    tabindex="0"
+                    role="button"
+                    aria-expanded="false"
+                    aria-label="Defaults to a typical weekend off in a 7-day week but supports partial-day values."
+                    data-tooltip="Defaults to a typical weekend off in a 7-day week but supports partial-day values."
+                  >ℹ️</span>
+                </label>
+                <input type="number" id="days-off-week" value="2" min="0" max="7" step="0.25" inputmode="decimal" />
+              </div>
+              <div class="control">
+                <label>
+                  <span class="label-text">Estimated working weeks per year</span>
+                  <span class="info-icon" tabindex="0" role="button" aria-expanded="false" aria-label="Calculated from the schedule above." data-tooltip="Calculated from the schedule above.">ℹ️</span>
+                </label>
+                <output id="working-weeks-display" class="output-field">32.5</output>
+              </div>
+              <div class="control">
+                <label>
+                  <span class="label-text">Estimated working days per year</span>
+                  <span class="info-icon" tabindex="0" role="button" aria-expanded="false" aria-label="Working weeks × working days per active week." data-tooltip="Working weeks × working days per active week.">ℹ️</span>
+                </label>
+                <output id="working-days-display" class="output-field">130</output>
+              </div>
+              <div class="section-footer">
+                <button
+                  type="button"
+                  class="section-toggle section-toggle--bottom"
+                  data-expanded-text="Collapse section"
+                  data-collapsed-text="Expand section"
+                  aria-expanded="true"
+                  aria-controls="section-time-off"
+                >
+                  <span class="toggle-label">Collapse section</span>
+                </button>
+              </div>
+            </div>
+          </fieldset>
+
+        </fieldset>
+        <div class="button-row actions" role="group" aria-label="Actions">
+          <button type="button" id="recalculate">Recalculate</button>
+          <button type="button" id="download-csv" class="secondary">Download CSV</button>
+          <button type="button" id="open-accounting-example" class="secondary">
+            Example month accounting breakdown
+          </button>
+        </div>
+        <p class="status-message" id="status-message" aria-live="polite"></p>
+      </section>
+
+      <section class="tables" aria-live="polite">
+        <div class="table-grid" id="tables-container">
+          <!-- Tables injected here -->
+        </div>
+        <div class="tables-footer">
+          <h2 style="font-size: 1.05rem; margin: 0;">Assumptions</h2>
+          <ul class="assumptions" id="assumptions-list"></ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="card privacy-info" id="privacy-info" aria-labelledby="privacy-heading">
+      <div>
+        <h2 id="privacy-heading">Your Info Is Safe</h2>
+        <p>
+          This calculator runs entirely in your browser. There are no sign-ins, accounts, or background network calls. Everything
+          you type stays on this page. By default the only thing saved between visits is your light/dark mode preference
+          (<code>course-pricing-theme</code>). If you turn on “Remember my inputs,” the calculator also stores your latest form values
+          (<code>course-pricing-saved-inputs</code>) plus a small flag (<code>course-pricing-save-enabled</code>) in local storage. Switch it
+          off or press “Reset to defaults” to remove them instantly.
+        </p>
+        <p>
+          When you export results, the CSV file is generated on your device: the app assembles the rows, wraps them in a
+          <code>Blob</code>, spawns a temporary download link, clicks it for you, and immediately cleans it up again, so nothing
+          leaves your device. Want to dig deeper? The full source code is available on
+          <a href="https://github.com/jd-d/course-pricing-calculator" target="_blank" rel="noreferrer noopener">GitHub</a>, review it yourself or with a
+          developer you trust to confirm exactly how the site works.
+        </p>
+      </div>
+      <div>
+        <h3>Easy ways to verify this yourself</h3>
+        <ol>
+          <li>
+            <strong>Check that no cookies are created.</strong> Open DevTools → Application/Storage → Cookies, reload the page,
+            and interact with the calculator. The cookies list will stay empty.
+          </li>
+          <li>
+            <strong>Inspect local storage.</strong> In the same panel, open “Local Storage,” select the site origin, and confirm
+            you see <code>course-pricing-theme</code>, plus <code>course-pricing-saved-inputs</code> and
+            <code>course-pricing-save-enabled</code> only if you enabled “Remember my inputs.” Toggle it off or use “Reset to
+            defaults” to clear the extra entries.
+          </li>
+          <li>
+            <strong>Watch for network requests.</strong> Keep the Network tab open with “Preserve log” enabled as you adjust
+            inputs and export CSV. You’ll see no additional requests after the initial page load because every
+            calculation happens locally.
+          </li>
+          <li>
+            <strong>Review the page source.</strong> Search for calls like <code>fetch</code>, <code>XMLHttpRequest</code>, or
+            <code>navigator.sendBeacon</code>. You’ll only find <code>localStorage.getItem</code>/<code>setItem</code> for the theme
+            preference and the optional saved inputs toggle.
+          </li>
+          <li>
+            <strong>Browse the GitHub repository.</strong> Inspect the project files directly on <a href="https://github.com/jd-d/course-pricing-calculator" target="_blank" rel="noreferrer noopener">GitHub</a> to confirm exactly what
+            the site ships and how it behaves.
+          </li>
+        </ol>
+      </div>
+    </section>
+  </div>
+
+  <div
+    class="lesson-breakdown-dialog"
+    id="lesson-breakdown-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="lesson-breakdown-title"
+    aria-describedby="lesson-breakdown-summary"
+    hidden
+  >
+    <div class="lesson-breakdown-dialog__backdrop" id="lesson-breakdown-backdrop" tabindex="-1"></div>
+    <div class="lesson-breakdown-dialog__content" role="document">
+      <div class="lesson-breakdown-dialog__header">
+        <div>
+          <h2 id="lesson-breakdown-title">Lesson breakdown</h2>
+          <p class="lesson-breakdown-dialog__variant" id="lesson-breakdown-variant"></p>
+        </div>
+        <button
+          type="button"
+          class="lesson-breakdown-dialog__close"
+          id="lesson-breakdown-close"
+          aria-label="Close lesson breakdown"
+        >×</button>
+      </div>
+      <div class="lesson-breakdown-dialog__summary" id="lesson-breakdown-summary">
+        <p class="lesson-breakdown-dialog__price" id="lesson-breakdown-price"></p>
+        <p class="lesson-breakdown-dialog__meta" id="lesson-breakdown-meta"></p>
+        <p class="lesson-breakdown-dialog__total" id="lesson-breakdown-total"></p>
+      </div>
+      <div class="lesson-breakdown-dialog__body">
+        <div class="lesson-breakdown-dialog__table-wrapper">
+          <table class="lesson-breakdown-table">
+            <caption class="visually-hidden">Per-student and per-lesson financial breakdown</caption>
+            <thead>
+              <tr>
+                <th scope="col">Line item</th>
+                <th scope="col">Per student</th>
+                <th scope="col">Per lesson</th>
+              </tr>
+            </thead>
+            <tbody id="lesson-breakdown-table-body"></tbody>
+          </table>
+        </div>
+        <div class="lesson-breakdown-dialog__chart">
+          <div class="lesson-breakdown-dialog__chart-graphic" id="lesson-breakdown-chart-graphic" aria-hidden="true"></div>
+          <ul class="lesson-breakdown-dialog__legend" id="lesson-breakdown-legend"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="readme-dialog" id="readme-dialog" role="dialog" aria-modal="true" aria-labelledby="readme-title" hidden>
+    <div class="readme-dialog__backdrop" id="readme-backdrop" tabindex="-1"></div>
+    <div class="readme-dialog__content" role="document">
+      <div class="readme-dialog__header">
+        <h2 id="readme-title">How To Use This Tool</h2>
+        <button type="button" class="readme-dialog__close" id="readme-close" aria-label="Close instructions">×</button>
+      </div>
+      <div class="readme-dialog__body" id="readme-body" tabindex="0"></div>
+    </div>
+  </div>
+
+  <div
+    class="accounting-dialog"
+    id="accounting-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="accounting-title"
+    aria-describedby="accounting-subtitle"
+    hidden
+  >
+    <div class="accounting-dialog__backdrop" id="accounting-backdrop" tabindex="-1"></div>
+    <div class="accounting-dialog__content" role="document">
+      <div class="accounting-dialog__header">
+        <div>
+          <h2 class="accounting-dialog__title" id="accounting-title">Example month accounting breakdown</h2>
+          <p class="accounting-dialog__subtitle" id="accounting-subtitle">
+            Enter the class mix you want to showcase and we’ll assemble an accountant-style monthly report.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="accounting-dialog__close"
+          id="accounting-close"
+          aria-label="Close accounting breakdown form"
+        >×</button>
+      </div>
+      <form class="accounting-dialog__form" id="accounting-form">
+        <div class="accounting-dialog__field">
+          <label for="accounting-students">Students per class</label>
+          <input
+            type="number"
+            id="accounting-students"
+            name="accounting-students"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            required
+          />
+        </div>
+        <div class="accounting-dialog__field">
+          <label for="accounting-classes">Classes per week</label>
+          <input
+            type="number"
+            id="accounting-classes"
+            name="accounting-classes"
+            min="0.25"
+            step="0.25"
+            inputmode="decimal"
+            required
+          />
+        </div>
+        <div class="accounting-dialog__field">
+          <label for="accounting-hours">Hours per class</label>
+          <input
+            type="number"
+            id="accounting-hours"
+            name="accounting-hours"
+            min="0.25"
+            step="0.25"
+            inputmode="decimal"
+            required
+          />
+        </div>
+        <p class="accounting-dialog__note">
+          The values default to your current calculator inputs. Adjust them if you want to illustrate a different class mix.
+        </p>
+        <p class="accounting-dialog__error" id="accounting-error" role="alert" aria-live="polite"></p>
+        <div class="accounting-dialog__actions">
+          <button type="button" class="secondary" id="accounting-cancel">Cancel</button>
+          <button type="submit" id="accounting-generate">Generate</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="js/theme.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
