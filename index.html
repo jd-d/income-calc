@@ -5222,19 +5222,29 @@
         .map(token => token.trim())
         .filter(token => token.length > 0);
 
+      const getDecimalPlaces = value => {
+        const decimalPart = value.split('.')[1];
+        return decimalPart ? decimalPart.length : 0;
+      };
+
       tokens.forEach(token => {
         const rangeMatch = token.match(/^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/);
         if (rangeMatch) {
-          const startValue = Number(rangeMatch[1]);
-          const endValue = Number(rangeMatch[2]);
+          const [ , startToken, endToken ] = rangeMatch;
+          const startValue = Number(startToken);
+          const endValue = Number(endToken);
           if (!Number.isFinite(startValue) || !Number.isFinite(endValue)) {
             return;
           }
 
           const rangeStart = Math.min(startValue, endValue);
           const rangeEnd = Math.max(startValue, endValue);
-          for (let current = rangeStart; current <= rangeEnd + 1e-9; current += 1) {
-            const normalized = Number(current.toFixed(6));
+          const decimalPlaces = Math.max(getDecimalPlaces(startToken), getDecimalPlaces(endToken));
+          const step = decimalPlaces > 0 ? Math.pow(10, -decimalPlaces) : 1;
+          const precision = Math.max(decimalPlaces, 6);
+
+          for (let current = rangeStart; current <= rangeEnd + step / 2; current = Number((current + step).toFixed(precision))) {
+            const normalized = Number(current.toFixed(precision));
             const meetsZeroRule = allowZero ? normalized >= 0 : normalized > 0;
             if (!meetsZeroRule) {
               continue;
@@ -5263,6 +5273,33 @@
 
       return Array.from(values).sort((a, b) => a - b);
     }
+
+    (function runParseNumberListChecks() {
+      if (typeof console === 'undefined' || typeof console.assert !== 'function') {
+        return;
+      }
+
+      const arrayEquals = (left, right) =>
+        left.length === right.length && left.every((value, index) => value === right[index]);
+
+      console.assert(
+        arrayEquals(parseNumberList('6-10', { allowZero: true }), [6, 7, 8, 9, 10]),
+        'parseNumberList should include integer ranges'
+      );
+
+      console.assert(
+        arrayEquals(parseNumberList('0-2', { allowZero: true }), [0, 1, 2]),
+        'parseNumberList should include zero when allowed'
+      );
+
+      const fractionalRange = parseNumberList('0.5-2');
+      console.assert(
+        fractionalRange[0] === 0.5 &&
+          fractionalRange[1] === 0.6 &&
+          fractionalRange[fractionalRange.length - 1] === 2,
+        'parseNumberList should respect fractional increments'
+      );
+    })();
 
     function parseList(value) {
       if (!value) {
