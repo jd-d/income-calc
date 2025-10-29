@@ -1,7 +1,7 @@
 {
-  "name": "Income Calculator",
-  "short_name": "Income Calc",
-  "description": "Plan flexible schedules, custom costs, and see gross and net income outcomes offline.",
+  "name": "Income Planner",
+  "short_name": "Income Planner",
+  "description": "Plan service pricing with taxes, costs, and workload assumptions offline.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
