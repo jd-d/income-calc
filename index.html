@@ -78,6 +78,10 @@
       box-sizing: border-box;
     }
 
+    [hidden] {
+      display: none !important;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -168,6 +172,71 @@
       font-family: inherit;
     }
 
+    .theme-toggle {
+      position: relative;
+      gap: 10px;
+    }
+
+    .theme-toggle__icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .theme-toggle__icon-circle {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid var(--button-border);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    body[data-theme="dark"] .theme-toggle__icon-circle--dark {
+      background: #0a0c12;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    body[data-theme="dark"] .theme-toggle__icon-circle--light {
+      background: transparent;
+    }
+
+    body[data-theme="light"] .theme-toggle__icon-circle--light {
+      background: #f5f7fb;
+      border-color: rgba(15, 23, 42, 0.2);
+    }
+
+    body[data-theme="light"] .theme-toggle__icon-circle--dark {
+      background: transparent;
+    }
+
+    .theme-toggle .tooltip {
+      position: absolute;
+      inset-inline-start: 50%;
+      transform: translateX(-50%) translateY(calc(100% + 10px));
+      background: rgba(5, 7, 12, 0.95);
+      color: #f5f7fb;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.8rem;
+      white-space: nowrap;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 1100;
+    }
+
+    .theme-toggle:focus-visible .tooltip,
+    .theme-toggle:hover .tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(calc(100% + 6px));
+    }
+
+    .theme-toggle__label {
+      font-weight: 600;
+    }
+
     .header-actions a:hover,
     .header-actions button:hover,
     .header-actions a:focus-visible,
@@ -251,6 +320,43 @@
       gap: 6px;
       flex: 1 1 220px;
       min-width: 200px;
+      position: relative;
+    }
+
+    .control__label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .info-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--button-border);
+      background: var(--button-bg);
+      color: var(--button-text);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .info-button span {
+      pointer-events: none;
+    }
+
+    .info-button:hover,
+    .info-button:focus-visible {
+      background: var(--button-hover);
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+      transform: translateY(-1px);
     }
 
     label {
@@ -291,6 +397,11 @@
       color: var(--text-muted);
       font-size: 0.85rem;
       margin: 0;
+    }
+
+    .field-hint--conversion {
+      color: var(--accent-strong);
+      margin-top: -2px;
     }
 
     .summary-grid {
@@ -550,6 +661,98 @@
       border: 0;
     }
 
+    .info-popover {
+      position: fixed;
+      max-width: min(320px, 92vw);
+      background: rgba(5, 7, 12, 0.96);
+      color: #f5f7fb;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 24px 40px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 1200;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .info-popover[data-open="true"] {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .info-popover__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .info-popover__title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #f5f7fb;
+    }
+
+    .info-popover__close {
+      border: none;
+      background: transparent;
+      color: #f5f7fb;
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 2px 6px;
+    }
+
+    .info-popover__close:hover,
+    .info-popover__close:focus-visible {
+      background: rgba(255, 255, 255, 0.12);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .info-popover__body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: #e3e6f0;
+    }
+
+    .info-popover__body p {
+      margin: 0;
+    }
+
+    .info-popover__footer {
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .info-popover__how-to {
+      border: none;
+      background: transparent;
+      color: var(--accent-strong);
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    .info-popover__how-to:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+      border-radius: 8px;
+      padding: 2px 4px;
+      margin: -2px -4px;
+    }
+
     @media (max-width: 640px) {
       .summary-grid {
         grid-template-columns: 1fr;
@@ -579,7 +782,20 @@
       <div class="header-actions">
         <a href="resources.html">Helpful resources</a>
         <button type="button" id="how-to-link">How to use</button>
-        <button type="button" id="theme-toggle" aria-pressed="true">Dark mode</button>
+        <button
+          type="button"
+          id="theme-toggle"
+          class="theme-toggle"
+          aria-pressed="true"
+          aria-describedby="theme-toggle-tooltip"
+        >
+          <span class="theme-toggle__icon" aria-hidden="true">
+            <span class="theme-toggle__icon-circle theme-toggle__icon-circle--light"></span>
+            <span class="theme-toggle__icon-circle theme-toggle__icon-circle--dark"></span>
+          </span>
+          <span class="theme-toggle__label" id="theme-toggle-label">Dark theme</span>
+          <span class="tooltip" role="tooltip" id="theme-toggle-tooltip">Toggle light / dark</span>
+        </button>
       </div>
     </header>
 
@@ -591,32 +807,203 @@
           <legend class="visually-hidden">Income target</legend>
           <div class="control-row">
             <div class="control">
-              <label for="currency-symbol">Currency symbol</label>
+              <div class="control__label-row">
+                <label for="currency-symbol">Currency symbol</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-currency-symbol"
+                  aria-label="Show info about the currency symbol"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="text" id="currency-symbol" value="€" maxlength="4" autocomplete="off" />
+              <div
+                class="info-popover"
+                id="info-currency-symbol"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-currency-symbol-title"
+                aria-describedby="info-currency-symbol-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-currency-symbol-title">Currency symbol</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close currency symbol details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-currency-symbol-body">
+                  <p>Choose the symbol or short code that should prefix all money values, such as €, £, or USD.</p>
+                  <p>Example: enter USD to show results like USD 4,500.00.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="income-target">Income target</label>
+              <div class="control__label-row">
+                <label for="income-target">Income target</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-income-target"
+                  aria-label="Show info about the income target"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="number" id="income-target" inputmode="decimal" value="4500" min="0" step="50" />
               <p class="field-hint">Enter the amount that keeps your lifestyle funded.</p>
+              <p class="field-hint field-hint--conversion" id="income-target-conversion-hint" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-income-target"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-income-target-title"
+                aria-describedby="info-income-target-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-income-target-title">Income target</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close income target details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-income-target-body">
+                  <p>Set how much you aim to earn for the chosen period and tax mode. The planner will recalculate revenue, pricing, and table highlights automatically.</p>
+                  <p>Example: 4,500 keeps your monthly living costs covered.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="income-period">Target period</label>
+              <div class="control__label-row">
+                <label for="income-period">Target period</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-income-period"
+                  aria-label="Show info about the target period"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <select id="income-period">
                 <option value="monthly" selected>Monthly</option>
                 <option value="annual">Annual</option>
               </select>
+              <div
+                class="info-popover"
+                id="info-income-period"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-income-period-title"
+                aria-describedby="info-income-period-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-income-period-title">Target period</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close target period details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-income-period-body">
+                  <p>Select whether your income goal is monthly or annual. The planner immediately converts the amount and summary numbers using ×12 or ÷12.</p>
+                  <p>Example: switching from monthly 4,500 to annual becomes 54,000.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="income-type">Target type</label>
+              <div class="control__label-row">
+                <label for="income-type">Target type</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-income-type"
+                  aria-label="Show info about the target type"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <select id="income-type">
                 <option value="net" selected>Net (after tax)</option>
                 <option value="gross">Gross (before tax)</option>
               </select>
+              <div
+                class="info-popover"
+                id="info-income-type"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-income-type-title"
+                aria-describedby="info-income-type-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-income-type-title">Target type</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close target type details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-income-type-body">
+                  <p>Pick whether the target amount is net (after tax) or gross (before tax). Switching modes instantly converts the figure using the effective tax rate.</p>
+                  <p>Example: with a 32% tax rate, 4,500 net becomes 6,617.65 gross.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="buffer-percent">Safety buffer (%)</label>
+              <div class="control__label-row">
+                <label for="buffer-percent">Safety buffer (%)</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-buffer-percent"
+                  aria-label="Show info about the safety buffer"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="number" id="buffer-percent" inputmode="decimal" value="10" min="0" max="90" step="1" />
               <p class="field-hint">Adds extra revenue coverage for no-shows or downtime.</p>
+              <div
+                class="info-popover"
+                id="info-buffer-percent"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-buffer-percent-title"
+                aria-describedby="info-buffer-percent-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-buffer-percent-title">Safety buffer</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close safety buffer details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-buffer-percent-body">
+                  <p>Increase this percentage to cover gaps such as cancellations or seasonal dips. The buffer multiplies the required revenue after taxes and costs.</p>
+                  <p>Example: 10% adds one extra tenth to the revenue target.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
           </div>
         </fieldset>
@@ -625,16 +1012,118 @@
           <legend class="visually-hidden">Costs and taxes</legend>
           <div class="control-row">
             <div class="control">
-              <label for="tax-rate">Effective tax rate (%)</label>
+              <div class="control__label-row">
+                <label for="tax-rate">Effective tax rate (%)</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-tax-rate"
+                  aria-label="Show info about the tax rate"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="number" id="tax-rate" inputmode="decimal" value="32" min="0" max="70" step="1" />
+              <div
+                class="info-popover"
+                id="info-tax-rate"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-tax-rate-title"
+                aria-describedby="info-tax-rate-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-tax-rate-title">Effective tax rate</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close tax rate details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-tax-rate-body">
+                  <p>Use your expected overall tax plus fees rate. The planner applies it to convert between net and gross income and to estimate take-home pay in the table.</p>
+                  <p>Example: 32% leaves 68% of gross revenue as net income.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="fixed-costs">Fixed costs per month</label>
+              <div class="control__label-row">
+                <label for="fixed-costs">Fixed costs per month</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-fixed-costs"
+                  aria-label="Show info about fixed costs"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="number" id="fixed-costs" inputmode="decimal" value="1200" min="0" step="50" />
+              <div
+                class="info-popover"
+                id="info-fixed-costs"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-fixed-costs-title"
+                aria-describedby="info-fixed-costs-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-fixed-costs-title">Fixed costs</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close fixed cost details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-fixed-costs-body">
+                  <p>Include recurring monthly expenses that do not depend on how many bookings you deliver, such as rent, software, or insurance.</p>
+                  <p>Example: add 1,200 for studio rent and utilities.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="variable-cost">Variable cost per booking</label>
+              <div class="control__label-row">
+                <label for="variable-cost">Variable cost per booking</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-variable-cost"
+                  aria-label="Show info about variable costs"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="number" id="variable-cost" inputmode="decimal" value="15" min="0" step="1" />
+              <div
+                class="info-popover"
+                id="info-variable-cost"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-variable-cost-title"
+                aria-describedby="info-variable-cost-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-variable-cost-title">Variable cost</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close variable cost details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-variable-cost-body">
+                  <p>Add per-booking expenses such as materials, transaction fees, or travel. These scale with the number of bookings in the summary and table.</p>
+                  <p>Example: add 15 to cover supplies used in each session.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
           </div>
         </fieldset>
@@ -643,25 +1132,195 @@
           <legend class="visually-hidden">Workload assumptions</legend>
           <div class="control-row">
             <div class="control">
-              <label for="expected-bookings">Expected bookings per month</label>
+              <div class="control__label-row">
+                <label for="expected-bookings">Expected bookings per month</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-expected-bookings"
+                  aria-label="Show info about expected bookings"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="number" id="expected-bookings" inputmode="decimal" value="12" min="0" step="1" />
+              <div
+                class="info-popover"
+                id="info-expected-bookings"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-expected-bookings-title"
+                aria-describedby="info-expected-bookings-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-expected-bookings-title">Expected bookings</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close expected bookings details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-expected-bookings-body">
+                  <p>Estimate how many bookings you realistically deliver per month. This drives the recommended price and marks the baseline scenario in the table.</p>
+                  <p>Example: enter 12 if you usually complete three bookings each week.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="bookings-options">Bookings to explore</label>
+              <div class="control__label-row">
+                <label for="bookings-options">Bookings to explore</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-bookings-options"
+                  aria-label="Show info about bookings to explore"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="text" id="bookings-options" value="8, 10, 12, 14" autocomplete="off" />
               <p class="field-hint">Comma separated list used for the scenario table.</p>
+              <div
+                class="info-popover"
+                id="info-bookings-options"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-bookings-options-title"
+                aria-describedby="info-bookings-options-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-bookings-options-title">Bookings to explore</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close bookings to explore details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-bookings-options-body">
+                  <p>List the booking counts you want to compare in the scenario table. Separate each value with a comma or space; decimals are allowed.</p>
+                  <p>Example: try 8, 10, 12, 14 to see outcomes if you land two extra clients.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="hours-per-booking">Hours per booking</label>
+              <div class="control__label-row">
+                <label for="hours-per-booking">Hours per booking</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-hours-per-booking"
+                  aria-label="Show info about hours per booking"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="number" id="hours-per-booking" inputmode="decimal" value="1.5" min="0" step="0.25" />
+              <div
+                class="info-popover"
+                id="info-hours-per-booking"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-hours-per-booking-title"
+                aria-describedby="info-hours-per-booking-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-hours-per-booking-title">Hours per booking</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close hours per booking details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-hours-per-booking-body">
+                  <p>Capture the time you invest in each booking, including preparation and follow up. The planner uses this to estimate your net hourly rate.</p>
+                  <p>Example: 1.5 hours accounts for a 60 minute session plus prep.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="billable-hours-week">Billable hours per week</label>
+              <div class="control__label-row">
+                <label for="billable-hours-week">Billable hours per week</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-billable-hours-week"
+                  aria-label="Show info about billable hours per week"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="number" id="billable-hours-week" inputmode="decimal" value="24" min="0" step="1" />
+              <div
+                class="info-popover"
+                id="info-billable-hours-week"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-billable-hours-week-title"
+                aria-describedby="info-billable-hours-week-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-billable-hours-week-title">Billable hours</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close billable hours details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-billable-hours-week-body">
+                  <p>Describe how many hours you can devote to paid work each week. When bookings are low or unset, the planner falls back to this limit for hourly rate estimates.</p>
+                  <p>Example: 24 hours reserves time for admin and marketing outside of bookings.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="working-weeks-year">Working weeks per year</label>
+              <div class="control__label-row">
+                <label for="working-weeks-year">Working weeks per year</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-working-weeks-year"
+                  aria-label="Show info about working weeks"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="number" id="working-weeks-year" inputmode="decimal" value="46" min="0" max="52" step="1" />
+              <div
+                class="info-popover"
+                id="info-working-weeks-year"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-working-weeks-year-title"
+                aria-describedby="info-working-weeks-year-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-working-weeks-year-title">Working weeks</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close working weeks details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-working-weeks-year-body">
+                  <p>Account for holidays or down time across the year. The planner converts weekly capacity into a monthly equivalent using this number.</p>
+                  <p>Example: 46 weeks leaves six weeks for vacation and recovery.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
           </div>
         </fieldset>
@@ -670,21 +1329,157 @@
           <legend class="visually-hidden">Price exploration</legend>
           <div class="control-row">
             <div class="control">
-              <label for="price-min">Price range minimum</label>
+              <div class="control__label-row">
+                <label for="price-min">Price range minimum</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-price-min"
+                  aria-label="Show info about the minimum price"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="number" id="price-min" inputmode="decimal" value="75" min="0" step="5" />
+              <div
+                class="info-popover"
+                id="info-price-min"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-price-min-title"
+                aria-describedby="info-price-min-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-price-min-title">Price minimum</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close price minimum details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-price-min-body">
+                  <p>Set the lowest price you are willing to charge in the scenario table. The planner builds price points from this floor upward.</p>
+                  <p>Example: enter 75 to explore prices from 75 and above.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="price-max">Price range maximum</label>
+              <div class="control__label-row">
+                <label for="price-max">Price range maximum</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-price-max"
+                  aria-label="Show info about the maximum price"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="number" id="price-max" inputmode="decimal" value="180" min="0" step="5" />
+              <div
+                class="info-popover"
+                id="info-price-max"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-price-max-title"
+                aria-describedby="info-price-max-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-price-max-title">Price maximum</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close price maximum details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-price-max-body">
+                  <p>Define the ceiling you want to model. The planner fills in price points between the minimum and maximum using the step value.</p>
+                  <p>Example: 180 keeps table prices between 75 and 180.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="price-step">Price step</label>
+              <div class="control__label-row">
+                <label for="price-step">Price step</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-price-step"
+                  aria-label="Show info about the price step"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="number" id="price-step" inputmode="decimal" value="15" min="1" step="1" />
+              <div
+                class="info-popover"
+                id="info-price-step"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-price-step-title"
+                aria-describedby="info-price-step-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-price-step-title">Price step</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close price step details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-price-step-body">
+                  <p>Control how much each generated price increases between the minimum and maximum. Smaller steps create more table columns to compare.</p>
+                  <p>Example: a step of 15 produces 75, 90, 105, and so on.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
             <div class="control">
-              <label for="price-points">Custom prices (optional)</label>
+              <div class="control__label-row">
+                <label for="price-points">Custom prices (optional)</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-price-points"
+                  aria-label="Show info about custom prices"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
               <input type="text" id="price-points" placeholder="e.g. 95, 125, 155" autocomplete="off" />
               <p class="field-hint">Use comma separated values to override the range above.</p>
+              <div
+                class="info-popover"
+                id="info-price-points"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-price-points-title"
+                aria-describedby="info-price-points-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-price-points-title">Custom prices</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close custom prices details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-price-points-body">
+                  <p>Override the automatic range by typing specific prices separated with commas. The table will only use these values along with the recommended price.</p>
+                  <p>Example: 95, 125, 155 compares only those offer levels.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
             </div>
           </div>
         </fieldset>
@@ -797,15 +1592,23 @@
       const tableNote = document.getElementById('table-note');
 
       const themeToggle = document.getElementById('theme-toggle');
+      const themeToggleLabel = document.getElementById('theme-toggle-label');
       const howToLink = document.getElementById('how-to-link');
       const howToDialog = document.getElementById('how-to-dialog');
       const howToClose = document.getElementById('how-to-close');
       const howToBackdrop = document.getElementById('how-to-backdrop');
+      const incomeTargetConversionHint = document.getElementById('income-target-conversion-hint');
+      const infoButtons = Array.from(document.querySelectorAll('.info-button[data-info-target]'));
 
       const MONTHS_PER_YEAR = 12;
       const numberFormatter0 = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
       const numberFormatter1 = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
       const numberFormatter2 = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      let lastIncomePeriod = incomePeriodSelect?.value === 'annual' ? 'annual' : 'monthly';
+      let lastIncomeType = incomeTypeSelect?.value === 'gross' ? 'gross' : 'net';
+      let activeInfo = null;
+      let previousFocus = null;
 
       function parseNumber(value) {
         if (typeof value === 'number') {
@@ -1107,6 +1910,195 @@
         tableNote.textContent = `${targetText} Tap a highlighted cell to spot combinations that exceed your goal.`.trim();
       }
 
+      function applyIncomeTargetConversions(nextPeriod, nextType) {
+        if (!incomeTargetInput) {
+          return;
+        }
+        const normalizedPeriod = nextPeriod === 'annual' ? 'annual' : 'monthly';
+        const normalizedType = nextType === 'gross' ? 'gross' : 'net';
+        const rawValue = parseNumber(incomeTargetInput.value);
+        if (!Number.isFinite(rawValue)) {
+          lastIncomePeriod = normalizedPeriod;
+          lastIncomeType = normalizedType;
+          if (incomeTargetConversionHint) {
+            incomeTargetConversionHint.textContent = '';
+          }
+          return;
+        }
+
+        const messages = [];
+        let updatedValue = rawValue;
+        let changed = false;
+        const parsedTaxRate = clamp(parsePercent(taxRateInput?.value), 0, 0.95);
+        const taxRate = Number.isFinite(parsedTaxRate) ? parsedTaxRate : 0;
+
+        if (lastIncomeType !== normalizedType) {
+          changed = true;
+          if (lastIncomeType === 'net' && normalizedType === 'gross') {
+            const divisor = Math.max(1 - taxRate, 0.0001);
+            updatedValue = updatedValue / divisor;
+            messages.push(`Converted to gross using ${formatPercent(taxRate)} tax.`);
+          } else if (lastIncomeType === 'gross' && normalizedType === 'net') {
+            updatedValue = updatedValue * Math.max(1 - taxRate, 0);
+            messages.push(`Converted to net using ${formatPercent(taxRate)} tax.`);
+          }
+        }
+
+        if (lastIncomePeriod !== normalizedPeriod) {
+          changed = true;
+          if (lastIncomePeriod === 'monthly' && normalizedPeriod === 'annual') {
+            updatedValue *= MONTHS_PER_YEAR;
+            messages.push('Converted to annual (×12).');
+          } else if (lastIncomePeriod === 'annual' && normalizedPeriod === 'monthly') {
+            updatedValue /= MONTHS_PER_YEAR;
+            messages.push('Converted to monthly (÷12).');
+          }
+        }
+
+        if (changed) {
+          const rounded = Math.round(updatedValue * 100) / 100;
+          const sanitized = Math.abs(rounded) < 0.01 ? 0 : rounded;
+          incomeTargetInput.value = sanitized.toFixed(2);
+          if (incomeTargetConversionHint) {
+            const detail = messages.join(' ');
+            incomeTargetConversionHint.textContent = detail
+              ? `${detail} Values rounded to 2 decimals.`
+              : 'Values rounded to 2 decimals.';
+          }
+        } else if (incomeTargetConversionHint) {
+          incomeTargetConversionHint.textContent = '';
+        }
+
+        lastIncomePeriod = normalizedPeriod;
+        lastIncomeType = normalizedType;
+      }
+
+      function positionInfoPopover(button, popover) {
+        if (!button || !popover) {
+          return;
+        }
+        const spacing = 12;
+        const viewportPadding = 12;
+        const buttonRect = button.getBoundingClientRect();
+        const maxHeight = Math.max(220, window.innerHeight - viewportPadding * 2);
+        popover.style.maxHeight = `${Math.round(maxHeight)}px`;
+        const popoverRect = popover.getBoundingClientRect();
+        let top = buttonRect.bottom + spacing;
+        let left = buttonRect.left + buttonRect.width / 2 - popoverRect.width / 2;
+
+        if (left < viewportPadding) {
+          left = viewportPadding;
+        }
+        if (left + popoverRect.width > window.innerWidth - viewportPadding) {
+          left = window.innerWidth - viewportPadding - popoverRect.width;
+        }
+        if (left < viewportPadding) {
+          left = viewportPadding;
+        }
+
+        if (top + popoverRect.height > window.innerHeight - viewportPadding) {
+          const above = buttonRect.top - spacing - popoverRect.height;
+          if (above >= viewportPadding) {
+            top = above;
+          } else {
+            top = Math.max(viewportPadding, Math.min(top, window.innerHeight - viewportPadding - popoverRect.height));
+          }
+        }
+
+        if (top < viewportPadding) {
+          top = viewportPadding;
+        }
+
+        popover.style.top = `${Math.round(top)}px`;
+        popover.style.left = `${Math.round(left)}px`;
+      }
+
+      function closeInfoPopover(options = {}) {
+        if (!activeInfo) {
+          return;
+        }
+        const { button, popover, onPointerDown, onKeyDown, onReposition } = activeInfo;
+        document.removeEventListener('pointerdown', onPointerDown, true);
+        document.removeEventListener('keydown', onKeyDown, true);
+        window.removeEventListener('resize', onReposition);
+        window.removeEventListener('scroll', onReposition, true);
+        popover.setAttribute('aria-hidden', 'true');
+        popover.setAttribute('hidden', '');
+        popover.style.visibility = '';
+        popover.style.top = '';
+        popover.style.left = '';
+        popover.style.maxHeight = '';
+        delete popover.dataset.open;
+        if (button) {
+          button.setAttribute('aria-expanded', 'false');
+        }
+        if (options.restoreFocus !== false && button && button.isConnected) {
+          button.focus();
+        }
+        activeInfo = null;
+      }
+
+      function openInfoPopover(button, popover) {
+        if (!button || !popover) {
+          return;
+        }
+        if (activeInfo?.button === button) {
+          closeInfoPopover();
+          return;
+        }
+
+        closeInfoPopover({ restoreFocus: false });
+
+        const onPointerDown = event => {
+          if (!popover.contains(event.target) && !button.contains(event.target)) {
+            closeInfoPopover();
+          }
+        };
+
+        const onKeyDown = event => {
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopPropagation();
+            closeInfoPopover();
+          }
+        };
+
+        const onReposition = () => {
+          if (activeInfo?.popover === popover) {
+            positionInfoPopover(button, popover);
+          }
+        };
+
+        activeInfo = { button, popover, onPointerDown, onKeyDown, onReposition };
+
+        document.addEventListener('pointerdown', onPointerDown, true);
+        document.addEventListener('keydown', onKeyDown, true);
+        window.addEventListener('resize', onReposition);
+        window.addEventListener('scroll', onReposition, true);
+
+        button.setAttribute('aria-expanded', 'true');
+        popover.removeAttribute('hidden');
+        popover.setAttribute('aria-hidden', 'false');
+        popover.dataset.open = 'true';
+        popover.style.visibility = 'hidden';
+        popover.style.top = '0px';
+        popover.style.left = '0px';
+
+        requestAnimationFrame(() => {
+          if (activeInfo?.popover !== popover) {
+            return;
+          }
+          positionInfoPopover(button, popover);
+          popover.style.visibility = 'visible';
+          const focusTarget = popover.querySelector('[data-info-close]')
+            || popover.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+            || popover;
+          if (focusTarget instanceof HTMLElement) {
+            focusTarget.focus();
+          }
+        });
+      }
+
       function update() {
         const values = collectInputs();
         const summary = computeSummary(values);
@@ -1117,8 +2109,6 @@
       const inputElements = [
         currencyInput,
         incomeTargetInput,
-        incomePeriodSelect,
-        incomeTypeSelect,
         bufferInput,
         taxRateInput,
         fixedCostsInput,
@@ -1138,12 +2128,73 @@
         element?.addEventListener('change', update);
       });
 
+      infoButtons.forEach(button => {
+        const targetId = button.dataset.infoTarget;
+        const popover = targetId ? document.getElementById(targetId) : null;
+        if (!popover) {
+          button.setAttribute('aria-disabled', 'true');
+          button.setAttribute('tabindex', '-1');
+          return;
+        }
+        button.setAttribute('aria-expanded', 'false');
+        button.setAttribute('aria-haspopup', 'dialog');
+        button.setAttribute('aria-controls', popover.id);
+
+        const closeButton = popover.querySelector('[data-info-close]');
+        closeButton?.addEventListener('click', () => closeInfoPopover());
+
+        popover.addEventListener('keydown', event => {
+          if (event.key === 'Escape') {
+            event.stopPropagation();
+            closeInfoPopover();
+          }
+        });
+
+        const howToButton = popover.querySelector('[data-info-how-to]');
+        if (howToButton) {
+          howToButton.addEventListener('click', () => {
+            const originButton = button;
+            closeInfoPopover({ restoreFocus: false });
+            openHowToDialog();
+            if (originButton) {
+              previousFocus = originButton;
+            }
+          });
+        }
+
+        button.addEventListener('click', () => openInfoPopover(button, popover));
+      });
+
+      function handleIncomeSettingsChange() {
+        const nextPeriod = incomePeriodSelect?.value;
+        const nextType = incomeTypeSelect?.value;
+        applyIncomeTargetConversions(nextPeriod, nextType);
+        update();
+      }
+
+      incomePeriodSelect?.addEventListener('change', handleIncomeSettingsChange);
+      incomeTypeSelect?.addEventListener('change', handleIncomeSettingsChange);
+
+      incomeTargetInput?.addEventListener('input', () => {
+        if (incomeTargetConversionHint) {
+          incomeTargetConversionHint.textContent = '';
+        }
+        lastIncomePeriod = incomePeriodSelect?.value === 'annual' ? 'annual' : 'monthly';
+        lastIncomeType = incomeTypeSelect?.value === 'gross' ? 'gross' : 'net';
+      });
+
       function applyTheme(theme) {
         const normalized = theme === 'light' ? 'light' : 'dark';
         document.body.dataset.theme = normalized;
         localStorage.setItem('income-planner-theme', normalized);
         const isDark = normalized === 'dark';
-        themeToggle.textContent = isDark ? 'Dark mode' : 'Light mode';
+        if (themeToggleLabel) {
+          themeToggleLabel.textContent = isDark ? 'Dark theme' : 'Light theme';
+        }
+        themeToggle.setAttribute(
+          'aria-label',
+          isDark ? 'Dark theme active. Switch to light theme.' : 'Light theme active. Switch to dark theme.'
+        );
         themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
         document.dispatchEvent(new CustomEvent('themechange', { detail: normalized }));
       }
@@ -1156,12 +2207,11 @@
         applyTheme(next);
       });
 
-      let previousFocus = null;
-
       function openHowToDialog() {
         if (!howToDialog) {
           return;
         }
+        closeInfoPopover({ restoreFocus: false });
         previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
         howToDialog.setAttribute('aria-hidden', 'false');
         document.body.classList.add('dialog-open');
