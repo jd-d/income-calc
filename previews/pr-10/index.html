@@ -1825,6 +1825,63 @@
         .filter(item => item >= 0);
     }
 
+    function stringifyStateNumber(value, precision = 2) {
+      if (!Number.isFinite(value)) {
+        return '';
+      }
+      const factor = 10 ** precision;
+      const rounded = Math.round(value * factor) / factor;
+      return `${rounded}`;
+    }
+
+    function hasPersistedCapacityFields(state) {
+      if (!state || typeof state !== 'object') {
+        return false;
+      }
+      return ['monthsOff', 'weeklyHours', 'utilization'].some(key => {
+        const value = state[key];
+        if (typeof value === 'string') {
+          return value.trim().length > 0;
+        }
+        return value != null;
+      });
+    }
+
+    function migrateLegacyCapacityFields(state) {
+      if (!state || typeof state !== 'object') {
+        return {};
+      }
+
+      const migrated = {};
+      const parsedLegacyHours = parseNumber(state.billableHoursWeek);
+      const legacyBillableHoursWeek = Number.isFinite(parsedLegacyHours) ? Math.max(parsedLegacyHours, 0) : NaN;
+      const parsedWorkingWeeks = parseNumber(state.workingWeeks);
+      const legacyWorkingWeeks = Number.isFinite(parsedWorkingWeeks)
+        ? clamp(parsedWorkingWeeks, 0, WEEKS_PER_YEAR)
+        : NaN;
+
+      if (Number.isFinite(legacyWorkingWeeks)) {
+        const workingFraction = Math.min(Math.max(legacyWorkingWeeks / WEEKS_PER_YEAR, 0), 1);
+        const derivedMonthsOff = clamp(MONTHS_PER_YEAR * (1 - workingFraction), 0, MONTHS_PER_YEAR);
+        if (Number.isFinite(derivedMonthsOff)) {
+          const roundedMonthsOff = Math.round(derivedMonthsOff * 2) / 2;
+          migrated.monthsOff = stringifyStateNumber(roundedMonthsOff, 2);
+        }
+      }
+
+      if (Number.isFinite(legacyBillableHoursWeek)) {
+        migrated.weeklyHours = stringifyStateNumber(Math.max(legacyBillableHoursWeek, 0), 2);
+        const parsedUtilization = clamp(parsePercent(state.utilization), 0, 1);
+        if (Number.isFinite(parsedUtilization)) {
+          migrated.utilization = stringifyStateNumber(parsedUtilization * 100, 2);
+        } else {
+          migrated.utilization = '100';
+        }
+      }
+
+      return migrated;
+    }
+
     function buildPricePoints({ rangeMin, rangeMax, rangeStep, customPoints, recommended }) {
       const values = new Set();
       if (Array.isArray(customPoints) && customPoints.length) {
@@ -2606,11 +2663,23 @@
 
     const defaultCalcState = getDefaultStateFromInputs();
     const storedCalcState = readStoredState();
+    let migratedCapacityFields = {};
+    let appliedLegacyMigration = false;
+
+    if (storedCalcState && !hasPersistedCapacityFields(storedCalcState)) {
+      migratedCapacityFields = migrateLegacyCapacityFields(storedCalcState);
+      appliedLegacyMigration = Object.keys(migratedCapacityFields).length > 0;
+    }
+
     calcState = storedCalcState
-      ? normalizeCalcState({ ...defaultCalcState, ...storedCalcState })
+      ? normalizeCalcState({ ...defaultCalcState, ...storedCalcState, ...migratedCapacityFields })
       : defaultCalcState;
     lastIncomePeriod = calcState.incomePeriod;
     lastIncomeType = calcState.incomeType;
+
+    if (appliedLegacyMigration) {
+      persistState();
+    }
 
     render();
   </script>
