@@ -5,10 +5,6 @@ on:
     branches:
       - main
       - work
-  pull_request:
-    branches:
-      - main
-      - work
   pull_request_target:
     branches:
       - main
@@ -16,7 +12,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: pages
+  group: pages-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
