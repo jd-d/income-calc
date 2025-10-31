@@ -1605,8 +1605,8 @@
       const numberFormatter1 = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
       const numberFormatter2 = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-      let lastIncomePeriod = incomePeriodSelect?.value === 'annual' ? 'annual' : 'monthly';
-      let lastIncomeType = incomeTypeSelect?.value === 'gross' ? 'gross' : 'net';
+      let lastIncomePeriod = 'monthly';
+      let lastIncomeType = 'net';
       let activeInfo = null;
       let previousFocus = null;
 
@@ -1710,24 +1710,151 @@
         return Array.from(values).sort((a, b) => a - b);
       }
 
-      function collectInputs() {
-        const currency = currencyInput.value.trim() || '€';
-        const incomeTarget = parseNumber(incomeTargetInput.value);
-        const incomePeriod = incomePeriodSelect.value === 'annual' ? 'annual' : 'monthly';
-        const incomeType = incomeTypeSelect.value === 'gross' ? 'gross' : 'net';
-        const bufferPercent = clamp(parsePercent(bufferInput.value), 0, 0.95);
-        const taxRate = clamp(parsePercent(taxRateInput.value), 0, 0.95);
-        const fixedCosts = Math.max(parseNumber(fixedCostsInput.value) || 0, 0);
-        const variableCost = Math.max(parseNumber(variableCostInput.value) || 0, 0);
-        const expectedBookings = Math.max(parseNumber(expectedBookingsInput.value) || 0, 0);
-        const bookingsOptions = parseList(bookingsOptionsInput.value);
-        const hoursPerBooking = Math.max(parseNumber(hoursPerBookingInput.value) || 0, 0);
-        const billableHoursWeek = Math.max(parseNumber(billableHoursWeekInput.value) || 0, 0);
-        const workingWeeks = clamp(parseNumber(workingWeeksInput.value), 0, 52);
-        const priceMin = Math.max(parseNumber(priceMinInput.value) || NaN, 0);
-        const priceMax = Math.max(parseNumber(priceMaxInput.value) || NaN, 0);
-        const priceStep = Math.max(parseNumber(priceStepInput.value) || NaN, 0);
-        const pricePoints = parseList(pricePointsInput.value);
+      const STATE_STORAGE_KEY = 'ic.state.v1';
+      const stateTemplate = {
+        currency: '',
+        incomeTarget: '',
+        incomePeriod: 'monthly',
+        incomeType: 'net',
+        bufferPercent: '',
+        taxRate: '',
+        fixedCosts: '',
+        variableCost: '',
+        expectedBookings: '',
+        bookingsOptions: '',
+        hoursPerBooking: '',
+        billableHoursWeek: '',
+        workingWeeks: '',
+        priceMin: '',
+        priceMax: '',
+        priceStep: '',
+        pricePoints: '',
+        incomeTargetHint: ''
+      };
+
+      function normalizeCalcState(input) {
+        const normalized = { ...stateTemplate };
+        if (!input || typeof input !== 'object') {
+          return normalized;
+        }
+        Object.keys(normalized).forEach(key => {
+          const value = input[key];
+          if (key === 'incomePeriod') {
+            normalized[key] = value === 'annual' ? 'annual' : 'monthly';
+          } else if (key === 'incomeType') {
+            normalized[key] = value === 'gross' ? 'gross' : 'net';
+          } else if (typeof value === 'string') {
+            normalized[key] = value;
+          } else if (value == null) {
+            normalized[key] = '';
+          } else {
+            normalized[key] = String(value);
+          }
+        });
+        return normalized;
+      }
+
+      let calcState = normalizeCalcState({});
+
+      function readStoredState() {
+        try {
+          const raw = localStorage.getItem(STATE_STORAGE_KEY);
+          if (!raw) {
+            return null;
+          }
+          const parsed = JSON.parse(raw);
+          return normalizeCalcState(parsed);
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function persistState() {
+        try {
+          localStorage.setItem(STATE_STORAGE_KEY, JSON.stringify(calcState));
+        } catch (error) {
+          // ignore persistence errors
+        }
+      }
+
+      function getDefaultStateFromInputs() {
+        return normalizeCalcState({
+          currency: currencyInput?.value ?? '',
+          incomeTarget: incomeTargetInput?.value ?? '',
+          incomePeriod: incomePeriodSelect?.value,
+          incomeType: incomeTypeSelect?.value,
+          bufferPercent: bufferInput?.value ?? '',
+          taxRate: taxRateInput?.value ?? '',
+          fixedCosts: fixedCostsInput?.value ?? '',
+          variableCost: variableCostInput?.value ?? '',
+          expectedBookings: expectedBookingsInput?.value ?? '',
+          bookingsOptions: bookingsOptionsInput?.value ?? '',
+          hoursPerBooking: hoursPerBookingInput?.value ?? '',
+          billableHoursWeek: billableHoursWeekInput?.value ?? '',
+          workingWeeks: workingWeeksInput?.value ?? '',
+          priceMin: priceMinInput?.value ?? '',
+          priceMax: priceMaxInput?.value ?? '',
+          priceStep: priceStepInput?.value ?? '',
+          pricePoints: pricePointsInput?.value ?? '',
+          incomeTargetHint: ''
+        });
+      }
+
+      function setInputValue(element, value) {
+        if (!element) {
+          return;
+        }
+        const nextValue = value ?? '';
+        if (element.value !== nextValue) {
+          element.value = nextValue;
+        }
+      }
+
+      function applyStateToInputs(state) {
+        setInputValue(currencyInput, state.currency);
+        setInputValue(incomeTargetInput, state.incomeTarget);
+        if (incomePeriodSelect && incomePeriodSelect.value !== state.incomePeriod) {
+          incomePeriodSelect.value = state.incomePeriod;
+        }
+        if (incomeTypeSelect && incomeTypeSelect.value !== state.incomeType) {
+          incomeTypeSelect.value = state.incomeType;
+        }
+        setInputValue(bufferInput, state.bufferPercent);
+        setInputValue(taxRateInput, state.taxRate);
+        setInputValue(fixedCostsInput, state.fixedCosts);
+        setInputValue(variableCostInput, state.variableCost);
+        setInputValue(expectedBookingsInput, state.expectedBookings);
+        setInputValue(bookingsOptionsInput, state.bookingsOptions);
+        setInputValue(hoursPerBookingInput, state.hoursPerBooking);
+        setInputValue(billableHoursWeekInput, state.billableHoursWeek);
+        setInputValue(workingWeeksInput, state.workingWeeks);
+        setInputValue(priceMinInput, state.priceMin);
+        setInputValue(priceMaxInput, state.priceMax);
+        setInputValue(priceStepInput, state.priceStep);
+        setInputValue(pricePointsInput, state.pricePoints);
+        if (incomeTargetConversionHint) {
+          incomeTargetConversionHint.textContent = state.incomeTargetHint || '';
+        }
+      }
+
+      function deriveValues(state) {
+        const currency = (state.currency || '').trim() || '€';
+        const incomeTarget = parseNumber(state.incomeTarget);
+        const incomePeriod = state.incomePeriod === 'annual' ? 'annual' : 'monthly';
+        const incomeType = state.incomeType === 'gross' ? 'gross' : 'net';
+        const bufferPercent = clamp(parsePercent(state.bufferPercent), 0, 0.95);
+        const taxRate = clamp(parsePercent(state.taxRate), 0, 0.95);
+        const fixedCosts = Math.max(parseNumber(state.fixedCosts) || 0, 0);
+        const variableCost = Math.max(parseNumber(state.variableCost) || 0, 0);
+        const expectedBookings = Math.max(parseNumber(state.expectedBookings) || 0, 0);
+        const bookingsOptions = parseList(state.bookingsOptions);
+        const hoursPerBooking = Math.max(parseNumber(state.hoursPerBooking) || 0, 0);
+        const billableHoursWeek = Math.max(parseNumber(state.billableHoursWeek) || 0, 0);
+        const workingWeeks = clamp(parseNumber(state.workingWeeks), 0, 52);
+        const priceMin = Math.max(parseNumber(state.priceMin) || NaN, 0);
+        const priceMax = Math.max(parseNumber(state.priceMax) || NaN, 0);
+        const priceStep = Math.max(parseNumber(state.priceStep) || NaN, 0);
+        const pricePoints = parseList(state.pricePoints);
 
         return {
           currency,
@@ -1748,6 +1875,28 @@
           priceStep,
           pricePoints
         };
+      }
+
+      const defaultCalcState = getDefaultStateFromInputs();
+      const storedCalcState = readStoredState();
+      calcState = storedCalcState
+        ? normalizeCalcState({ ...defaultCalcState, ...storedCalcState })
+        : defaultCalcState;
+      lastIncomePeriod = calcState.incomePeriod;
+      lastIncomeType = calcState.incomeType;
+
+      function render() {
+        applyStateToInputs(calcState);
+        const values = deriveValues(calcState);
+        const summary = computeSummary(values);
+        renderSummary(values, summary);
+        renderTable(values, summary);
+      }
+
+      function updateCalcState(partial) {
+        calcState = normalizeCalcState({ ...calcState, ...partial });
+        persistState();
+        render();
       }
 
       function computeSummary(values) {
@@ -1910,26 +2059,25 @@
         tableNote.textContent = `${targetText} Tap a highlighted cell to spot combinations that exceed your goal.`.trim();
       }
 
-      function applyIncomeTargetConversions(nextPeriod, nextType) {
-        if (!incomeTargetInput) {
-          return;
-        }
+      function applyIncomeTargetConversions(state, nextPeriod, nextType) {
         const normalizedPeriod = nextPeriod === 'annual' ? 'annual' : 'monthly';
         const normalizedType = nextType === 'gross' ? 'gross' : 'net';
-        const rawValue = parseNumber(incomeTargetInput.value);
+        const rawValue = parseNumber(state.incomeTarget);
         if (!Number.isFinite(rawValue)) {
           lastIncomePeriod = normalizedPeriod;
           lastIncomeType = normalizedType;
-          if (incomeTargetConversionHint) {
-            incomeTargetConversionHint.textContent = '';
-          }
-          return;
+          return {
+            incomePeriod: normalizedPeriod,
+            incomeType: normalizedType,
+            incomeTarget: state.incomeTarget,
+            incomeTargetHint: ''
+          };
         }
 
         const messages = [];
         let updatedValue = rawValue;
         let changed = false;
-        const parsedTaxRate = clamp(parsePercent(taxRateInput?.value), 0, 0.95);
+        const parsedTaxRate = clamp(parsePercent(state.taxRate), 0, 0.95);
         const taxRate = Number.isFinite(parsedTaxRate) ? parsedTaxRate : 0;
 
         if (lastIncomeType !== normalizedType) {
@@ -1955,22 +2103,30 @@
           }
         }
 
-        if (changed) {
-          const rounded = Math.round(updatedValue * 100) / 100;
-          const sanitized = Math.abs(rounded) < 0.01 ? 0 : rounded;
-          incomeTargetInput.value = sanitized.toFixed(2);
-          if (incomeTargetConversionHint) {
-            const detail = messages.join(' ');
-            incomeTargetConversionHint.textContent = detail
-              ? `${detail} Values rounded to 2 decimals.`
-              : 'Values rounded to 2 decimals.';
-          }
-        } else if (incomeTargetConversionHint) {
-          incomeTargetConversionHint.textContent = '';
-        }
-
         lastIncomePeriod = normalizedPeriod;
         lastIncomeType = normalizedType;
+
+        if (!changed) {
+          return {
+            incomePeriod: normalizedPeriod,
+            incomeType: normalizedType,
+            incomeTarget: state.incomeTarget,
+            incomeTargetHint: ''
+          };
+        }
+
+        const rounded = Math.round(updatedValue * 100) / 100;
+        const sanitized = Math.abs(rounded) < 0.01 ? 0 : rounded;
+        const formatted = Number.isFinite(sanitized) ? sanitized.toFixed(2) : '';
+        const detail = messages.join(' ');
+        const hint = detail ? `${detail} Values rounded to 2 decimals.` : 'Values rounded to 2 decimals.';
+
+        return {
+          incomePeriod: normalizedPeriod,
+          incomeType: normalizedType,
+          incomeTarget: formatted,
+          incomeTargetHint: hint
+        };
       }
 
       function positionInfoPopover(button, popover) {
@@ -2099,33 +2255,32 @@
         });
       }
 
-      function update() {
-        const values = collectInputs();
-        const summary = computeSummary(values);
-        renderSummary(values, summary);
-        renderTable(values, summary);
-      }
-
-      const inputElements = [
-        currencyInput,
-        incomeTargetInput,
-        bufferInput,
-        taxRateInput,
-        fixedCostsInput,
-        variableCostInput,
-        expectedBookingsInput,
-        bookingsOptionsInput,
-        hoursPerBookingInput,
-        billableHoursWeekInput,
-        workingWeeksInput,
-        priceMinInput,
-        priceMaxInput,
-        priceStepInput,
-        pricePointsInput
+      const stateBindings = [
+        [currencyInput, 'currency'],
+        [bufferInput, 'bufferPercent'],
+        [taxRateInput, 'taxRate'],
+        [fixedCostsInput, 'fixedCosts'],
+        [variableCostInput, 'variableCost'],
+        [expectedBookingsInput, 'expectedBookings'],
+        [bookingsOptionsInput, 'bookingsOptions'],
+        [hoursPerBookingInput, 'hoursPerBooking'],
+        [billableHoursWeekInput, 'billableHoursWeek'],
+        [workingWeeksInput, 'workingWeeks'],
+        [priceMinInput, 'priceMin'],
+        [priceMaxInput, 'priceMax'],
+        [priceStepInput, 'priceStep'],
+        [pricePointsInput, 'pricePoints']
       ];
-      inputElements.forEach(element => {
-        element?.addEventListener('input', update);
-        element?.addEventListener('change', update);
+      stateBindings.forEach(([element, key]) => {
+        if (!element) {
+          return;
+        }
+        const handler = event => {
+          const value = typeof event?.target?.value === 'string' ? event.target.value : '';
+          updateCalcState({ [key]: value });
+        };
+        element.addEventListener('input', handler);
+        element.addEventListener('change', handler);
       });
 
       infoButtons.forEach(button => {
@@ -2168,20 +2323,22 @@
       function handleIncomeSettingsChange() {
         const nextPeriod = incomePeriodSelect?.value;
         const nextType = incomeTypeSelect?.value;
-        applyIncomeTargetConversions(nextPeriod, nextType);
-        update();
+        const conversion = applyIncomeTargetConversions(calcState, nextPeriod, nextType);
+        updateCalcState(conversion);
       }
 
       incomePeriodSelect?.addEventListener('change', handleIncomeSettingsChange);
       incomeTypeSelect?.addEventListener('change', handleIncomeSettingsChange);
 
-      incomeTargetInput?.addEventListener('input', () => {
-        if (incomeTargetConversionHint) {
-          incomeTargetConversionHint.textContent = '';
-        }
-        lastIncomePeriod = incomePeriodSelect?.value === 'annual' ? 'annual' : 'monthly';
-        lastIncomeType = incomeTypeSelect?.value === 'gross' ? 'gross' : 'net';
-      });
+      const handleIncomeTargetInput = event => {
+        lastIncomePeriod = calcState.incomePeriod === 'annual' ? 'annual' : 'monthly';
+        lastIncomeType = calcState.incomeType === 'gross' ? 'gross' : 'net';
+        const value = typeof event?.target?.value === 'string' ? event.target.value : '';
+        updateCalcState({ incomeTarget: value, incomeTargetHint: '' });
+      };
+
+      incomeTargetInput?.addEventListener('input', handleIncomeTargetInput);
+      incomeTargetInput?.addEventListener('change', handleIncomeTargetInput);
 
       function applyTheme(theme) {
         const normalized = theme === 'light' ? 'light' : 'dark';
@@ -2244,7 +2401,7 @@
         }
       });
 
-      update();
+      render();
     })();
   </script>
 </body>
