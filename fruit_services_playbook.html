@@ -151,6 +151,65 @@
     }
     .pill { display:inline-block; background:#111827; border:1px solid #1f2937; color:#cbd5e1; padding:4px 10px; border-radius:999px; font-size:12px; margin-right:6px}
     footer { margin-top: 64px; color: var(--muted); font-size: 13px; }
+    @media print {
+      :root {
+        --bg: #ffffff;
+        --panel: #ffffff;
+        --text: #000000;
+        --border: #d1d5db;
+        --shadow: none;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .wrap,
+      .panel,
+      header.page,
+      table,
+      th,
+      td,
+      .callout,
+      code,
+      pre {
+        background: #ffffff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        border-color: #d1d5db !important;
+      }
+      .panel,
+      .callout,
+      code,
+      pre {
+        border: 1px solid #d1d5db !important;
+      }
+      table {
+        border: 1px solid #d1d5db !important;
+      }
+      th,
+      td {
+        border: 1px solid #d1d5db !important;
+      }
+      th {
+        font-weight: 700;
+      }
+      .tag,
+      .pill,
+      .kpi {
+        background: none !important;
+        color: #000000 !important;
+        border: 1px solid #d1d5db !important;
+      }
+      a {
+        color: #000000 !important;
+        text-decoration: underline !important;
+      }
+      a::after {
+        content: " (" attr(href) ")";
+        font-size: 12px;
+        word-break: break-all;
+      }
+    }
   </style>
 </head>
 <body>
