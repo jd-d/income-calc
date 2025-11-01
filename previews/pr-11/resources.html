@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0a0c12" />
+  <link rel="icon" href="assets/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="assets/favicon.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <title>Helpful Resources • Income Calculator</title>
+  <script src="pwa.js" defer></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg-gradient: radial-gradient(circle at top left, #1e2330, #10131c 55%, #0a0c12 100%);
+      --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --font-heading: "Clash Display", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --card-bg: rgba(20, 24, 35, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-border-gradient: linear-gradient(
+        135deg,
+        rgba(77, 163, 255, 0.6),
+        rgba(149, 114, 255, 0.45)
+      );
+      --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+      --accent: #4da3ff;
+      --text-primary: #f5f7fb;
+      --text-muted: #b1b7c7;
+      --button-bg: #f1f5ff;
+      --button-color: #0c111d;
+      --button-shadow: rgba(0, 0, 0, 0.3);
+      --secondary-button-bg: rgba(77, 163, 255, 0.15);
+      --secondary-button-border: rgba(77, 163, 255, 0.45);
+      --secondary-button-hover-bg: rgba(77, 163, 255, 0.25);
+      --focus-ring: rgba(77, 163, 255, 0.25);
+      --focus-outline: rgba(77, 163, 255, 0.55);
+      --info-bg: rgba(77, 163, 255, 0.12);
+      --info-border: rgba(77, 163, 255, 0.35);
+    }
+
+    body[data-theme="light"] {
+      color-scheme: light;
+      --bg-gradient: radial-gradient(circle at top left, #eff4ff, #dde7ff 55%, #d4e0ff 100%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --card-border: rgba(15, 23, 42, 0.08);
+      --card-border-gradient: linear-gradient(
+        135deg,
+        rgba(37, 99, 235, 0.35),
+        rgba(59, 130, 246, 0.15)
+      );
+      --card-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+      --accent: #2563eb;
+      --text-primary: #111827;
+      --text-muted: #4b5563;
+      --button-bg: #1d4ed8;
+      --button-color: #f8fafc;
+      --button-shadow: rgba(29, 78, 216, 0.3);
+      --secondary-button-bg: rgba(37, 99, 235, 0.12);
+      --secondary-button-border: rgba(37, 99, 235, 0.3);
+      --secondary-button-hover-bg: rgba(37, 99, 235, 0.22);
+      --focus-ring: rgba(37, 99, 235, 0.28);
+      --focus-outline: rgba(37, 99, 235, 0.55);
+      --info-bg: rgba(37, 99, 235, 0.12);
+      --info-border: rgba(37, 99, 235, 0.32);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-body);
+      line-height: 1.6;
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .page {
+      width: min(960px, 92vw);
+      margin: 0 auto;
+      padding: clamp(24px, 5vw, 48px) 0 64px;
+      padding-top: calc(
+        clamp(24px, 5vw, 48px) + env(safe-area-inset-top, 0px)
+      );
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0 24px;
+    }
+
+    .top-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--secondary-button-border);
+      background: var(--secondary-button-bg);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .top-link::before {
+      content: "←";
+      font-size: 1rem;
+    }
+
+    .top-link:hover,
+    .top-link:focus-visible {
+      background: var(--secondary-button-hover-bg);
+      border-color: var(--secondary-button-border);
+      transform: translateY(-1px);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 2.75rem);
+    }
+
+    p.lead {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .resource-card {
+      background: var(--card-bg);
+      border-radius: 18px;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
+      padding: clamp(20px, 3vw, 28px);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .resource-card h2 {
+      font-family: var(--font-heading);
+      font-weight: 500;
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    .resource-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .resource-list li {
+      background: var(--info-bg);
+      border: 1px solid var(--info-border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .resource-link {
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .resource-link:hover,
+    .resource-link:focus-visible {
+      text-decoration: underline;
+    }
+
+    .resource-description {
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: 100%;
+      }
+
+      .top-nav {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <div class="page">
+    <nav class="top-nav">
+      <a href="index.html" class="top-link">Back to calculator</a>
+    </nav>
+    <main>
+      <header>
+        <h1>Helpful resources</h1>
+        <p class="lead">Dive deeper into common Dutch freelancer costs with these curated guides.</p>
+      </header>
+      <section class="resource-card" aria-labelledby="resource-links-title">
+        <h2 id="resource-links-title">Cost benchmarks and guidance</h2>
+        <ul class="resource-list">
+          <li>
+            <a
+              class="resource-link"
+              href="https://www.kvk.nl/financiering/bereken-uw-uurtarief-als-zzper/"
+              target="_blank"
+              rel="noreferrer noopener"
+            >KVK on calculating your ZZP hourly rate</a>
+            <p class="resource-description">Overview of typical Dutch freelancer expenses and how to structure your tariff.</p>
+          </li>
+          <li>
+            <a
+              class="resource-link"
+              href="https://www.independer.nl/pensioen/zelfstandig/pensioen-zzp.aspx"
+              target="_blank"
+              rel="noreferrer noopener"
+            >Independer pension comparison for ZZP’ers</a>
+            <p class="resource-description">Compare third pillar pension products tailored to independent professionals.</p>
+          </li>
+          <li>
+            <a
+              class="resource-link"
+              href="https://www.zzp-nederland.nl/verzekeringen/arbeidsongeschiktheidsverzekering"
+              target="_blank"
+              rel="noreferrer noopener"
+            >ZZP Nederland on AOV insurance</a>
+            <p class="resource-description">Understand disability (AOV) coverage options, premiums, and tax treatment.</p>
+          </li>
+          <li>
+            <a
+              class="resource-link"
+              href="https://www.zorgwijzer.nl/zorgverzekering/zzp"
+              target="_blank"
+              rel="noreferrer noopener"
+            >Zorgwijzer health insurance guide for ZZP’ers</a>
+            <p class="resource-description">Compare zorgverzekeringen with business deductions and self-employed benefits in mind.</p>
+          </li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script>
+    (function applyStoredTheme() {
+      const THEME_STORAGE_KEY = 'income-calculator-theme';
+      const prefersDark = typeof window.matchMedia === 'function'
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+        : true;
+      let theme = 'dark';
+      try {
+        const stored = localStorage.getItem(THEME_STORAGE_KEY);
+        if (stored === 'light' || stored === 'dark') {
+          theme = stored;
+        } else {
+          theme = prefersDark ? 'dark' : 'light';
+        }
+      } catch (error) {
+        theme = prefersDark ? 'dark' : 'light';
+    }
+    document.body.dataset.theme = theme;
+    document.dispatchEvent(new CustomEvent('themechange', { detail: theme }));
+  })();
+  </script>
+</body>
+</html>
