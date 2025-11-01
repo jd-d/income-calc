@@ -178,6 +178,20 @@
       font-size: 1.6rem;
     }
 
+    .retainer-details {
+      list-style: disc;
+      padding-left: 20px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      color: var(--text-muted);
+    }
+
+    .retainer-details strong {
+      color: var(--text-primary);
+    }
+
     .resource-list {
       list-style: none;
       padding: 0;
@@ -234,6 +248,21 @@
         <h1>Helpful resources</h1>
         <p class="lead">Dive deeper into common Dutch freelancer costs with these curated guides.</p>
       </header>
+      <section class="resource-card" id="fruit-retainer" aria-labelledby="fruit-retainer-title">
+        <h2 id="fruit-retainer-title">Fruit retainer breakdown</h2>
+        <p class="resource-description">
+          A retainer bundles season-long support for growers and complements once-off advisory visits, packhouse quality control,
+          and crew training engagements.
+        </p>
+        <ul class="retainer-details">
+          <li><strong>Monitoring:</strong> Monthly orchard walks with photo reports and early pest or disease alerts.</li>
+          <li><strong>Forecasting:</strong> Rolling crop-yield updates that guide packing plans and wholesale commitments.</li>
+          <li><strong>Rapid response:</strong> Priority phone or video support during weather swings and harvest logistics crunches.</li>
+        </ul>
+        <p class="resource-description">
+          Share this summary when presenting a retainer offer alongside alternative fruit-industry services in the calculator.
+        </p>
+      </section>
       <section class="resource-card" aria-labelledby="resource-links-title">
         <h2 id="resource-links-title">Cost benchmarks and guidance</h2>
         <ul class="resource-list">
