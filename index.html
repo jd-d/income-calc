@@ -94,10 +94,6 @@
       transition: background 0.4s ease, color 0.4s ease;
     }
 
-    body.dialog-open {
-      overflow: hidden;
-    }
-
     h1,
     h2,
     h3 {
@@ -799,91 +795,6 @@
     .footer-note {
       color: var(--text-muted);
       font-size: 0.85rem;
-    }
-
-    .dialog {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      z-index: 1000;
-    }
-
-    .dialog[aria-hidden="false"] {
-      display: flex;
-    }
-
-    .dialog__backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(4, 6, 10, 0.75);
-    }
-
-    .dialog__content {
-      position: relative;
-      width: min(640px, 96vw);
-      max-height: min(90vh, 720px);
-      border-radius: 24px;
-      border: 1px solid var(--card-border);
-      background: var(--card-bg);
-      box-shadow: var(--card-shadow);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .dialog__header {
-      padding: 20px clamp(20px, 4vw, 28px);
-      border-bottom: 1px solid var(--table-cell-border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .dialog__header h2 {
-      font-size: 1.5rem;
-    }
-
-    .dialog__close {
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-size: 1.5rem;
-      cursor: pointer;
-      line-height: 1;
-      padding: 4px;
-      border-radius: 999px;
-    }
-
-    .dialog__close:hover,
-    .dialog__close:focus-visible {
-      color: var(--text-primary);
-      background: var(--button-hover);
-      outline: none;
-      box-shadow: 0 0 0 3px var(--focus-ring);
-    }
-
-    .dialog__body {
-      padding: clamp(20px, 4vw, 28px);
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-    }
-
-    .dialog__body ol,
-    .dialog__body ul {
-      padding-left: 24px;
-      margin: 0;
-    }
-
-    .dialog__body li + li {
-      margin-top: 8px;
     }
 
     .visually-hidden {
@@ -2074,8 +1985,6 @@
     </main>
   </div>
 
-  <div class="dialog" id="how-to-dialog" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="how-to-title">
-    <div class="dialog__backdrop" id="how-to-backdrop" tabindex="-1"></div>
     <div class="dialog__content" role="document">
       <div class="dialog__header">
         <h2 id="how-to-title">How to use this planner</h2>
@@ -3051,12 +2960,43 @@
     const themeToggle = document.getElementById('theme-toggle');
     const themeToggleLabel = document.getElementById('theme-toggle-label');
     const howToLink = document.getElementById('how-to-link');
-    const howToDialog = document.getElementById('how-to-dialog');
-    const howToClose = document.getElementById('how-to-close');
-    const howToBackdrop = document.getElementById('how-to-backdrop');
     const incomeTargetConversionHint = document.getElementById('income-target-conversion-hint');
     const incomeTargetError = document.getElementById('income-target-error');
     const infoButtons = Array.from(document.querySelectorAll('.info-button[data-info-target]'));
+    const helpLinks = {
+      'info-currency-symbol': 'docs/appendices.html#planner-setup',
+      'info-income-target': 'docs/appendices.html#planner-setup',
+      'info-income-period': 'docs/appendices.html#planner-setup',
+      'info-income-type': 'docs/appendices.html#planner-setup',
+      'info-buffer-percent': 'docs/appendices.html#planner-setup',
+      'info-tax-rate': 'docs/appendices.html#planner-taxes',
+      'info-tax-reserve': 'docs/appendices.html#planner-taxes',
+      'info-fixed-costs': 'docs/appendices.html#planner-costs',
+      'info-variable-cost': 'docs/appendices.html#planner-costs',
+      'info-travel-days-per-booking': 'docs/appendices.html#planner-costs',
+      'info-travel-cost-per-day': 'docs/appendices.html#planner-costs',
+      'info-expected-bookings': 'docs/appendices.html#planner-bookings',
+      'info-bookings-options': 'docs/appendices.html#planner-bookings',
+      'info-hours-per-booking': 'docs/appendices.html#planner-bookings',
+      'info-months-off': 'docs/appendices.html#planner-bookings',
+      'info-weekly-hours': 'docs/appendices.html#planner-bookings',
+      'info-utilization': 'docs/appendices.html#planner-bookings',
+      'info-price-min': 'docs/appendices.html#planner-pricing',
+      'info-price-max': 'docs/appendices.html#planner-pricing',
+      'info-price-step': 'docs/appendices.html#planner-pricing',
+      'info-price-points': 'docs/appendices.html#planner-pricing'
+    };
+    const defaultHelpLink = 'docs/index.html#how-to';
+
+    function openHelpLink(popoverId) {
+      const target = typeof popoverId === 'string' ? helpLinks[popoverId] : undefined;
+      const url = typeof target === 'string' ? target : defaultHelpLink;
+      const newWindow = window.open(url, '_blank', 'noopener');
+      if (newWindow) {
+        newWindow.opener = null;
+      }
+    }
+
 
     const inputBindings = new Map();
 
@@ -3713,7 +3653,6 @@
     applyRetainerView();
 
     let activeInfo = null;
-    let previousFocus = null;
 
     const INFO_FOCUS_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
@@ -4064,12 +4003,8 @@
       const howToButton = popover.querySelector('[data-info-how-to]');
       if (howToButton) {
         howToButton.addEventListener('click', () => {
-          const originButton = button;
           closeInfoPopover({ restoreFocus: false });
-          openHowToDialog();
-          if (originButton) {
-            previousFocus = originButton;
-          }
+          openHelpLink(popover.id);
         });
       }
 
@@ -4100,41 +4035,9 @@
       applyTheme(next);
     });
 
-    function openHowToDialog() {
-      if (!howToDialog) {
-        return;
-      }
-      closeInfoPopover({ restoreFocus: false });
-      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      howToDialog.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('dialog-open');
-      const focusable = howToDialog.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-      if (focusable instanceof HTMLElement) {
-        focusable.focus();
-      }
-    }
-
-    function closeHowToDialog() {
-      if (!howToDialog) {
-        return;
-      }
-      howToDialog.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('dialog-open');
-      if (previousFocus && previousFocus.isConnected) {
-        previousFocus.focus();
-      }
-    }
-
     howToLink?.addEventListener('click', event => {
       event.preventDefault();
-      openHowToDialog();
-    });
-    howToClose?.addEventListener('click', closeHowToDialog);
-    howToBackdrop?.addEventListener('click', closeHowToDialog);
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && howToDialog?.getAttribute('aria-hidden') === 'false') {
-        closeHowToDialog();
-      }
+      openHelpLink();
     });
 
     const defaultCalcState = getDefaultStateFromInputs();
