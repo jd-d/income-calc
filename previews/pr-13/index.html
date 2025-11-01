@@ -1,0 +1,3731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0a0c12" />
+  <link rel="icon" href="assets/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="assets/favicon.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <title>Income Planner</title>
+  <script src="pwa.js" defer></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg-gradient: radial-gradient(circle at top left, #1e2330, #10131c 55%, #090b11 100%);
+      --card-bg: rgba(18, 22, 32, 0.9);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-shadow: 0 28px 48px rgba(0, 0, 0, 0.45);
+      --text-primary: #f5f7fb;
+      --text-secondary: #c3c8d7;
+      --text-muted: #9aa1b5;
+      --accent: #5aa9ff;
+      --accent-strong: #82c0ff;
+      --field-bg: rgba(8, 11, 17, 0.75);
+      --field-border: rgba(255, 255, 255, 0.16);
+      --field-focus: rgba(90, 169, 255, 0.55);
+      --table-header-bg: rgba(255, 255, 255, 0.06);
+      --table-cell-bg: rgba(255, 255, 255, 0.03);
+      --table-cell-border: rgba(255, 255, 255, 0.06);
+      --table-cell-ok: rgba(46, 204, 113, 0.18);
+      --table-cell-ok-border: rgba(46, 204, 113, 0.55);
+      --table-cell-warn: rgba(255, 149, 128, 0.18);
+      --table-cell-warn-border: rgba(255, 149, 128, 0.45);
+      --button-bg: rgba(255, 255, 255, 0.12);
+      --button-border: rgba(255, 255, 255, 0.2);
+      --button-hover: rgba(255, 255, 255, 0.2);
+      --button-text: #f5f7fb;
+      --focus-ring: rgba(90, 169, 255, 0.35);
+    }
+
+    body[data-theme="light"] {
+      color-scheme: light;
+      --bg-gradient: radial-gradient(circle at top left, #eff4ff, #dae4ff 55%, #d1dcff 100%);
+      --card-bg: rgba(255, 255, 255, 0.92);
+      --card-border: rgba(15, 23, 42, 0.08);
+      --card-shadow: 0 24px 40px rgba(15, 23, 42, 0.12);
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #54617d;
+      --accent: #2563eb;
+      --accent-strong: #3b82f6;
+      --field-bg: rgba(246, 248, 255, 0.95);
+      --field-border: rgba(15, 23, 42, 0.16);
+      --field-focus: rgba(37, 99, 235, 0.45);
+      --table-header-bg: rgba(37, 99, 235, 0.12);
+      --table-cell-bg: rgba(15, 23, 42, 0.03);
+      --table-cell-border: rgba(15, 23, 42, 0.08);
+      --table-cell-ok: rgba(34, 197, 94, 0.22);
+      --table-cell-ok-border: rgba(34, 197, 94, 0.45);
+      --table-cell-warn: rgba(250, 204, 21, 0.2);
+      --table-cell-warn-border: rgba(250, 204, 21, 0.45);
+      --button-bg: rgba(37, 99, 235, 0.12);
+      --button-border: rgba(37, 99, 235, 0.3);
+      --button-hover: rgba(37, 99, 235, 0.22);
+      --button-text: #0f172a;
+      --focus-ring: rgba(37, 99, 235, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    body.dialog-open {
+      overflow: hidden;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-weight: 600;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1120px, 92vw);
+      margin: 0 auto;
+      padding: clamp(24px, 5vw, 48px) 0 72px;
+      padding-top: calc(clamp(24px, 5vw, 48px) + env(safe-area-inset-top, 0px));
+      display: flex;
+      flex-direction: column;
+      gap: clamp(24px, 4vw, 32px);
+    }
+
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .brand h1 {
+      font-size: clamp(2.1rem, 5vw, 3rem);
+      letter-spacing: -0.02em;
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      max-width: 48ch;
+    }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .header-actions a,
+    .header-actions button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--button-border);
+      background: var(--button-bg);
+      color: var(--button-text);
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .header-actions button {
+      font-family: inherit;
+    }
+
+    .theme-toggle {
+      position: relative;
+      gap: 10px;
+    }
+
+    .theme-toggle__icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .theme-toggle__icon-circle {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid var(--button-border);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    body[data-theme="dark"] .theme-toggle__icon-circle--dark {
+      background: #0a0c12;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    body[data-theme="dark"] .theme-toggle__icon-circle--light {
+      background: transparent;
+    }
+
+    body[data-theme="light"] .theme-toggle__icon-circle--light {
+      background: #f5f7fb;
+      border-color: rgba(15, 23, 42, 0.2);
+    }
+
+    body[data-theme="light"] .theme-toggle__icon-circle--dark {
+      background: transparent;
+    }
+
+    .theme-toggle .tooltip {
+      position: absolute;
+      inset-inline-start: 50%;
+      transform: translateX(-50%) translateY(calc(100% + 10px));
+      background: rgba(5, 7, 12, 0.95);
+      color: #f5f7fb;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.8rem;
+      white-space: nowrap;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 1100;
+    }
+
+    .theme-toggle:focus-visible .tooltip,
+    .theme-toggle:hover .tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(calc(100% + 6px));
+    }
+
+    .theme-toggle__label {
+      font-weight: 600;
+    }
+
+    .header-actions a:hover,
+    .header-actions button:hover,
+    .header-actions a:focus-visible,
+    .header-actions button:focus-visible {
+      background: var(--button-hover);
+      border-color: var(--accent);
+      outline: none;
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .layout {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(20px, 4vw, 28px);
+    }
+
+    @media (min-width: 1024px) {
+      .page-header {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: clamp(20px, 3vw, 32px);
+      }
+
+      .layout > .card.controls {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
+      padding: clamp(20px, 3.5vw, 32px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(18px, 3vw, 24px);
+    }
+
+    .card h2 {
+      font-size: clamp(1.4rem, 3vw, 1.8rem);
+      letter-spacing: -0.01em;
+    }
+
+    fieldset {
+      border: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .fieldset-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .control {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1 1 220px;
+      min-width: 200px;
+      position: relative;
+    }
+
+    .input-with-suffix {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--field-bg);
+      border: 1px solid var(--field-border);
+      border-radius: 14px;
+      padding: 0 12px 0 0;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .input-with-suffix:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .input-with-suffix input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      padding: 10px 12px;
+      border-radius: 14px;
+      outline: none;
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    .input-with-suffix span {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      padding-right: 4px;
+    }
+
+    .input-with-suffix input::-webkit-outer-spin-button,
+    .input-with-suffix input::-webkit-inner-spin-button {
+      margin: 0;
+      -webkit-appearance: none;
+    }
+
+    .control__label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .info-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--button-border);
+      background: var(--button-bg);
+      color: var(--button-text);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .info-button span {
+      pointer-events: none;
+    }
+
+    .info-button:hover,
+    .info-button:focus-visible {
+      background: var(--button-hover);
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+      transform: translateY(-1px);
+    }
+
+    label {
+      font-weight: 500;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    input,
+    select,
+    textarea {
+      appearance: none;
+      border-radius: 12px;
+      border: 1px solid var(--field-border);
+      background: var(--field-bg);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 10px 14px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+
+    .field-hint {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    .field-hint--conversion {
+      color: var(--accent-strong);
+      margin-top: -2px;
+    }
+
+    .field-hint--error {
+      color: #ff6b6b;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .summary-item {
+      background: var(--table-cell-bg);
+      border: 1px solid var(--table-cell-border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .summary-item dt {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .summary-item dd {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .summary-note {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .summary-warning {
+      margin: 6px 0 0;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--table-cell-warn-border);
+      background: var(--table-cell-warn);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .retainer-card__header {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .retainer-card__header p {
+      margin: 6px 0 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .retainer-explainer {
+      margin: 8px 0 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .retainer-explainer a {
+      color: var(--accent-strong);
+      font-weight: 600;
+    }
+
+    .retainer-card__controls {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid var(--button-border);
+      background: var(--field-bg);
+      gap: 4px;
+    }
+
+    .retainer-card__controls button {
+      border: none;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .retainer-card__controls button[aria-pressed="true"] {
+      background: var(--button-hover);
+      color: var(--text-primary);
+      box-shadow: inset 0 0 0 1px var(--accent);
+    }
+
+    .retainer-note {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .retainer-views {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .retainer-view[hidden] {
+      display: none !important;
+    }
+
+    .retainer-mini-metrics {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .retainer-mini-metric {
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--table-cell-border);
+      background: var(--table-cell-bg);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .retainer-mini-metric__label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .retainer-mini-metric__value {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .retainer-mini-metric__hint {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    @media (min-width: 720px) {
+      .retainer-card__header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .table-card h2 {
+      margin-bottom: -6px;
+    }
+
+    .table-card p {
+      margin: 0;
+    }
+
+    .status-message {
+      margin: 0;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--table-cell-border);
+      background: var(--table-cell-bg);
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 18px;
+      border: 1px solid var(--table-cell-border);
+      background: var(--table-cell-bg);
+    }
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      min-width: 560px;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: var(--table-header-bg);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      padding: 14px;
+      border-bottom: 1px solid var(--table-cell-border);
+    }
+
+    tbody th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--table-header-bg);
+      padding: 14px;
+      border-bottom: 1px solid var(--table-cell-border);
+      border-right: 1px solid var(--table-cell-border);
+      position: sticky;
+      left: 0;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--table-cell-border);
+      border-right: 1px solid var(--table-cell-border);
+      vertical-align: top;
+      min-width: 140px;
+    }
+
+    tr:last-child td,
+    tr:last-child th {
+      border-bottom: none;
+    }
+
+    tr td:last-child,
+    tr th:last-child {
+      border-right: none;
+    }
+
+    .result-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: transparent;
+      border-radius: 12px;
+      padding: 4px;
+    }
+
+    .result-cell__price {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+
+    .result-cell__net {
+      font-size: 0.95rem;
+      color: var(--accent-strong);
+    }
+
+    .result-cell__revenue,
+    .result-cell__hourly {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .result-cell--ok {
+      background: var(--table-cell-ok);
+      border: 1px solid var(--table-cell-ok-border);
+      padding: 10px;
+    }
+
+    .result-cell--warn {
+      background: var(--table-cell-warn);
+      border: 1px solid var(--table-cell-warn-border);
+      padding: 10px;
+    }
+
+    .table-note {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin: 8px 0 0;
+    }
+
+    .footer-note {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .dialog {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 1000;
+    }
+
+    .dialog[aria-hidden="false"] {
+      display: flex;
+    }
+
+    .dialog__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(4, 6, 10, 0.75);
+    }
+
+    .dialog__content {
+      position: relative;
+      width: min(640px, 96vw);
+      max-height: min(90vh, 720px);
+      border-radius: 24px;
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .dialog__header {
+      padding: 20px clamp(20px, 4vw, 28px);
+      border-bottom: 1px solid var(--table-cell-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .dialog__header h2 {
+      font-size: 1.5rem;
+    }
+
+    .dialog__close {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+      border-radius: 999px;
+    }
+
+    .dialog__close:hover,
+    .dialog__close:focus-visible {
+      color: var(--text-primary);
+      background: var(--button-hover);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .dialog__body {
+      padding: clamp(20px, 4vw, 28px);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    .dialog__body ol,
+    .dialog__body ul {
+      padding-left: 24px;
+      margin: 0;
+    }
+
+    .dialog__body li + li {
+      margin-top: 8px;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .info-popover {
+      position: fixed;
+      max-width: min(320px, 92vw);
+      background: rgba(5, 7, 12, 0.96);
+      color: #f5f7fb;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 24px 40px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 1200;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .info-popover[data-open="true"] {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .info-popover__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .info-popover__title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #f5f7fb;
+    }
+
+    .info-popover__close {
+      border: none;
+      background: transparent;
+      color: #f5f7fb;
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 2px 6px;
+    }
+
+    .info-popover__close:hover,
+    .info-popover__close:focus-visible {
+      background: rgba(255, 255, 255, 0.12);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .info-popover__body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: #e3e6f0;
+    }
+
+    .info-popover__body p {
+      margin: 0;
+    }
+
+    .info-popover__footer {
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .info-popover__how-to {
+      border: none;
+      background: transparent;
+      color: var(--accent-strong);
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    .info-popover__how-to:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+      border-radius: 8px;
+      padding: 2px 4px;
+      margin: -2px -4px;
+    }
+
+    @media (max-width: 640px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-actions {
+        justify-content: flex-start;
+      }
+
+      tbody th {
+        position: sticky;
+        left: auto;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <div class="page">
+    <header class="page-header">
+      <div class="brand">
+        <h1>Income planner</h1>
+        <p>
+          Model the revenue required to reach your income goals, understand the impact of taxes and costs,
+          and compare different price and workload combinations.
+        </p>
+      </div>
+      <div class="header-actions">
+        <a href="resources.html">Helpful resources</a>
+        <button type="button" id="how-to-link">How to use</button>
+        <button
+          type="button"
+          id="theme-toggle"
+          class="theme-toggle"
+          aria-pressed="true"
+          aria-describedby="theme-toggle-tooltip"
+        >
+          <span class="theme-toggle__icon" aria-hidden="true">
+            <span class="theme-toggle__icon-circle theme-toggle__icon-circle--light"></span>
+            <span class="theme-toggle__icon-circle theme-toggle__icon-circle--dark"></span>
+          </span>
+          <span class="theme-toggle__label" id="theme-toggle-label">Dark theme</span>
+          <span class="tooltip" role="tooltip" id="theme-toggle-tooltip">Toggle light / dark</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="card controls" aria-labelledby="controls-title">
+        <div class="fieldset-title" id="controls-title">Setup</div>
+
+        <fieldset>
+          <legend class="visually-hidden">Income target</legend>
+          <div class="control-row">
+            <div class="control">
+              <div class="control__label-row">
+                <label for="currency-symbol">Currency symbol</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-currency-symbol"
+                  aria-label="Show info about the currency symbol"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input type="text" id="currency-symbol" value="€" maxlength="4" autocomplete="off" />
+              <div
+                class="info-popover"
+                id="info-currency-symbol"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-currency-symbol-title"
+                aria-describedby="info-currency-symbol-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-currency-symbol-title">Currency symbol</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close currency symbol details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-currency-symbol-body">
+                  <p>Choose the symbol or short code that should prefix all money values, such as €, £, or USD.</p>
+                  <p>Example: enter USD to show results like USD 4,500.00.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="income-target">Income target</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-income-target"
+                  aria-label="Show info about the income target"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input type="number" id="income-target" inputmode="decimal" value="4500" min="0" step="50" />
+              <p class="field-hint">Enter the amount that keeps your lifestyle funded.</p>
+              <p class="field-hint field-hint--conversion" id="income-target-conversion-hint" aria-live="polite"></p>
+              <p class="field-hint field-hint--error" id="income-target-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-income-target"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-income-target-title"
+                aria-describedby="info-income-target-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-income-target-title">Income target</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close income target details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-income-target-body">
+                  <p>Set how much you aim to earn for the chosen period and tax mode. The planner will recalculate revenue, pricing, and table highlights automatically.</p>
+                  <p>Example: 4,500 keeps your monthly living costs covered.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="income-period">Target period</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-income-period"
+                  aria-label="Show info about the target period"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <select id="income-period">
+                <option value="monthly" selected>Monthly</option>
+                <option value="annual">Annual</option>
+              </select>
+              <div
+                class="info-popover"
+                id="info-income-period"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-income-period-title"
+                aria-describedby="info-income-period-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-income-period-title">Target period</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close target period details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-income-period-body">
+                  <p>Select whether your income goal is monthly or annual. The planner immediately converts the amount and summary numbers using ×12 or ÷12.</p>
+                  <p>Example: switching from monthly 4,500 to annual becomes 54,000.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="income-type">Target type</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-income-type"
+                  aria-label="Show info about the target type"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <select id="income-type">
+                <option value="net" selected>Net (after tax)</option>
+                <option value="gross">Gross (before tax)</option>
+              </select>
+              <div
+                class="info-popover"
+                id="info-income-type"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-income-type-title"
+                aria-describedby="info-income-type-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-income-type-title">Target type</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close target type details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-income-type-body">
+                  <p>Pick whether the target amount is net (after tax) or gross (before tax). Switching modes instantly converts the figure using the effective tax rate.</p>
+                  <p>Example: with a 32% tax rate, 4,500 net becomes 6,617.65 gross.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="buffer-percent">Safety buffer (%)</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-buffer-percent"
+                  aria-label="Show info about the safety buffer"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input
+                type="number"
+                id="buffer-percent"
+                inputmode="decimal"
+                value="10"
+                min="0"
+                max="100"
+                step="1"
+                aria-describedby="buffer-percent-error"
+              />
+              <p class="field-hint">Adds extra revenue coverage for no-shows or downtime.</p>
+              <p class="field-hint field-hint--error" id="buffer-percent-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-buffer-percent"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-buffer-percent-title"
+                aria-describedby="info-buffer-percent-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-buffer-percent-title">Safety buffer</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close safety buffer details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-buffer-percent-body">
+                  <p>Increase this percentage to cover gaps such as cancellations or seasonal dips. The buffer multiplies the required revenue after taxes and costs.</p>
+                  <p>Example: 10% adds one extra tenth to the revenue target.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="visually-hidden">Costs and taxes</legend>
+          <div class="control-row">
+            <div class="control">
+              <div class="control__label-row">
+                <label for="tax-rate">Effective tax rate (%)</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-tax-rate"
+                  aria-label="Show info about the tax rate"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input
+                type="number"
+                id="tax-rate"
+                inputmode="decimal"
+                value="36"
+                min="0"
+                max="100"
+                step="1"
+                aria-describedby="tax-rate-error"
+              />
+              <p class="field-hint field-hint--error" id="tax-rate-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-tax-rate"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-tax-rate-title"
+                aria-describedby="info-tax-rate-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-tax-rate-title">Effective tax rate</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close tax rate details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-tax-rate-body">
+                  <p>Use your expected overall tax plus fees rate. The planner applies it to convert between net and gross income and to estimate take-home pay in the table.</p>
+                  <p>Example: 32% leaves 68% of gross revenue as net income.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="tax-reserve">Tax reserve (%)</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-tax-reserve"
+                  aria-label="Show info about the tax reserve"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input
+                type="number"
+                id="tax-reserve"
+                inputmode="decimal"
+                value="5"
+                min="0"
+                max="100"
+                step="1"
+                aria-describedby="tax-reserve-error"
+              />
+              <p class="field-hint">Reserve extra cash beyond the tax rate for quarterly payments or surprises.</p>
+              <p class="field-hint field-hint--error" id="tax-reserve-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-tax-reserve"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-tax-reserve-title"
+                aria-describedby="info-tax-reserve-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-tax-reserve-title">Tax reserve</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close tax reserve details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-tax-reserve-body">
+                  <p>Set aside an additional percentage of revenue for quarterly tax payments, social charges, or unexpected bills.</p>
+                  <p>Example: a 5% reserve keeps an extra buffer for future obligations.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="fixed-costs">Fixed costs per month</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-fixed-costs"
+                  aria-label="Show info about fixed costs"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input
+                type="number"
+                id="fixed-costs"
+                inputmode="decimal"
+                value="800"
+                min="0"
+                step="50"
+                aria-describedby="fixed-costs-error"
+              />
+              <p class="field-hint field-hint--error" id="fixed-costs-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-fixed-costs"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-fixed-costs-title"
+                aria-describedby="info-fixed-costs-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-fixed-costs-title">Fixed costs</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close fixed cost details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-fixed-costs-body">
+                  <p>Include recurring monthly expenses that do not depend on how many bookings you deliver, such as rent, software, or insurance.</p>
+                  <p>Example: add 1,200 for studio rent and utilities.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="variable-cost">Variable cost per booking</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-variable-cost"
+                  aria-label="Show info about variable costs"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input
+                type="number"
+                id="variable-cost"
+                inputmode="decimal"
+                value="15"
+                min="0"
+                step="1"
+                aria-describedby="variable-cost-error"
+              />
+              <p class="field-hint field-hint--error" id="variable-cost-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-variable-cost"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-variable-cost-title"
+                aria-describedby="info-variable-cost-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-variable-cost-title">Variable cost</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close variable cost details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-variable-cost-body">
+                  <p>Add per-booking expenses such as materials, transaction fees, or travel. These scale with the number of bookings in the summary and table.</p>
+                  <p>Example: add 15 to cover supplies used in each session.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="travel-days-per-booking">Travel days per booking</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-travel-days-per-booking"
+                  aria-label="Show info about travel days per booking"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input type="number" id="travel-days-per-booking" inputmode="decimal" value="0" min="0" step="0.25" />
+              <div
+                class="info-popover"
+                id="info-travel-days-per-booking"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-travel-days-per-booking-title"
+                aria-describedby="info-travel-days-per-booking-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-travel-days-per-booking-title">Travel days per booking</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close travel days details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-travel-days-per-booking-body">
+                  <p>Capture travel or on-location overhead that removes you from other work. Enter partial days as decimals.</p>
+                  <p>Example: 0.5 covers a half-day of travel or setup for each booking.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="travel-cost-per-day">Travel cost per day</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-travel-cost-per-day"
+                  aria-label="Show info about travel cost per day"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <div class="input-with-suffix">
+                <input
+                  type="number"
+                  id="travel-cost-per-day"
+                  inputmode="decimal"
+                  value="0"
+                  min="0"
+                  step="5"
+                  aria-describedby="travel-cost-per-day-error"
+                />
+                <span>/ day</span>
+              </div>
+              <p class="field-hint field-hint--error" id="travel-cost-per-day-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-travel-cost-per-day"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-travel-cost-per-day-title"
+                aria-describedby="info-travel-cost-per-day-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-travel-cost-per-day-title">Travel cost per day</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close travel cost details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-travel-cost-per-day-body">
+                  <p>Include mileage, accommodation, or subsistence costs associated with each travel day. These scale with the travel days you set above.</p>
+                  <p>Example: 85 covers fuel, parking, and meals per travel day.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="visually-hidden">Workload assumptions</legend>
+          <div class="control-row">
+            <div class="control">
+              <div class="control__label-row">
+                <label for="expected-bookings">Expected bookings per month</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-expected-bookings"
+                  aria-label="Show info about expected bookings"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input type="number" id="expected-bookings" inputmode="decimal" value="12" min="0" step="1" />
+              <div
+                class="info-popover"
+                id="info-expected-bookings"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-expected-bookings-title"
+                aria-describedby="info-expected-bookings-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-expected-bookings-title">Expected bookings</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close expected bookings details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-expected-bookings-body">
+                  <p>Estimate how many bookings you realistically deliver per month. This drives the recommended price and marks the baseline scenario in the table.</p>
+                  <p>Example: enter 12 if you usually complete three bookings each week.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="bookings-options">Bookings to explore</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-bookings-options"
+                  aria-label="Show info about bookings to explore"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input
+                type="text"
+                id="bookings-options"
+                value="8, 10, 12, 14"
+                autocomplete="off"
+                aria-describedby="bookings-options-error"
+              />
+              <p class="field-hint">Comma separated list used for the scenario table.</p>
+              <p class="field-hint field-hint--error" id="bookings-options-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-bookings-options"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-bookings-options-title"
+                aria-describedby="info-bookings-options-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-bookings-options-title">Bookings to explore</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close bookings to explore details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-bookings-options-body">
+                  <p>List the booking counts you want to compare in the scenario table. Separate each value with a comma or space; decimals are allowed.</p>
+                  <p>Example: try 8, 10, 12, 14 to see outcomes if you land two extra clients.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="hours-per-booking">Hours per booking</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-hours-per-booking"
+                  aria-label="Show info about hours per booking"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input type="number" id="hours-per-booking" inputmode="decimal" value="1.5" min="0" step="0.25" />
+              <div
+                class="info-popover"
+                id="info-hours-per-booking"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-hours-per-booking-title"
+                aria-describedby="info-hours-per-booking-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-hours-per-booking-title">Hours per booking</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close hours per booking details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-hours-per-booking-body">
+                  <p>Capture the time you invest in each booking, including preparation and follow up. The planner uses this to estimate your net hourly rate.</p>
+                  <p>Example: 1.5 hours accounts for a 60 minute session plus prep.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="months-off">Months off per year</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-months-off"
+                  aria-label="Show info about months off per year"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input type="number" id="months-off" inputmode="decimal" value="2" min="0" max="12" step="0.5" />
+              <div
+                class="info-popover"
+                id="info-months-off"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-months-off-title"
+                aria-describedby="info-months-off-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-months-off-title">Time away from work</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close months off details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-months-off-body">
+                  <p>Reserve time for holidays, professional development, or recovery. The planner removes these months when estimating your available billable hours.</p>
+                  <p>Example: 2 months off leaves roughly 10 working months across the year.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="weekly-hours">Total weekly hours</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-weekly-hours"
+                  aria-label="Show info about total weekly hours"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input type="number" id="weekly-hours" inputmode="decimal" value="32" min="0" step="1" />
+              <div
+                class="info-popover"
+                id="info-weekly-hours"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-weekly-hours-title"
+                aria-describedby="info-weekly-hours-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-weekly-hours-title">Weekly schedule</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close weekly hours details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-weekly-hours-body">
+                  <p>Describe the total hours you plan to work in a typical week, including marketing or admin time. The planner combines this with utilization to estimate billable capacity.</p>
+                  <p>Example: 32 hours per week keeps evenings free while maintaining a full schedule.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="utilization">Utilization</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-utilization"
+                  aria-label="Show info about utilization"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <div class="input-with-suffix">
+                <input
+                  type="number"
+                  id="utilization"
+                  inputmode="decimal"
+                  value="75"
+                  min="0"
+                  max="100"
+                  step="1"
+                  aria-describedby="utilization-suffix utilization-error"
+                />
+                <span id="utilization-suffix" aria-hidden="true">%</span>
+              </div>
+              <p class="field-hint field-hint--error" id="utilization-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-utilization"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-utilization-title"
+                aria-describedby="info-utilization-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-utilization-title">Billable focus</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close utilization details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-utilization-body">
+                  <p>Utilization is the percentage of your weekly hours that can be billed to clients. The remainder covers admin, sales, or downtime.</p>
+                  <p>Example: 75% utilization on a 32 hour week yields 24 billable hours.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="visually-hidden">Price exploration</legend>
+          <div class="control-row">
+            <div class="control">
+              <div class="control__label-row">
+                <label for="price-min">Price range minimum</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-price-min"
+                  aria-label="Show info about the minimum price"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input
+                type="number"
+                id="price-min"
+                inputmode="decimal"
+                value="75"
+                min="0"
+                step="5"
+                aria-describedby="price-min-error"
+              />
+              <p class="field-hint field-hint--error" id="price-min-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-price-min"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-price-min-title"
+                aria-describedby="info-price-min-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-price-min-title">Price minimum</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close price minimum details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-price-min-body">
+                  <p>Set the lowest price you are willing to charge in the scenario table. The planner builds price points from this floor upward.</p>
+                  <p>Example: enter 75 to explore prices from 75 and above.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="price-max">Price range maximum</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-price-max"
+                  aria-label="Show info about the maximum price"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input
+                type="number"
+                id="price-max"
+                inputmode="decimal"
+                value="180"
+                min="0"
+                step="5"
+                aria-describedby="price-max-error"
+              />
+              <p class="field-hint field-hint--error" id="price-max-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-price-max"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-price-max-title"
+                aria-describedby="info-price-max-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-price-max-title">Price maximum</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close price maximum details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-price-max-body">
+                  <p>Define the ceiling you want to model. The planner fills in price points between the minimum and maximum using the step value.</p>
+                  <p>Example: 180 keeps table prices between 75 and 180.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="price-step">Price step</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-price-step"
+                  aria-label="Show info about the price step"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input
+                type="number"
+                id="price-step"
+                inputmode="decimal"
+                value="15"
+                min="1"
+                step="1"
+                aria-describedby="price-step-error"
+              />
+              <p class="field-hint field-hint--error" id="price-step-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-price-step"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-price-step-title"
+                aria-describedby="info-price-step-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-price-step-title">Price step</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close price step details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-price-step-body">
+                  <p>Control how much each generated price increases between the minimum and maximum. Smaller steps create more table columns to compare.</p>
+                  <p>Example: a step of 15 produces 75, 90, 105, and so on.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="price-points">Custom prices (optional)</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-price-points"
+                  aria-label="Show info about custom prices"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input
+                type="text"
+                id="price-points"
+                placeholder="e.g. 95, 125, 155"
+                autocomplete="off"
+                aria-describedby="price-points-error"
+              />
+              <p class="field-hint">Use comma separated values to override the range above.</p>
+              <p class="field-hint field-hint--error" id="price-points-error" aria-live="polite"></p>
+              <div
+                class="info-popover"
+                id="info-price-points"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-price-points-title"
+                aria-describedby="info-price-points-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-price-points-title">Custom prices</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close custom prices details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-price-points-body">
+                  <p>Override the automatic range by typing specific prices separated with commas. The table will only use these values along with the recommended price.</p>
+                  <p>Example: 95, 125, 155 compares only those offer levels.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="card" aria-labelledby="summary-title">
+        <h2 id="summary-title">Plan summary</h2>
+        <dl class="summary-grid">
+          <div class="summary-item">
+            <dt>Monthly net target</dt>
+            <dd id="summary-net">–</dd>
+          </div>
+          <div class="summary-item">
+            <dt>Monthly gross target</dt>
+            <dd id="summary-gross">–</dd>
+          </div>
+          <div class="summary-item">
+            <dt>Revenue required (incl. buffer)</dt>
+            <dd id="summary-revenue">–</dd>
+          </div>
+          <div class="summary-item">
+            <dt>Total operating costs per month</dt>
+            <dd id="summary-costs-monthly">–</dd>
+          </div>
+          <div class="summary-item">
+            <dt>Total operating costs per year</dt>
+            <dd id="summary-costs-annual">–</dd>
+          </div>
+          <div class="summary-item">
+            <dt>Recommended price / booking</dt>
+            <dd id="summary-price">–</dd>
+          </div>
+          <div class="summary-item">
+            <dt>Estimated net at recommended price</dt>
+            <dd id="summary-net-estimate">–</dd>
+          </div>
+          <div class="summary-item">
+            <dt>Recommended hourly rate</dt>
+            <dd id="summary-hourly">–</dd>
+          </div>
+        </dl>
+        <p class="summary-note" id="summary-note"></p>
+        <p
+          class="summary-warning"
+          id="summary-capacity-warning"
+          role="alert"
+          aria-live="polite"
+          hidden
+        ></p>
+      </section>
+
+      <section class="card retainer-card" id="retainer-card" aria-labelledby="retainer-title">
+        <div class="retainer-card__header">
+          <div>
+            <h2 id="retainer-title">Retainer</h2>
+            <p>Translate your goals into either a monthly rate or the workload to sustain that rate.</p>
+            <p class="retainer-explainer">
+              Retainers are one of several service formats fruit-industry specialists offer, bundling season-long orchard monitoring,
+              crop forecasting, and rapid harvest support.
+              <a href="resources.html#fruit-retainer">Read the fruit retainer explainer.</a>
+            </p>
+          </div>
+          <div class="retainer-card__controls" role="group" aria-label="Retainer focus">
+            <button type="button" data-retainer-view="rate" aria-pressed="true">Rate needed</button>
+            <button type="button" data-retainer-view="volume" aria-pressed="false">Volume needed</button>
+          </div>
+        </div>
+        <p class="retainer-note" id="retainer-note"></p>
+        <p class="status-message" id="retainer-status"></p>
+        <div class="retainer-views" id="retainer-views" hidden>
+          <div class="retainer-view" data-retainer-panel="rate">
+            <div class="retainer-mini-metrics">
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Charge per retainer</span>
+                <span class="retainer-mini-metric__value" id="retainer-rate-value">–</span>
+                <p class="retainer-mini-metric__hint" id="retainer-rate-hint"></p>
+              </div>
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Take-home at this rate</span>
+                <span class="retainer-mini-metric__value" id="retainer-rate-net">–</span>
+                <p class="retainer-mini-metric__hint">After costs, buffer, and taxes.</p>
+              </div>
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Monthly hours committed</span>
+                <span class="retainer-mini-metric__value" id="retainer-rate-hours">–</span>
+                <p class="retainer-mini-metric__hint" id="retainer-rate-hours-hint"></p>
+              </div>
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Travel overhead</span>
+                <span class="retainer-mini-metric__value" id="retainer-rate-travel">–</span>
+                <p class="retainer-mini-metric__hint">Adds to costs and capacity usage.</p>
+              </div>
+            </div>
+          </div>
+          <div class="retainer-view" data-retainer-panel="volume" hidden>
+            <div class="retainer-mini-metrics">
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Retainers needed</span>
+                <span class="retainer-mini-metric__value" id="retainer-volume-units">–</span>
+                <p class="retainer-mini-metric__hint" id="retainer-volume-units-hint"></p>
+              </div>
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Revenue at baseline rate</span>
+                <span class="retainer-mini-metric__value" id="retainer-volume-revenue">–</span>
+                <p class="retainer-mini-metric__hint" id="retainer-volume-rate"></p>
+              </div>
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Billable hours required</span>
+                <span class="retainer-mini-metric__value" id="retainer-volume-hours">–</span>
+                <p class="retainer-mini-metric__hint" id="retainer-volume-hours-hint"></p>
+              </div>
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Capacity used</span>
+                <span class="retainer-mini-metric__value" id="retainer-volume-capacity">–</span>
+                <p class="retainer-mini-metric__hint" id="retainer-volume-capacity-hint"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card table-card" aria-labelledby="table-title">
+        <div>
+          <h2 id="table-title">Scenario table</h2>
+          <p>Compare how different price points and booking volumes affect your monthly net income.</p>
+        </div>
+        <p class="status-message" id="table-status">Adjust the inputs above to generate a scenario table.</p>
+        <div class="table-wrapper" id="results-wrapper" hidden>
+          <table aria-describedby="table-note">
+            <thead id="results-head"></thead>
+            <tbody id="results-body"></tbody>
+          </table>
+        </div>
+        <p class="table-note" id="table-note"></p>
+        <p class="footer-note">Cells highlighted in green meet or exceed your monthly net target.</p>
+      </section>
+    </main>
+  </div>
+
+  <div class="dialog" id="how-to-dialog" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="how-to-title">
+    <div class="dialog__backdrop" id="how-to-backdrop" tabindex="-1"></div>
+    <div class="dialog__content" role="document">
+      <div class="dialog__header">
+        <h2 id="how-to-title">How to use this planner</h2>
+        <button type="button" class="dialog__close" id="how-to-close" aria-label="Close instructions">×</button>
+      </div>
+      <div class="dialog__body" id="how-to-body">
+        <ol>
+          <li>Enter the monthly or annual income you want to earn and whether that target is net or gross.</li>
+          <li>Describe your typical costs, expected bookings, and the time commitment per booking.</li>
+          <li>Use the price range (or custom prices) to explore what you could charge.</li>
+          <li>The summary shows the revenue required after costs, while the table highlights combinations that reach your net goal.</li>
+          <li>Revise assumptions any time; everything updates instantly without saving personal data.</li>
+        </ol>
+        <p>
+          This tool works entirely in your browser. We recommend exporting your results or taking screenshots after planning so
+          you can reference them later.
+        </p>
+      </div>
+    </div>
+  </div>
+
+    <script type="module">
+    // state --------------------------------------------------
+    const STATE_STORAGE_KEY = 'ic.state.v1';
+    const stateTemplate = {
+      currency: '',
+      incomeTarget: '',
+      incomePeriod: 'monthly',
+      incomeType: 'net',
+      bufferPercent: '',
+      taxRate: '',
+      taxReservePercent: '',
+      fixedCosts: '',
+      variableCost: '',
+      travelDaysPerBooking: '',
+      travelCostPerDay: '',
+      expectedBookings: '',
+      bookingsOptions: '',
+      hoursPerBooking: '',
+      monthsOff: '',
+      weeklyHours: '',
+      utilization: '',
+      billableHoursWeek: '', // legacy support
+      workingWeeks: '', // legacy support
+      priceMin: '',
+      priceMax: '',
+      priceStep: '',
+      pricePoints: '',
+      incomeTargetHint: ''
+    };
+
+    function normalizeCalcState(input) {
+      const normalized = { ...stateTemplate };
+      if (!input || typeof input !== 'object') {
+        return normalized;
+      }
+      Object.keys(normalized).forEach(key => {
+        const value = input[key];
+        if (key === 'incomePeriod') {
+          normalized[key] = value === 'annual' ? 'annual' : 'monthly';
+        } else if (key === 'incomeType') {
+          normalized[key] = value === 'gross' ? 'gross' : 'net';
+        } else if (typeof value === 'string') {
+          normalized[key] = value;
+        } else if (value == null) {
+          normalized[key] = '';
+        } else {
+          normalized[key] = String(value);
+        }
+      });
+      return normalized;
+    }
+
+    let calcState = normalizeCalcState({});
+
+    function readStoredState() {
+      try {
+        const raw = localStorage.getItem(STATE_STORAGE_KEY);
+        if (!raw) {
+          return null;
+        }
+        const parsed = JSON.parse(raw);
+        return normalizeCalcState(parsed);
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function persistState() {
+      try {
+        localStorage.setItem(STATE_STORAGE_KEY, JSON.stringify(calcState));
+      } catch (error) {
+        // ignore persistence errors
+      }
+    }
+
+    function updateCalcState(partial) {
+      calcState = normalizeCalcState({ ...calcState, ...partial });
+      persistState();
+      render();
+    }
+
+    let lastIncomePeriod = 'monthly';
+    let lastIncomeType = 'net';
+    let activeRetainerView = 'rate';
+    let lastDerivedValues = null;
+    let lastSummary = null;
+
+    // utils --------------------------------------------------
+    const MONTHS_PER_YEAR = 12;
+    const WEEKS_PER_YEAR = 52;
+    const HOURS_PER_TRAVEL_DAY = 8;
+    const numberFormatter0 = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
+    const numberFormatter1 = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const numberFormatter2 = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    function parseNumber(value) {
+      if (typeof value === 'number') {
+        return Number.isFinite(value) ? value : NaN;
+      }
+      if (typeof value !== 'string') {
+        return NaN;
+      }
+      const normalized = value.trim().replace(/[^0-9.,-]/g, '').replace(',', '.');
+      if (!normalized) {
+        return NaN;
+      }
+      return Number(normalized);
+    }
+
+    function parsePercent(value) {
+      const number = parseNumber(value);
+      if (!Number.isFinite(number)) {
+        return NaN;
+      }
+      return number / 100;
+    }
+
+    function clamp(value, min, max) {
+      if (!Number.isFinite(value)) {
+        return NaN;
+      }
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function formatCurrency(symbol, value, options) {
+      if (!Number.isFinite(value)) {
+        return '–';
+      }
+      const digits = options?.digits ?? (Math.abs(value) < 100 ? 2 : 0);
+      const formatter = digits === 2 ? numberFormatter2 : numberFormatter0;
+      const formatted = formatter.format(value);
+      return `${symbol}${formatted}`;
+    }
+
+    function formatNumber(value, digits = 0) {
+      if (!Number.isFinite(value)) {
+        return '–';
+      }
+      if (digits === 2) {
+        return numberFormatter2.format(value);
+      }
+      if (digits === 1) {
+        return numberFormatter1.format(value);
+      }
+      return numberFormatter0.format(value);
+    }
+
+    function formatPercent(value) {
+      if (!Number.isFinite(value)) {
+        return '–';
+      }
+      return `${numberFormatter1.format(value * 100)}%`;
+    }
+
+    function sanitizeNonNegative(value) {
+      if (!Number.isFinite(value)) {
+        return 0;
+      }
+      return value > 0 ? value : 0;
+    }
+
+    function aggregateCosts({
+      fixedMonthly = 0,
+      perHour = {},
+      perTravelDay = {},
+      activeMonths = MONTHS_PER_YEAR,
+      monthsPerYear = MONTHS_PER_YEAR
+    } = {}) {
+      const sanitizedFixedMonthly = sanitizeNonNegative(fixedMonthly);
+      const hourlyRate = sanitizeNonNegative(perHour.rate ?? 0);
+      const hourlyQuantity = sanitizeNonNegative(perHour.quantity ?? 0);
+      const travelRate = sanitizeNonNegative(perTravelDay.rate ?? 0);
+      const travelQuantity = sanitizeNonNegative(perTravelDay.quantity ?? 0);
+      const sanitizedMonthsPerYear = sanitizeNonNegative(monthsPerYear);
+      const sanitizedActiveMonths = Math.min(
+        sanitizeNonNegative(activeMonths),
+        sanitizedMonthsPerYear
+      );
+
+      const monthlyFixed = sanitizedFixedMonthly;
+      const monthlyHourly = hourlyRate * hourlyQuantity;
+      const monthlyTravel = travelRate * travelQuantity;
+      const monthlyTotal = monthlyFixed + monthlyHourly + monthlyTravel;
+
+      const annualFixed = monthlyFixed * sanitizedMonthsPerYear;
+      const annualHourly = monthlyHourly * sanitizedActiveMonths;
+      const annualTravel = monthlyTravel * sanitizedActiveMonths;
+      const annualTotal = annualFixed + annualHourly + annualTravel;
+
+      return {
+        monthlyTotal,
+        annualTotal,
+        breakdown: {
+          monthly: {
+            fixed: monthlyFixed,
+            hourly: monthlyHourly,
+            travel: monthlyTravel
+          },
+          annual: {
+            fixed: annualFixed,
+            hourly: annualHourly,
+            travel: annualTravel
+          }
+        }
+      };
+    }
+
+    function parseList(value) {
+      if (typeof value !== 'string') {
+        return [];
+      }
+      return value
+        .split(/[,\s]+/)
+        .map(item => parseNumber(item))
+        .filter(Number.isFinite)
+        .filter(item => item >= 0);
+    }
+
+    function isEmptyValue(value) {
+      if (value == null) {
+        return true;
+      }
+      if (typeof value === 'string') {
+        return value.trim().length === 0;
+      }
+      return false;
+    }
+
+    function percentValidator(message = 'Enter a percentage between 0 and 100.') {
+      return value => {
+        if (isEmptyValue(value)) {
+          return { valid: true };
+        }
+        const numeric = parseNumber(value);
+        if (!Number.isFinite(numeric) || numeric < 0 || numeric > 100) {
+          return { valid: false, message };
+        }
+        return { valid: true };
+      };
+    }
+
+    function nonNegativeValidator(message = 'Enter a value of 0 or more.') {
+      return value => {
+        if (isEmptyValue(value)) {
+          return { valid: true };
+        }
+        const numeric = parseNumber(value);
+        if (!Number.isFinite(numeric) || numeric < 0) {
+          return { valid: false, message };
+        }
+        return { valid: true };
+      };
+    }
+
+    function positiveNumberValidator(message = 'Enter a value greater than 0.') {
+      return value => {
+        if (isEmptyValue(value)) {
+          return { valid: true };
+        }
+        const numeric = parseNumber(value);
+        if (!Number.isFinite(numeric) || numeric <= 0) {
+          return { valid: false, message };
+        }
+        return { valid: true };
+      };
+    }
+
+    function createListValidator({ allowEmpty = true, message = 'Enter numbers separated by commas.', minItems = 1 } = {}) {
+      return value => {
+        if (isEmptyValue(value)) {
+          return { valid: allowEmpty, message: allowEmpty ? '' : message };
+        }
+        const items = parseList(value);
+        if (!items.length || items.length < minItems) {
+          return { valid: false, message };
+        }
+        return { valid: true };
+      };
+    }
+
+    function createRangeOrderValidator({ otherPath, type = 'min', message = 'Enter a valid range.' }) {
+      return (value, state) => {
+        if (!otherPath) {
+          return { valid: true };
+        }
+        if (isEmptyValue(value) || isEmptyValue(state?.[otherPath])) {
+          return { valid: true };
+        }
+        const current = parseNumber(value);
+        const other = parseNumber(state[otherPath]);
+        if (!Number.isFinite(current) || !Number.isFinite(other)) {
+          return { valid: true };
+        }
+        if (type === 'min') {
+          return current <= other ? { valid: true } : { valid: false, message };
+        }
+        return current >= other ? { valid: true } : { valid: false, message };
+      };
+    }
+
+    function stringifyStateNumber(value, precision = 2) {
+      if (!Number.isFinite(value)) {
+        return '';
+      }
+      const factor = 10 ** precision;
+      const rounded = Math.round(value * factor) / factor;
+      return `${rounded}`;
+    }
+
+    function hasPersistedCapacityFields(state) {
+      if (!state || typeof state !== 'object') {
+        return false;
+      }
+      return ['monthsOff', 'weeklyHours', 'utilization'].some(key => {
+        const value = state[key];
+        if (typeof value === 'string') {
+          return value.trim().length > 0;
+        }
+        return value != null;
+      });
+    }
+
+    function migrateLegacyCapacityFields(state) {
+      if (!state || typeof state !== 'object') {
+        return {};
+      }
+
+      const migrated = {};
+      const parsedLegacyHours = parseNumber(state.billableHoursWeek);
+      const legacyBillableHoursWeek = Number.isFinite(parsedLegacyHours) ? Math.max(parsedLegacyHours, 0) : NaN;
+      const parsedWorkingWeeks = parseNumber(state.workingWeeks);
+      const legacyWorkingWeeks = Number.isFinite(parsedWorkingWeeks)
+        ? clamp(parsedWorkingWeeks, 0, WEEKS_PER_YEAR)
+        : NaN;
+
+      if (Number.isFinite(legacyWorkingWeeks)) {
+        const workingFraction = Math.min(Math.max(legacyWorkingWeeks / WEEKS_PER_YEAR, 0), 1);
+        const derivedMonthsOff = clamp(MONTHS_PER_YEAR * (1 - workingFraction), 0, MONTHS_PER_YEAR);
+        if (Number.isFinite(derivedMonthsOff)) {
+          const roundedMonthsOff = Math.round(derivedMonthsOff * 2) / 2;
+          migrated.monthsOff = stringifyStateNumber(roundedMonthsOff, 2);
+        }
+      }
+
+      if (Number.isFinite(legacyBillableHoursWeek)) {
+        migrated.weeklyHours = stringifyStateNumber(Math.max(legacyBillableHoursWeek, 0), 2);
+        const parsedUtilization = clamp(parsePercent(state.utilization), 0, 1);
+        if (Number.isFinite(parsedUtilization)) {
+          migrated.utilization = stringifyStateNumber(parsedUtilization * 100, 2);
+        } else {
+          migrated.utilization = '100';
+        }
+      }
+
+      return migrated;
+    }
+
+    function buildPricePoints({ rangeMin, rangeMax, rangeStep, customPoints, recommended }) {
+      const values = new Set();
+      if (Array.isArray(customPoints) && customPoints.length) {
+        customPoints.forEach(point => {
+          if (Number.isFinite(point) && point >= 0) {
+            values.add(Number(point.toFixed(2)));
+          }
+        });
+      } else if (Number.isFinite(rangeMin) && Number.isFinite(rangeMax)) {
+        let start = rangeMin;
+        let end = rangeMax;
+        if (end < start) {
+          const temp = start;
+          start = end;
+          end = temp;
+        }
+        let step = Number.isFinite(rangeStep) && rangeStep > 0 ? rangeStep : (end - start) / 4 || 1;
+        step = Math.max(step, 0.01);
+        const limit = 500; // safety guard
+        let iterations = 0;
+        for (let value = start; value <= end + step / 2 && iterations < limit; value += step, iterations += 1) {
+          values.add(Number(value.toFixed(2)));
+        }
+      }
+      if (Number.isFinite(recommended)) {
+        values.add(Number(recommended.toFixed(2)));
+      }
+      return Array.from(values).sort((a, b) => a - b);
+    }
+
+    function deriveValues(state) {
+      const currency = (state.currency || '').trim() || '€';
+      const incomeTarget = parseNumber(state.incomeTarget);
+      const incomePeriod = state.incomePeriod === 'annual' ? 'annual' : 'monthly';
+      const incomeType = state.incomeType === 'gross' ? 'gross' : 'net';
+      const bufferPercent = clamp(parsePercent(state.bufferPercent), 0, 1);
+      const taxRate = clamp(parsePercent(state.taxRate), 0, 1);
+      const taxReserveRate = clamp(parsePercent(state.taxReservePercent), 0, 1);
+      const fixedCosts = Math.max(parseNumber(state.fixedCosts) || 0, 0);
+      const variableCost = Math.max(parseNumber(state.variableCost) || 0, 0);
+      const travelDaysPerBooking = Math.max(parseNumber(state.travelDaysPerBooking) || 0, 0);
+      const travelCostPerDay = Math.max(parseNumber(state.travelCostPerDay) || 0, 0);
+      const expectedBookings = Math.max(parseNumber(state.expectedBookings) || 0, 0);
+      const bookingsOptions = parseList(state.bookingsOptions);
+      const hoursPerBooking = Math.max(parseNumber(state.hoursPerBooking) || 0, 0);
+      let monthsOff = clamp(parseNumber(state.monthsOff), 0, MONTHS_PER_YEAR);
+      let weeklyHours = Math.max(parseNumber(state.weeklyHours) || 0, 0);
+      let utilization = clamp(parsePercent(state.utilization), 0, 1);
+      const legacyBillableHoursWeek = Math.max(parseNumber(state.billableHoursWeek) || 0, 0);
+      const legacyWorkingWeeks = clamp(parseNumber(state.workingWeeks), 0, 52);
+
+      if (!Number.isFinite(monthsOff) && Number.isFinite(legacyWorkingWeeks)) {
+        const workingFraction = Math.min(Math.max(legacyWorkingWeeks / WEEKS_PER_YEAR, 0), 1);
+        monthsOff = clamp(MONTHS_PER_YEAR * (1 - workingFraction), 0, MONTHS_PER_YEAR);
+      }
+
+      if (!Number.isFinite(weeklyHours) && legacyBillableHoursWeek > 0) {
+        weeklyHours = legacyBillableHoursWeek;
+        if (!Number.isFinite(utilization)) {
+          utilization = 1;
+        }
+      }
+
+      if (!Number.isFinite(utilization) && weeklyHours > 0 && legacyBillableHoursWeek > 0) {
+        utilization = clamp(legacyBillableHoursWeek / weeklyHours, 0, 1);
+      }
+
+      monthsOff = Number.isFinite(monthsOff) ? monthsOff : 0;
+      weeklyHours = Number.isFinite(weeklyHours) ? weeklyHours : 0;
+      utilization = Number.isFinite(utilization) ? utilization : 0;
+      const priceMin = Math.max(parseNumber(state.priceMin) || NaN, 0);
+      const priceMax = Math.max(parseNumber(state.priceMax) || NaN, 0);
+      const priceStep = Math.max(parseNumber(state.priceStep) || NaN, 0);
+      const pricePoints = parseList(state.pricePoints);
+
+      return {
+        currency,
+        incomeTarget,
+        incomePeriod,
+        incomeType,
+        bufferPercent,
+        taxRate,
+        taxReserveRate,
+        fixedCosts,
+        variableCost,
+        travelDaysPerBooking,
+        travelCostPerDay,
+        expectedBookings,
+        bookingsOptions,
+        hoursPerBooking,
+        monthsOff,
+        weeklyHours,
+        utilization,
+        priceMin,
+        priceMax,
+        priceStep,
+        pricePoints
+      };
+    }
+
+    function computeSummary(values) {
+      if (!Number.isFinite(values.incomeTarget) || values.incomeTarget <= 0) {
+        return null;
+      }
+      const monthlyTarget = values.incomePeriod === 'annual'
+        ? values.incomeTarget / MONTHS_PER_YEAR
+        : values.incomeTarget;
+      const baseTaxRate = Number.isFinite(values.taxRate) ? values.taxRate : 0;
+      const reserveRate = Number.isFinite(values.taxReserveRate) ? values.taxReserveRate : 0;
+      const combinedTaxRate = Math.min(Math.max(baseTaxRate + reserveRate, 0), 0.97);
+      const grossMonthlyTarget = values.incomeType === 'net'
+        ? monthlyTarget / Math.max(1 - combinedTaxRate, 0.0001)
+        : monthlyTarget;
+      const netMonthlyTarget = values.incomeType === 'net'
+        ? monthlyTarget
+        : monthlyTarget * Math.max(1 - combinedTaxRate, 0);
+
+      const bufferMultiplier = 1 + (Number.isFinite(values.bufferPercent) ? values.bufferPercent : 0);
+      const workingMonths = Math.max(MONTHS_PER_YEAR - values.monthsOff, 0);
+      const hoursPerBooking = Math.max(values.hoursPerBooking, 0);
+      const travelDaysPerBooking = Math.max(values.travelDaysPerBooking, 0);
+      const travelDayRate = Math.max(values.travelCostPerDay, 0);
+      const travelHoursPerBooking = travelDaysPerBooking * HOURS_PER_TRAVEL_DAY;
+      const effectiveHoursPerBooking = hoursPerBooking + travelHoursPerBooking;
+      const costHoursPerBooking = effectiveHoursPerBooking > 0 ? effectiveHoursPerBooking : 1;
+      const hourlyCostRate = values.variableCost > 0
+        ? (effectiveHoursPerBooking > 0 ? values.variableCost / costHoursPerBooking : values.variableCost)
+        : 0;
+      const expectedCostHours = costHoursPerBooking * values.expectedBookings;
+      const expectedTravelDays = travelDaysPerBooking * values.expectedBookings;
+
+      const costs = aggregateCosts({
+        fixedMonthly: values.fixedCosts,
+        perHour: { rate: hourlyCostRate, quantity: expectedCostHours },
+        perTravelDay: { rate: travelDayRate, quantity: expectedTravelDays },
+        activeMonths: workingMonths,
+        monthsPerYear: MONTHS_PER_YEAR
+      });
+
+      const revenueBeforeBuffer = grossMonthlyTarget + costs.monthlyTotal;
+      const revenueRequired = revenueBeforeBuffer * bufferMultiplier;
+
+      const recommendedPrice = values.expectedBookings > 0
+        ? revenueRequired / values.expectedBookings
+        : NaN;
+
+      const workingFraction = workingMonths / MONTHS_PER_YEAR;
+      const billableHoursPerWeek = Math.max(values.weeklyHours * values.utilization, 0);
+      const billableHoursPerYear = billableHoursPerWeek * WEEKS_PER_YEAR * Math.min(Math.max(workingFraction, 0), 1);
+      const billableHoursPerMonth = workingMonths > 0 ? billableHoursPerYear / workingMonths : 0;
+
+      const serviceHoursFromBookings = hoursPerBooking * values.expectedBookings;
+      const totalHoursFromBookings = effectiveHoursPerBooking * values.expectedBookings;
+      const plannedMonthlyHours = Number.isFinite(totalHoursFromBookings) ? totalHoursFromBookings : NaN;
+      const monthlyBillableHours = Number.isFinite(plannedMonthlyHours) && plannedMonthlyHours > 0
+        ? plannedMonthlyHours
+        : billableHoursPerMonth;
+      const recommendedHourly = monthlyBillableHours > 0
+        ? revenueRequired / monthlyBillableHours
+        : (effectiveHoursPerBooking > 0 ? recommendedPrice / effectiveHoursPerBooking : NaN);
+
+      const hasPlannedHours = Number.isFinite(plannedMonthlyHours) && plannedMonthlyHours > 0;
+      const capacityExceeded = hasPlannedHours && (billableHoursPerMonth <= 0 || (plannedMonthlyHours - billableHoursPerMonth) > 0.1);
+
+      const netAtRecommended = values.expectedBookings > 0
+        ? ((recommendedPrice * values.expectedBookings) - costs.monthlyTotal) * Math.max(1 - combinedTaxRate, 0)
+        : NaN;
+
+      const pricePoints = buildPricePoints({
+        rangeMin: values.priceMin,
+        rangeMax: values.priceMax,
+        rangeStep: values.priceStep,
+        customPoints: values.pricePoints,
+        recommended: recommendedPrice
+      });
+      const bookingsOptions = (values.bookingsOptions.length
+        ? values.bookingsOptions
+        : (values.expectedBookings > 0 ? [values.expectedBookings] : [])).map(option => Number(option.toFixed(2)));
+
+      return {
+        currency: values.currency,
+        taxRate: values.taxRate,
+        taxReserveRate: reserveRate,
+        combinedTaxRate,
+        netMonthlyTarget,
+        grossMonthlyTarget,
+        bufferMultiplier,
+        revenueRequired,
+        recommendedPrice,
+        recommendedHourly,
+        netAtRecommended,
+        costs,
+        costModel: {
+          fixedMonthly: values.fixedCosts,
+          hourlyRate: hourlyCostRate,
+          costHoursPerBooking,
+          effectiveHoursPerBooking,
+          travelDayRate,
+          travelDaysPerBooking,
+          activeMonths: workingMonths,
+          monthsPerYear: MONTHS_PER_YEAR
+        },
+        variableCost: values.variableCost,
+        fixedCosts: values.fixedCosts,
+        hoursPerBooking: values.hoursPerBooking,
+        travelDaysPerBooking,
+        travelCostPerDay: travelDayRate,
+        travelHoursPerBooking,
+        effectiveHoursPerBooking,
+        billableHoursPerYear,
+        billableHoursPerMonth,
+        monthlyBillableHours,
+        plannedMonthlyHours,
+        expectedServiceHours: serviceHoursFromBookings,
+        expectedTotalHours: totalHoursFromBookings,
+        expectedTravelDays,
+        capacityExceeded,
+        workingMonths,
+        billableHoursPerWeek,
+        pricePoints,
+        bookingsOptions,
+        expectedBookings: values.expectedBookings,
+        bufferPercent: values.bufferPercent
+      };
+    }
+
+    function applyIncomeTargetConversions(state, nextPeriod, nextType) {
+      const normalizedPeriod = nextPeriod === 'annual' ? 'annual' : 'monthly';
+      const normalizedType = nextType === 'gross' ? 'gross' : 'net';
+      const rawValue = parseNumber(state.incomeTarget);
+      if (!Number.isFinite(rawValue)) {
+        lastIncomePeriod = normalizedPeriod;
+        lastIncomeType = normalizedType;
+        return {
+          incomePeriod: normalizedPeriod,
+          incomeType: normalizedType,
+          incomeTarget: state.incomeTarget,
+          incomeTargetHint: ''
+        };
+      }
+
+      const messages = [];
+      let updatedValue = rawValue;
+      let changed = false;
+      const parsedTaxRate = clamp(parsePercent(state.taxRate), 0, 1);
+      const parsedReserveRate = clamp(parsePercent(state.taxReservePercent), 0, 1);
+      const taxRate = Number.isFinite(parsedTaxRate) ? parsedTaxRate : 0;
+      const reserveRate = Number.isFinite(parsedReserveRate) ? parsedReserveRate : 0;
+      const combinedRate = Math.min(Math.max(taxRate + reserveRate, 0), 0.97);
+
+      if (lastIncomeType !== normalizedType) {
+        changed = true;
+        if (lastIncomeType === 'net' && normalizedType === 'gross') {
+          const divisor = Math.max(1 - combinedRate, 0.0001);
+          updatedValue = updatedValue / divisor;
+          messages.push(`Converted to gross using ${formatPercent(combinedRate)} total tax and reserve.`);
+        } else if (lastIncomeType === 'gross' && normalizedType === 'net') {
+          updatedValue = updatedValue * Math.max(1 - combinedRate, 0);
+          messages.push(`Converted to net using ${formatPercent(combinedRate)} total tax and reserve.`);
+        }
+      }
+
+      if (lastIncomePeriod !== normalizedPeriod) {
+        changed = true;
+        if (lastIncomePeriod === 'monthly' && normalizedPeriod === 'annual') {
+          updatedValue *= MONTHS_PER_YEAR;
+          messages.push('Converted to annual (×12).');
+        } else if (lastIncomePeriod === 'annual' && normalizedPeriod === 'monthly') {
+          updatedValue /= MONTHS_PER_YEAR;
+          messages.push('Converted to monthly (÷12).');
+        }
+      }
+
+      lastIncomePeriod = normalizedPeriod;
+      lastIncomeType = normalizedType;
+
+      if (!changed) {
+        return {
+          incomePeriod: normalizedPeriod,
+          incomeType: normalizedType,
+          incomeTarget: state.incomeTarget,
+          incomeTargetHint: ''
+        };
+      }
+
+      const rounded = Math.round(updatedValue * 100) / 100;
+      const sanitized = Math.abs(rounded) < 0.01 ? 0 : rounded;
+      const formatted = Number.isFinite(sanitized) ? sanitized.toFixed(2) : '';
+      const detail = messages.join(' ');
+      const hint = detail ? `${detail} Values rounded to 2 decimals.` : 'Values rounded to 2 decimals.';
+
+      return {
+        incomePeriod: normalizedPeriod,
+        incomeType: normalizedType,
+        incomeTarget: formatted,
+        incomeTargetHint: hint
+      };
+    }
+
+    // ui --------------------------------------------------
+    const currencyInput = document.getElementById('currency-symbol');
+    const incomeTargetInput = document.getElementById('income-target');
+    const incomePeriodSelect = document.getElementById('income-period');
+    const incomeTypeSelect = document.getElementById('income-type');
+    const bufferInput = document.getElementById('buffer-percent');
+    const taxRateInput = document.getElementById('tax-rate');
+    const taxReserveInput = document.getElementById('tax-reserve');
+    const fixedCostsInput = document.getElementById('fixed-costs');
+    const variableCostInput = document.getElementById('variable-cost');
+    const travelDaysPerBookingInput = document.getElementById('travel-days-per-booking');
+    const travelCostPerDayInput = document.getElementById('travel-cost-per-day');
+    const expectedBookingsInput = document.getElementById('expected-bookings');
+    const bookingsOptionsInput = document.getElementById('bookings-options');
+    const hoursPerBookingInput = document.getElementById('hours-per-booking');
+    const monthsOffInput = document.getElementById('months-off');
+    const weeklyHoursInput = document.getElementById('weekly-hours');
+    const utilizationInput = document.getElementById('utilization');
+    const priceMinInput = document.getElementById('price-min');
+    const priceMaxInput = document.getElementById('price-max');
+    const priceStepInput = document.getElementById('price-step');
+    const pricePointsInput = document.getElementById('price-points');
+
+    const summaryNet = document.getElementById('summary-net');
+    const summaryGross = document.getElementById('summary-gross');
+    const summaryRevenue = document.getElementById('summary-revenue');
+    const summaryCostsMonthly = document.getElementById('summary-costs-monthly');
+    const summaryCostsAnnual = document.getElementById('summary-costs-annual');
+    const summaryPrice = document.getElementById('summary-price');
+    const summaryNetEstimate = document.getElementById('summary-net-estimate');
+    const summaryHourly = document.getElementById('summary-hourly');
+    const summaryNote = document.getElementById('summary-note');
+    const summaryCapacityWarning = document.getElementById('summary-capacity-warning');
+
+    const retainerCard = document.getElementById('retainer-card');
+    const retainerNote = document.getElementById('retainer-note');
+    const retainerStatus = document.getElementById('retainer-status');
+    const retainerViews = document.getElementById('retainer-views');
+    const retainerViewPanels = Array.from(document.querySelectorAll('[data-retainer-panel]'));
+    const retainerToggleButtons = Array.from(document.querySelectorAll('[data-retainer-view]'));
+    const retainerRateValue = document.getElementById('retainer-rate-value');
+    const retainerRateHint = document.getElementById('retainer-rate-hint');
+    const retainerRateNet = document.getElementById('retainer-rate-net');
+    const retainerRateHours = document.getElementById('retainer-rate-hours');
+    const retainerRateHoursHint = document.getElementById('retainer-rate-hours-hint');
+    const retainerRateTravel = document.getElementById('retainer-rate-travel');
+    const retainerVolumeUnits = document.getElementById('retainer-volume-units');
+    const retainerVolumeUnitsHint = document.getElementById('retainer-volume-units-hint');
+    const retainerVolumeRevenue = document.getElementById('retainer-volume-revenue');
+    const retainerVolumeRate = document.getElementById('retainer-volume-rate');
+    const retainerVolumeHours = document.getElementById('retainer-volume-hours');
+    const retainerVolumeHoursHint = document.getElementById('retainer-volume-hours-hint');
+    const retainerVolumeCapacity = document.getElementById('retainer-volume-capacity');
+    const retainerVolumeCapacityHint = document.getElementById('retainer-volume-capacity-hint');
+
+    const resultsWrapper = document.getElementById('results-wrapper');
+    const resultsHead = document.getElementById('results-head');
+    const resultsBody = document.getElementById('results-body');
+    const tableStatus = document.getElementById('table-status');
+    const tableNote = document.getElementById('table-note');
+
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleLabel = document.getElementById('theme-toggle-label');
+    const howToLink = document.getElementById('how-to-link');
+    const howToDialog = document.getElementById('how-to-dialog');
+    const howToClose = document.getElementById('how-to-close');
+    const howToBackdrop = document.getElementById('how-to-backdrop');
+    const incomeTargetConversionHint = document.getElementById('income-target-conversion-hint');
+    const incomeTargetError = document.getElementById('income-target-error');
+    const infoButtons = Array.from(document.querySelectorAll('.info-button[data-info-target]'));
+
+    const inputBindings = new Map();
+
+    function bindInput(id, path, options = {}) {
+      const element = options.element ?? document.getElementById(id);
+      if (!element) {
+        return null;
+      }
+      const {
+        events = ['input', 'change'],
+        getValue = event => (typeof event?.target?.value === 'string' ? event.target.value : ''),
+        format = value => (value ?? ''),
+        read,
+        required = false,
+        message,
+        messageElement,
+        messageElementId,
+        beforeDispatch,
+        dispatch,
+        validators = [],
+        invalidMessage
+      } = options;
+
+      const resolvedMessageElement = messageElementId
+        ? document.getElementById(messageElementId)
+        : messageElement ?? null;
+
+      const handler = event => {
+        if (typeof beforeDispatch === 'function') {
+          beforeDispatch(event);
+        }
+        const value = getValue(event);
+        const partial = typeof dispatch === 'function' ? dispatch(value, event) : { [path]: value };
+        if (partial && typeof partial === 'object') {
+          updateCalcState(partial);
+        }
+      };
+
+      events.forEach(name => element.addEventListener(name, handler));
+
+      inputBindings.set(path, {
+        path,
+        element,
+        format,
+        required,
+        message: required ? (message || 'This field is required.') : '',
+        messageElement: resolvedMessageElement || null,
+        read: typeof read === 'function' ? read : () => (typeof element.value === 'string' ? element.value : ''),
+        validators: Array.isArray(validators) ? validators.filter(validator => typeof validator === 'function') : [],
+        invalidMessage: invalidMessage || 'Enter a valid value.'
+      });
+
+      return element;
+    }
+
+    function updateBindingValidation(binding, state) {
+      const rawValue = state[binding.path];
+      const value = typeof rawValue === 'string' ? rawValue.trim() : rawValue;
+      const hasValue = !(typeof value === 'string' && value.length === 0) && value !== null && value !== undefined && value !== '';
+
+      let errorMessage = '';
+
+      if (binding.required && !hasValue) {
+        errorMessage = binding.message || 'This field is required.';
+      }
+
+      if (!errorMessage && binding.validators?.length) {
+        binding.validators.some(validator => {
+          try {
+            const result = validator(value, state);
+            if (typeof result === 'string') {
+              if (result) {
+                errorMessage = result;
+                return true;
+              }
+              return false;
+            }
+            if (result && typeof result === 'object') {
+              if (result.valid === false) {
+                errorMessage = result.message || binding.invalidMessage;
+                return true;
+              }
+              return false;
+            }
+            if (result === false) {
+              errorMessage = binding.invalidMessage;
+              return true;
+            }
+          } catch (error) {
+            errorMessage = binding.invalidMessage;
+            return true;
+          }
+          return false;
+        });
+      }
+
+      if (errorMessage) {
+        binding.element.setAttribute('aria-invalid', 'true');
+        if (binding.messageElement) {
+          binding.messageElement.textContent = errorMessage;
+        }
+      } else {
+        binding.element.removeAttribute('aria-invalid');
+        if (binding.messageElement) {
+          binding.messageElement.textContent = '';
+        }
+      }
+    }
+
+    function syncBoundInputs(state) {
+      inputBindings.forEach(binding => {
+        const nextValue = binding.format(state[binding.path]);
+        if (binding.element.value !== nextValue) {
+          binding.element.value = nextValue;
+        }
+        updateBindingValidation(binding, state);
+      });
+    }
+
+    function getDefaultStateFromInputs() {
+      const entries = Array.from(inputBindings.values()).map(binding => [binding.path, binding.read()]);
+      entries.push(['incomeTargetHint', '']);
+      return normalizeCalcState(Object.fromEntries(entries));
+    }
+
+    function renderSummary(values, summary) {
+      if (summaryCapacityWarning) {
+        summaryCapacityWarning.hidden = true;
+        summaryCapacityWarning.textContent = '';
+      }
+
+      if (!summary) {
+        summaryNet.textContent = '–';
+        summaryGross.textContent = '–';
+        summaryRevenue.textContent = '–';
+        summaryCostsMonthly.textContent = '–';
+        summaryCostsAnnual.textContent = '–';
+        summaryPrice.textContent = '–';
+        summaryNetEstimate.textContent = '–';
+        summaryHourly.textContent = '–';
+        summaryNote.textContent = 'Enter an income target to get started.';
+        return;
+      }
+
+      summaryNet.textContent = formatCurrency(summary.currency, summary.netMonthlyTarget, { digits: 0 });
+      summaryGross.textContent = formatCurrency(summary.currency, summary.grossMonthlyTarget, { digits: 0 });
+      summaryRevenue.textContent = formatCurrency(summary.currency, summary.revenueRequired, { digits: 0 });
+      summaryCostsMonthly.textContent = formatCurrency(summary.currency, summary.costs.monthlyTotal, { digits: 0 });
+      summaryCostsAnnual.textContent = formatCurrency(summary.currency, summary.costs.annualTotal, { digits: 0 });
+      summaryPrice.textContent = formatCurrency(summary.currency, summary.recommendedPrice, { digits: 2 });
+      summaryNetEstimate.textContent = formatCurrency(summary.currency, summary.netAtRecommended, { digits: 0 });
+      summaryHourly.textContent = formatCurrency(summary.currency, summary.recommendedHourly, { digits: 2 });
+
+      const bufferText = Number.isFinite(values.bufferPercent)
+        ? `Safety buffer applied: ${formatPercent(values.bufferPercent)}.`
+        : '';
+      const reserveText = Number.isFinite(values.taxReserveRate) && values.taxReserveRate > 0
+        ? `Tax reserve applied: ${formatPercent(values.taxReserveRate)} in addition to taxes.`
+        : '';
+      const bookingsText = summary.expectedBookings > 0
+        ? `Calculations assume ${formatNumber(summary.expectedBookings, 1)} bookings per month.`
+        : 'Add an expected bookings figure to calculate a recommended price.';
+      const capacityText = summary.billableHoursPerMonth > 0
+        ? `Billable capacity: ${formatNumber(summary.billableHoursPerMonth, 1)} hours per working month (${formatNumber(summary.billableHoursPerYear, 0)} per year).`
+        : (values.weeklyHours > 0 || values.utilization > 0 || values.monthsOff > 0
+          ? 'Billable capacity is currently zero; adjust months off, weekly hours, or utilization to free up time.'
+          : 'Set your schedule assumptions to estimate billable capacity.');
+      summaryNote.textContent = [bookingsText, bufferText, reserveText, capacityText].filter(Boolean).join(' ');
+
+      if (summaryCapacityWarning && summary.capacityExceeded) {
+        const planned = formatNumber(summary.plannedMonthlyHours, 1);
+        const availableText = summary.billableHoursPerMonth > 0
+          ? `${formatNumber(summary.billableHoursPerMonth, 1)} hour${Math.abs(summary.billableHoursPerMonth - 1) < 0.05 ? '' : 's'}`
+          : 'no billable hours';
+        summaryCapacityWarning.textContent = `Warning: Planned bookings need about ${planned} billable hours each month, but you only have ${availableText} available. Tweak your schedule or expectations to stay within capacity.`;
+        summaryCapacityWarning.hidden = false;
+      }
+    }
+
+    function buildResultCell({ summary, bookings, price }) {
+      const revenue = price * bookings;
+      const costHours = summary.costModel.costHoursPerBooking * bookings;
+      const costTravelDays = summary.costModel.travelDaysPerBooking * bookings;
+      const costTotals = aggregateCosts({
+        fixedMonthly: summary.costModel.fixedMonthly,
+        perHour: { rate: summary.costModel.hourlyRate, quantity: costHours },
+        perTravelDay: { rate: summary.costModel.travelDayRate, quantity: costTravelDays },
+        activeMonths: summary.costModel.activeMonths,
+        monthsPerYear: summary.costModel.monthsPerYear
+      });
+      const monthlyCosts = costTotals.monthlyTotal;
+      const grossProfit = revenue - monthlyCosts;
+      const netIncome = grossProfit * Math.max(1 - summary.combinedTaxRate, 0);
+      const totalHours = summary.effectiveHoursPerBooking > 0
+        ? summary.effectiveHoursPerBooking * bookings
+        : summary.billableHoursPerMonth;
+      const hourlyNet = totalHours > 0 ? netIncome / totalHours : NaN;
+
+      const classes = ['result-cell'];
+      if (Number.isFinite(summary.netMonthlyTarget) && Number.isFinite(netIncome)) {
+        if (netIncome >= summary.netMonthlyTarget) {
+          classes.push('result-cell--ok');
+        } else if (netIncome < 0) {
+          classes.push('result-cell--warn');
+        }
+      }
+      const parts = [
+        `<div class="result-cell__price">${formatCurrency(summary.currency, price, { digits: 2 })}</div>`,
+        `<div class="result-cell__net">Net ${formatCurrency(summary.currency, netIncome, { digits: 0 })}</div>`,
+        `<div class="result-cell__revenue">Revenue ${formatCurrency(summary.currency, revenue, { digits: 0 })}</div>`
+      ];
+      if (Number.isFinite(hourlyNet)) {
+        parts.push(`<div class="result-cell__hourly">Hourly net ${formatCurrency(summary.currency, hourlyNet, { digits: 2 })}</div>`);
+      }
+      return `<td><div class="${classes.join(' ')}">${parts.join('')}</div></td>`;
+    }
+
+    function renderTable(values, summary) {
+      if (!summary || !summary.pricePoints.length || !summary.bookingsOptions.length) {
+        resultsWrapper.hidden = true;
+        tableStatus.hidden = false;
+        tableStatus.textContent = summary
+          ? 'Add at least one booking value and price point to see results.'
+          : 'Enter an income target to generate the scenario table.';
+        tableNote.textContent = '';
+        resultsHead.innerHTML = '';
+        resultsBody.innerHTML = '';
+        return;
+      }
+
+      const headerCells = summary.pricePoints
+        .map(price => `<th scope="col">${formatCurrency(summary.currency, price, { digits: 2 })}</th>`)
+        .join('');
+      resultsHead.innerHTML = `<tr><th scope="col">Bookings / month</th>${headerCells}</tr>`;
+
+      const rowsMarkup = summary.bookingsOptions
+        .map(bookings => {
+          const cells = summary.pricePoints
+            .map(price => buildResultCell({ summary, bookings, price }))
+            .join('');
+          return `<tr><th scope="row">${formatNumber(bookings, bookings % 1 === 0 ? 0 : 1)}</th>${cells}</tr>`;
+        })
+        .join('');
+      resultsBody.innerHTML = rowsMarkup;
+
+      resultsWrapper.hidden = false;
+      tableStatus.hidden = true;
+
+      const targetText = Number.isFinite(summary.netMonthlyTarget)
+        ? `Monthly net target: ${formatCurrency(summary.currency, summary.netMonthlyTarget, { digits: 0 })}.`
+        : '';
+      tableNote.textContent = `${targetText} Tap a highlighted cell to spot combinations that exceed your goal.`.trim();
+    }
+
+    function applyRetainerView() {
+      if (!retainerCard) {
+        return;
+      }
+      retainerToggleButtons.forEach(button => {
+        const view = button.dataset.retainerView === 'volume' ? 'volume' : 'rate';
+        const isActive = view === activeRetainerView;
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+      retainerViewPanels.forEach(panel => {
+        const view = panel.dataset.retainerPanel === 'volume' ? 'volume' : 'rate';
+        panel.hidden = view !== activeRetainerView;
+      });
+    }
+
+    function renderRetainerCard(values, summary) {
+      if (!retainerCard) {
+        return;
+      }
+      if (!summary) {
+        if (retainerStatus) {
+          retainerStatus.hidden = false;
+          retainerStatus.textContent = 'Enter an income target to size a retainer package.';
+        }
+        if (retainerViews) {
+          retainerViews.hidden = true;
+        }
+        if (retainerNote) {
+          retainerNote.textContent = '';
+        }
+        return;
+      }
+
+      if (retainerViews) {
+        retainerViews.hidden = false;
+      }
+
+      const expected = summary.expectedBookings;
+      const hasExpected = Number.isFinite(expected) && expected > 0;
+      const recommendedPrice = summary.recommendedPrice;
+      const baselineRateCandidates = [values.priceMin, recommendedPrice, values.priceMax];
+      const baselineRate = baselineRateCandidates.find(rate => Number.isFinite(rate) && rate > 0) ?? NaN;
+      const unitsAtBaseline = Number.isFinite(baselineRate) && baselineRate > 0
+        ? summary.revenueRequired / baselineRate
+        : NaN;
+      const effectiveHoursPerBooking = summary.effectiveHoursPerBooking;
+      const serviceHoursPerBooking = summary.hoursPerBooking;
+      const travelDaysPerBooking = summary.travelDaysPerBooking;
+      const serviceHoursPerMonth = summary.expectedServiceHours;
+      const totalHoursPerMonth = summary.expectedTotalHours;
+      const travelDaysPerMonth = summary.expectedTravelDays;
+      const travelHoursPerMonth = Number.isFinite(travelDaysPerMonth)
+        ? travelDaysPerMonth * HOURS_PER_TRAVEL_DAY
+        : NaN;
+      const baselineHours = Number.isFinite(unitsAtBaseline) && Number.isFinite(effectiveHoursPerBooking)
+        ? unitsAtBaseline * effectiveHoursPerBooking
+        : NaN;
+      const baselineServiceHours = Number.isFinite(unitsAtBaseline) && Number.isFinite(serviceHoursPerBooking)
+        ? unitsAtBaseline * serviceHoursPerBooking
+        : NaN;
+      const baselineTravelDays = Number.isFinite(unitsAtBaseline) && Number.isFinite(travelDaysPerBooking)
+        ? unitsAtBaseline * travelDaysPerBooking
+        : NaN;
+      const baselineTravelHours = Number.isFinite(baselineTravelDays)
+        ? baselineTravelDays * HOURS_PER_TRAVEL_DAY
+        : NaN;
+      const capacityFraction = Number.isFinite(baselineHours) && summary.billableHoursPerMonth > 0
+        ? baselineHours / summary.billableHoursPerMonth
+        : NaN;
+
+      const parts = [];
+      if (hasExpected) {
+        parts.push(`Planned: ${formatNumber(expected, expected % 1 === 0 ? 0 : 1)} retainers / month.`);
+      }
+      const workloadParts = [];
+      if (Number.isFinite(serviceHoursPerBooking) && serviceHoursPerBooking > 0) {
+        workloadParts.push(`${formatNumber(serviceHoursPerBooking, 1)} h service`);
+      }
+      if (Number.isFinite(travelDaysPerBooking) && travelDaysPerBooking > 0) {
+        workloadParts.push(`${formatNumber(travelDaysPerBooking, 2)} travel days`);
+      }
+      if (workloadParts.length) {
+        parts.push(`Per retainer: ${workloadParts.join(' + ')}.`);
+      }
+      if (retainerNote) {
+        retainerNote.textContent = parts.join(' ');
+      }
+
+      const statusMessages = [];
+      if (!hasExpected) {
+        statusMessages.push('Add expected retainers per month to unlock the recommended rate.');
+      }
+      if (!Number.isFinite(baselineRate) || baselineRate <= 0) {
+        statusMessages.push('Set a price range minimum to translate your goal into units.');
+      }
+      if (retainerStatus) {
+        retainerStatus.hidden = statusMessages.length === 0;
+        retainerStatus.textContent = statusMessages.join(' ');
+      }
+
+      if (retainerRateValue) {
+        retainerRateValue.textContent = hasExpected && Number.isFinite(recommendedPrice)
+          ? formatCurrency(summary.currency, recommendedPrice, { digits: 2 })
+          : '–';
+      }
+      if (retainerRateHint) {
+        retainerRateHint.textContent = hasExpected
+          ? `Hits your goal with ${formatNumber(expected, expected % 1 === 0 ? 0 : 1)} retainers.`
+          : 'Add an expected retainers figure to calculate a rate.';
+      }
+      if (retainerRateNet) {
+        retainerRateNet.textContent = Number.isFinite(summary.netAtRecommended)
+          ? formatCurrency(summary.currency, summary.netAtRecommended, { digits: 0 })
+          : '–';
+      }
+      if (retainerRateHours) {
+        retainerRateHours.textContent = hasExpected && Number.isFinite(totalHoursPerMonth)
+          ? `${formatNumber(totalHoursPerMonth, 1)} h`
+          : '–';
+      }
+      if (retainerRateHoursHint) {
+        if (hasExpected && Number.isFinite(serviceHoursPerMonth)) {
+          const serviceText = `${formatNumber(serviceHoursPerMonth, 1)} h service`;
+          const travelText = Number.isFinite(travelHoursPerMonth) && travelHoursPerMonth > 0
+            ? ` + ${formatNumber(travelHoursPerMonth, 1)} h travel`
+            : '';
+          retainerRateHoursHint.textContent = `${serviceText}${travelText}`;
+        } else {
+          retainerRateHoursHint.textContent = 'Hours update when expected retainers are set.';
+        }
+      }
+      if (retainerRateTravel) {
+        retainerRateTravel.textContent = hasExpected && Number.isFinite(travelDaysPerMonth)
+          ? `${formatNumber(travelDaysPerMonth, travelDaysPerMonth >= 2 ? 1 : 2)} days`
+          : '0 days';
+      }
+
+      if (retainerVolumeUnits) {
+        retainerVolumeUnits.textContent = Number.isFinite(unitsAtBaseline)
+          ? formatNumber(unitsAtBaseline, unitsAtBaseline % 1 === 0 ? 0 : 1)
+          : '–';
+      }
+      if (retainerVolumeUnitsHint) {
+        retainerVolumeUnitsHint.textContent = Number.isFinite(unitsAtBaseline)
+          ? `Needed each month to cover ${formatCurrency(summary.currency, summary.netMonthlyTarget, { digits: 0 })} net.`
+          : 'Enter a realistic rate to convert your goal into units.';
+      }
+      if (retainerVolumeRevenue) {
+        retainerVolumeRevenue.textContent = formatCurrency(summary.currency, summary.revenueRequired, { digits: 0 });
+      }
+      if (retainerVolumeRate) {
+        retainerVolumeRate.textContent = Number.isFinite(baselineRate)
+          ? `Based on ${formatCurrency(summary.currency, baselineRate, { digits: 2 })} each.`
+          : 'Set a price minimum to estimate units.';
+      }
+      if (retainerVolumeHours) {
+        retainerVolumeHours.textContent = Number.isFinite(baselineHours)
+          ? `${formatNumber(baselineHours, 1)} h`
+          : '–';
+      }
+      if (retainerVolumeHoursHint) {
+        if (Number.isFinite(baselineServiceHours)) {
+          const travelText = Number.isFinite(baselineTravelHours) && baselineTravelHours > 0
+            ? ` + ${formatNumber(baselineTravelHours, 1)} h travel`
+            : '';
+          retainerVolumeHoursHint.textContent = `${formatNumber(baselineServiceHours, 1)} h service${travelText}`;
+        } else {
+          retainerVolumeHoursHint.textContent = 'Hours update once a rate is available.';
+        }
+      }
+      if (retainerVolumeCapacity) {
+        retainerVolumeCapacity.textContent = Number.isFinite(capacityFraction)
+          ? formatPercent(capacityFraction)
+          : '–';
+      }
+      if (retainerVolumeCapacityHint) {
+        retainerVolumeCapacityHint.textContent = Number.isFinite(summary.billableHoursPerMonth) && summary.billableHoursPerMonth > 0
+          ? `Of ${formatNumber(summary.billableHoursPerMonth, 1)} h monthly capacity.`
+          : 'Add capacity assumptions to benchmark workload.';
+      }
+
+      applyRetainerView();
+    }
+
+    function render() {
+      syncBoundInputs(calcState);
+      if (incomeTargetConversionHint) {
+        incomeTargetConversionHint.textContent = calcState.incomeTargetHint || '';
+      }
+      const values = deriveValues(calcState);
+      const summary = computeSummary(values);
+      lastDerivedValues = values;
+      lastSummary = summary;
+      renderSummary(values, summary);
+      renderRetainerCard(values, summary);
+      renderTable(values, summary);
+    }
+
+    function setRetainerView(nextView) {
+      if (!retainerCard) {
+        return;
+      }
+      const normalized = nextView === 'volume' ? 'volume' : 'rate';
+      if (normalized === activeRetainerView) {
+        return;
+      }
+      activeRetainerView = normalized;
+      applyRetainerView();
+      if (lastDerivedValues) {
+        renderRetainerCard(lastDerivedValues, lastSummary);
+      }
+    }
+
+    retainerToggleButtons.forEach(button => {
+      button.addEventListener('click', () => setRetainerView(button.dataset.retainerView));
+    });
+
+    applyRetainerView();
+
+    let activeInfo = null;
+    let previousFocus = null;
+
+    const INFO_FOCUS_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+    function getInfoFocusableElements(popover) {
+      if (!popover) {
+        return [];
+      }
+      return Array.from(popover.querySelectorAll(INFO_FOCUS_SELECTOR)).filter(element => {
+        if (!(element instanceof HTMLElement)) {
+          return false;
+        }
+        if (element.hasAttribute('disabled')) {
+          return false;
+        }
+        if (element.getAttribute('aria-hidden') === 'true') {
+          return false;
+        }
+        return element.tabIndex >= 0;
+      });
+    }
+
+    function positionInfoPopover(button, popover) {
+      if (!button || !popover) {
+        return;
+      }
+      const spacing = 12;
+      const viewportPadding = 12;
+      const buttonRect = button.getBoundingClientRect();
+      const maxHeight = Math.max(220, window.innerHeight - viewportPadding * 2);
+      popover.style.maxHeight = `${Math.round(maxHeight)}px`;
+      const popoverRect = popover.getBoundingClientRect();
+      let top = buttonRect.bottom + spacing;
+      let left = buttonRect.left + buttonRect.width / 2 - popoverRect.width / 2;
+
+      if (left < viewportPadding) {
+        left = viewportPadding;
+      }
+      if (left + popoverRect.width > window.innerWidth - viewportPadding) {
+        left = window.innerWidth - viewportPadding - popoverRect.width;
+      }
+      if (left < viewportPadding) {
+        left = viewportPadding;
+      }
+
+      if (top + popoverRect.height > window.innerHeight - viewportPadding) {
+        const above = buttonRect.top - spacing - popoverRect.height;
+        if (above >= viewportPadding) {
+          top = above;
+        } else {
+          top = Math.max(viewportPadding, Math.min(top, window.innerHeight - viewportPadding - popoverRect.height));
+        }
+      }
+
+      if (top < viewportPadding) {
+        top = viewportPadding;
+      }
+
+      popover.style.top = `${Math.round(top)}px`;
+      popover.style.left = `${Math.round(left)}px`;
+    }
+
+    function closeInfoPopover(options = {}) {
+      if (!activeInfo) {
+        return;
+      }
+      const { button, popover, onPointerDown, onKeyDown, onReposition, onFocusIn } = activeInfo;
+      document.removeEventListener('pointerdown', onPointerDown, true);
+      document.removeEventListener('keydown', onKeyDown, true);
+      window.removeEventListener('resize', onReposition);
+      window.removeEventListener('scroll', onReposition, true);
+      if (onFocusIn) {
+        document.removeEventListener('focusin', onFocusIn, true);
+      }
+      popover.setAttribute('aria-hidden', 'true');
+      popover.setAttribute('aria-modal', 'false');
+      popover.setAttribute('hidden', '');
+      popover.style.visibility = '';
+      popover.style.top = '';
+      popover.style.left = '';
+      popover.style.maxHeight = '';
+      delete popover.dataset.open;
+      if (button) {
+        button.setAttribute('aria-expanded', 'false');
+      }
+      if (options.restoreFocus !== false && button && button.isConnected) {
+        button.focus();
+      }
+      activeInfo = null;
+    }
+
+    function openInfoPopover(button, popover) {
+      if (!button || !popover) {
+        return;
+      }
+      if (popover.dataset.open === 'true') {
+        closeInfoPopover();
+        return;
+      }
+      if (activeInfo?.button === button) {
+        closeInfoPopover();
+        return;
+      }
+
+      closeInfoPopover({ restoreFocus: false });
+
+      const onPointerDown = event => {
+        if (!popover.contains(event.target) && !button.contains(event.target)) {
+          closeInfoPopover();
+        }
+      };
+
+      const onKeyDown = event => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          event.stopPropagation();
+          closeInfoPopover();
+          return;
+        }
+        if (event.key === 'Tab' && activeInfo?.popover === popover) {
+          const focusables = activeInfo.focusables?.length
+            ? activeInfo.focusables
+            : (activeInfo.focusables = getInfoFocusableElements(popover));
+          if (!focusables.length) {
+            event.preventDefault();
+            popover.focus();
+            return;
+          }
+          const currentIndex = focusables.indexOf(document.activeElement);
+          let nextIndex = currentIndex;
+          if (event.shiftKey) {
+            nextIndex = currentIndex <= 0 ? focusables.length - 1 : currentIndex - 1;
+          } else {
+            nextIndex = currentIndex === -1 || currentIndex >= focusables.length - 1 ? 0 : currentIndex + 1;
+          }
+          if (focusables[nextIndex] instanceof HTMLElement) {
+            focusables[nextIndex].focus();
+          }
+          event.preventDefault();
+        }
+      };
+
+      const onReposition = () => {
+        if (activeInfo?.popover === popover) {
+          positionInfoPopover(button, popover);
+        }
+      };
+
+      const onFocusIn = event => {
+        if (activeInfo?.popover !== popover) {
+          return;
+        }
+        if (popover.contains(event.target)) {
+          return;
+        }
+        const focusables = activeInfo.focusables?.length
+          ? activeInfo.focusables
+          : getInfoFocusableElements(popover);
+        const fallback = focusables[0] ?? popover;
+        requestAnimationFrame(() => {
+          if (activeInfo?.popover === popover && fallback instanceof HTMLElement) {
+            fallback.focus();
+          }
+        });
+      };
+
+      activeInfo = {
+        button,
+        popover,
+        onPointerDown,
+        onKeyDown,
+        onReposition,
+        onFocusIn,
+        focusables: []
+      };
+
+      document.addEventListener('pointerdown', onPointerDown, true);
+      document.addEventListener('keydown', onKeyDown, true);
+      document.addEventListener('focusin', onFocusIn, true);
+      window.addEventListener('resize', onReposition);
+      window.addEventListener('scroll', onReposition, true);
+
+      button.setAttribute('aria-expanded', 'true');
+      popover.removeAttribute('hidden');
+      popover.setAttribute('aria-hidden', 'false');
+      popover.setAttribute('aria-modal', 'true');
+      popover.dataset.open = 'true';
+      popover.style.visibility = 'hidden';
+      popover.style.top = '0px';
+      popover.style.left = '0px';
+
+      requestAnimationFrame(() => {
+        if (activeInfo?.popover !== popover) {
+          return;
+        }
+        positionInfoPopover(button, popover);
+        popover.style.visibility = 'visible';
+        const focusables = getInfoFocusableElements(popover);
+        activeInfo.focusables = focusables;
+        let focusTarget = popover.querySelector('[data-info-close]');
+        if (!(focusTarget instanceof HTMLElement) || focusTarget.tabIndex < 0) {
+          focusTarget = focusables[0] ?? popover;
+        }
+        if (focusTarget instanceof HTMLElement) {
+          focusTarget.focus();
+        }
+      });
+    }
+
+    bindInput('currency-symbol', 'currency', { element: currencyInput });
+    bindInput('buffer-percent', 'bufferPercent', {
+      element: bufferInput,
+      validators: [percentValidator()],
+      messageElementId: 'buffer-percent-error'
+    });
+    bindInput('tax-rate', 'taxRate', {
+      element: taxRateInput,
+      validators: [percentValidator('Enter a percentage between 0 and 100.')],
+      messageElementId: 'tax-rate-error'
+    });
+    bindInput('tax-reserve', 'taxReservePercent', {
+      element: taxReserveInput,
+      validators: [percentValidator('Enter a percentage between 0 and 100.')],
+      messageElementId: 'tax-reserve-error'
+    });
+    bindInput('fixed-costs', 'fixedCosts', {
+      element: fixedCostsInput,
+      validators: [nonNegativeValidator()],
+      messageElementId: 'fixed-costs-error'
+    });
+    bindInput('variable-cost', 'variableCost', {
+      element: variableCostInput,
+      validators: [nonNegativeValidator()],
+      messageElementId: 'variable-cost-error'
+    });
+    bindInput('travel-days-per-booking', 'travelDaysPerBooking', { element: travelDaysPerBookingInput });
+    bindInput('travel-cost-per-day', 'travelCostPerDay', {
+      element: travelCostPerDayInput,
+      validators: [nonNegativeValidator()],
+      messageElementId: 'travel-cost-per-day-error'
+    });
+    bindInput('expected-bookings', 'expectedBookings', { element: expectedBookingsInput });
+    bindInput('bookings-options', 'bookingsOptions', {
+      element: bookingsOptionsInput,
+      validators: [
+        createListValidator({
+          allowEmpty: false,
+          message: 'Add at least one booking count (e.g. 8, 10, 12).'
+        })
+      ],
+      messageElementId: 'bookings-options-error'
+    });
+    bindInput('hours-per-booking', 'hoursPerBooking', { element: hoursPerBookingInput });
+    bindInput('months-off', 'monthsOff', { element: monthsOffInput });
+    bindInput('weekly-hours', 'weeklyHours', { element: weeklyHoursInput });
+    bindInput('utilization', 'utilization', {
+      element: utilizationInput,
+      validators: [percentValidator('Enter a percentage between 0 and 100.')],
+      messageElementId: 'utilization-error'
+    });
+    bindInput('price-min', 'priceMin', {
+      element: priceMinInput,
+      validators: [
+        nonNegativeValidator(),
+        createRangeOrderValidator({
+          otherPath: 'priceMax',
+          type: 'min',
+          message: 'Keep the minimum at or below the maximum.'
+        })
+      ],
+      messageElementId: 'price-min-error'
+    });
+    bindInput('price-max', 'priceMax', {
+      element: priceMaxInput,
+      validators: [
+        nonNegativeValidator(),
+        createRangeOrderValidator({
+          otherPath: 'priceMin',
+          type: 'max',
+          message: 'Keep the maximum at or above the minimum.'
+        })
+      ],
+      messageElementId: 'price-max-error'
+    });
+    bindInput('price-step', 'priceStep', {
+      element: priceStepInput,
+      validators: [positiveNumberValidator('Enter a step greater than 0.')],
+      messageElementId: 'price-step-error'
+    });
+    bindInput('price-points', 'pricePoints', {
+      element: pricePointsInput,
+      validators: [
+        createListValidator({
+          allowEmpty: true,
+          message: 'Use commas between numbers like 95, 125, 155.'
+        })
+      ],
+      messageElementId: 'price-points-error'
+    });
+
+    bindInput('income-target', 'incomeTarget', {
+      element: incomeTargetInput,
+      required: true,
+      message: 'Income target is required.',
+      messageElement: incomeTargetError,
+      beforeDispatch: () => {
+        lastIncomePeriod = calcState.incomePeriod === 'annual' ? 'annual' : 'monthly';
+        lastIncomeType = calcState.incomeType === 'gross' ? 'gross' : 'net';
+      },
+      dispatch: value => ({ incomeTarget: value, incomeTargetHint: '' })
+    });
+
+    bindInput('income-period', 'incomePeriod', {
+      element: incomePeriodSelect,
+      events: ['change'],
+      dispatch: value => applyIncomeTargetConversions(calcState, value, calcState.incomeType),
+      format: value => (value === 'annual' ? 'annual' : 'monthly')
+    });
+
+    bindInput('income-type', 'incomeType', {
+      element: incomeTypeSelect,
+      events: ['change'],
+      dispatch: value => applyIncomeTargetConversions(calcState, calcState.incomePeriod, value),
+      format: value => (value === 'gross' ? 'gross' : 'net')
+    });
+
+    infoButtons.forEach(button => {
+      const targetId = button.dataset.infoTarget;
+      const popover = targetId ? document.getElementById(targetId) : null;
+      if (!popover) {
+        button.setAttribute('aria-disabled', 'true');
+        button.setAttribute('tabindex', '-1');
+        return;
+      }
+      button.setAttribute('aria-expanded', 'false');
+      button.setAttribute('aria-haspopup', 'dialog');
+      button.setAttribute('aria-controls', popover.id);
+
+      const closeButton = popover.querySelector('[data-info-close]');
+      closeButton?.addEventListener('click', () => closeInfoPopover());
+
+      popover.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+          event.stopPropagation();
+          closeInfoPopover();
+        }
+      });
+
+      const howToButton = popover.querySelector('[data-info-how-to]');
+      if (howToButton) {
+        howToButton.addEventListener('click', () => {
+          const originButton = button;
+          closeInfoPopover({ restoreFocus: false });
+          openHowToDialog();
+          if (originButton) {
+            previousFocus = originButton;
+          }
+        });
+      }
+
+      button.addEventListener('click', () => openInfoPopover(button, popover));
+    });
+
+    function applyTheme(theme) {
+      const normalized = theme === 'light' ? 'light' : 'dark';
+      document.body.dataset.theme = normalized;
+      localStorage.setItem('income-planner-theme', normalized);
+      const isDark = normalized === 'dark';
+      if (themeToggleLabel) {
+        themeToggleLabel.textContent = isDark ? 'Dark theme' : 'Light theme';
+      }
+      themeToggle.setAttribute(
+        'aria-label',
+        isDark ? 'Dark theme active. Switch to light theme.' : 'Light theme active. Switch to dark theme.'
+      );
+      themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+      document.dispatchEvent(new CustomEvent('themechange', { detail: normalized }));
+    }
+
+    const storedTheme = localStorage.getItem('income-planner-theme');
+    applyTheme(storedTheme || 'dark');
+
+    themeToggle.addEventListener('click', () => {
+      const next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+    });
+
+    function openHowToDialog() {
+      if (!howToDialog) {
+        return;
+      }
+      closeInfoPopover({ restoreFocus: false });
+      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      howToDialog.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('dialog-open');
+      const focusable = howToDialog.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusable instanceof HTMLElement) {
+        focusable.focus();
+      }
+    }
+
+    function closeHowToDialog() {
+      if (!howToDialog) {
+        return;
+      }
+      howToDialog.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('dialog-open');
+      if (previousFocus && previousFocus.isConnected) {
+        previousFocus.focus();
+      }
+    }
+
+    howToLink?.addEventListener('click', event => {
+      event.preventDefault();
+      openHowToDialog();
+    });
+    howToClose?.addEventListener('click', closeHowToDialog);
+    howToBackdrop?.addEventListener('click', closeHowToDialog);
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && howToDialog?.getAttribute('aria-hidden') === 'false') {
+        closeHowToDialog();
+      }
+    });
+
+    const defaultCalcState = getDefaultStateFromInputs();
+    const storedCalcState = readStoredState();
+    let migratedCapacityFields = {};
+    let appliedLegacyMigration = false;
+
+    if (storedCalcState && !hasPersistedCapacityFields(storedCalcState)) {
+      migratedCapacityFields = migrateLegacyCapacityFields(storedCalcState);
+      appliedLegacyMigration = Object.keys(migratedCapacityFields).length > 0;
+    }
+
+    calcState = storedCalcState
+      ? normalizeCalcState({ ...defaultCalcState, ...storedCalcState, ...migratedCapacityFields })
+      : defaultCalcState;
+    lastIncomePeriod = calcState.incomePeriod;
+    lastIncomeType = calcState.incomeType;
+
+    if (appliedLegacyMigration) {
+      persistState();
+    }
+
+    render();
+  </script>
+</body>
+</html>
