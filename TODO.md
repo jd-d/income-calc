@@ -115,7 +115,6 @@ This file maps small, shippable sprints to enrich the simple **income-calc** (si
 To be executed after the sprint planning 
 
 ## Backlog Highest Priority (Fixes)
-- [ ] Validate numeric inputs so empty fields show friendly guidance instead of producing NaN results.
 - [ ] Add an option to download the scenario table as CSV for sharing with accountants.
 
 ## Backlog Highest Priority (UI/UX)
@@ -136,6 +135,7 @@ To be executed after the sprint planning
 - [x] Sprint 4: Card “Retainer” with two views: Rate needed and Volume needed. (2025-11-01)
 - [x] Sprint 4: Use capacity plus cost utilities; factor hours-per-unit and travel overhead. (2025-11-01)
 - [x] Sprint 4: Mobile-friendly two-column mini-metrics for the Retainer card. (2025-11-01)
+- [x] Validate numeric inputs so empty fields show friendly guidance instead of producing NaN results. (2025-11-01)
 - [x] Replace the class-based pricing template with a service-focused income planner layout so terminology matches our use case. (2025-10-28)
 - [x] Fix that green table cell backgrounds don't display when not in fixed lesson price mode any more. (Superseded by planner redesign – 2025-10-28)
 - [x] On touch screen when finger is on table you can't scroll up and down, can only scroll when finger right on the side, which isn't practical, scrolling up and down of whole page/site should be possible when finger on table. (Superseded by planner redesign – 2025-10-28)

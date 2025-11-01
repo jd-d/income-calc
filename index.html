@@ -513,6 +513,17 @@
       font-size: 0.95rem;
     }
 
+    .retainer-explainer {
+      margin: 8px 0 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .retainer-explainer a {
+      color: var(--accent-strong);
+      font-weight: 600;
+    }
+
     .retainer-card__controls {
       display: inline-flex;
       align-self: flex-start;
@@ -1140,8 +1151,18 @@
                   <span aria-hidden="true">i</span>
                 </button>
               </div>
-              <input type="number" id="buffer-percent" inputmode="decimal" value="10" min="0" max="90" step="1" />
+              <input
+                type="number"
+                id="buffer-percent"
+                inputmode="decimal"
+                value="10"
+                min="0"
+                max="100"
+                step="1"
+                aria-describedby="buffer-percent-error"
+              />
               <p class="field-hint">Adds extra revenue coverage for no-shows or downtime.</p>
+              <p class="field-hint field-hint--error" id="buffer-percent-error" aria-live="polite"></p>
               <div
                 class="info-popover"
                 id="info-buffer-percent"
@@ -1185,7 +1206,17 @@
                   <span aria-hidden="true">i</span>
                 </button>
               </div>
-              <input type="number" id="tax-rate" inputmode="decimal" value="32" min="0" max="70" step="1" />
+              <input
+                type="number"
+                id="tax-rate"
+                inputmode="decimal"
+                value="36"
+                min="0"
+                max="100"
+                step="1"
+                aria-describedby="tax-rate-error"
+              />
+              <p class="field-hint field-hint--error" id="tax-rate-error" aria-live="polite"></p>
               <div
                 class="info-popover"
                 id="info-tax-rate"
@@ -1223,8 +1254,18 @@
                   <span aria-hidden="true">i</span>
                 </button>
               </div>
-              <input type="number" id="tax-reserve" inputmode="decimal" value="5" min="0" max="50" step="1" />
+              <input
+                type="number"
+                id="tax-reserve"
+                inputmode="decimal"
+                value="5"
+                min="0"
+                max="100"
+                step="1"
+                aria-describedby="tax-reserve-error"
+              />
               <p class="field-hint">Reserve extra cash beyond the tax rate for quarterly payments or surprises.</p>
+              <p class="field-hint field-hint--error" id="tax-reserve-error" aria-live="polite"></p>
               <div
                 class="info-popover"
                 id="info-tax-reserve"
@@ -1262,7 +1303,16 @@
                   <span aria-hidden="true">i</span>
                 </button>
               </div>
-              <input type="number" id="fixed-costs" inputmode="decimal" value="1200" min="0" step="50" />
+              <input
+                type="number"
+                id="fixed-costs"
+                inputmode="decimal"
+                value="800"
+                min="0"
+                step="50"
+                aria-describedby="fixed-costs-error"
+              />
+              <p class="field-hint field-hint--error" id="fixed-costs-error" aria-live="polite"></p>
               <div
                 class="info-popover"
                 id="info-fixed-costs"
@@ -1300,7 +1350,16 @@
                   <span aria-hidden="true">i</span>
                 </button>
               </div>
-              <input type="number" id="variable-cost" inputmode="decimal" value="15" min="0" step="1" />
+              <input
+                type="number"
+                id="variable-cost"
+                inputmode="decimal"
+                value="15"
+                min="0"
+                step="1"
+                aria-describedby="variable-cost-error"
+              />
+              <p class="field-hint field-hint--error" id="variable-cost-error" aria-live="polite"></p>
               <div
                 class="info-popover"
                 id="info-variable-cost"
@@ -1377,9 +1436,18 @@
                 </button>
               </div>
               <div class="input-with-suffix">
-                <input type="number" id="travel-cost-per-day" inputmode="decimal" value="0" min="0" step="5" />
+                <input
+                  type="number"
+                  id="travel-cost-per-day"
+                  inputmode="decimal"
+                  value="0"
+                  min="0"
+                  step="5"
+                  aria-describedby="travel-cost-per-day-error"
+                />
                 <span>/ day</span>
               </div>
+              <p class="field-hint field-hint--error" id="travel-cost-per-day-error" aria-live="polite"></p>
               <div
                 class="info-popover"
                 id="info-travel-cost-per-day"
@@ -1461,8 +1529,15 @@
                   <span aria-hidden="true">i</span>
                 </button>
               </div>
-              <input type="text" id="bookings-options" value="8, 10, 12, 14" autocomplete="off" />
+              <input
+                type="text"
+                id="bookings-options"
+                value="8, 10, 12, 14"
+                autocomplete="off"
+                aria-describedby="bookings-options-error"
+              />
               <p class="field-hint">Comma separated list used for the scenario table.</p>
+              <p class="field-hint field-hint--error" id="bookings-options-error" aria-live="polite"></p>
               <div
                 class="info-popover"
                 id="info-bookings-options"
@@ -1615,9 +1690,19 @@
                 </button>
               </div>
               <div class="input-with-suffix">
-                <input type="number" id="utilization" inputmode="decimal" value="75" min="0" max="100" step="1" aria-describedby="utilization-suffix" />
+                <input
+                  type="number"
+                  id="utilization"
+                  inputmode="decimal"
+                  value="75"
+                  min="0"
+                  max="100"
+                  step="1"
+                  aria-describedby="utilization-suffix utilization-error"
+                />
                 <span id="utilization-suffix" aria-hidden="true">%</span>
               </div>
+              <p class="field-hint field-hint--error" id="utilization-error" aria-live="polite"></p>
               <div
                 class="info-popover"
                 id="info-utilization"
@@ -1661,7 +1746,16 @@
                   <span aria-hidden="true">i</span>
                 </button>
               </div>
-              <input type="number" id="price-min" inputmode="decimal" value="75" min="0" step="5" />
+              <input
+                type="number"
+                id="price-min"
+                inputmode="decimal"
+                value="75"
+                min="0"
+                step="5"
+                aria-describedby="price-min-error"
+              />
+              <p class="field-hint field-hint--error" id="price-min-error" aria-live="polite"></p>
               <div
                 class="info-popover"
                 id="info-price-min"
@@ -1699,7 +1793,16 @@
                   <span aria-hidden="true">i</span>
                 </button>
               </div>
-              <input type="number" id="price-max" inputmode="decimal" value="180" min="0" step="5" />
+              <input
+                type="number"
+                id="price-max"
+                inputmode="decimal"
+                value="180"
+                min="0"
+                step="5"
+                aria-describedby="price-max-error"
+              />
+              <p class="field-hint field-hint--error" id="price-max-error" aria-live="polite"></p>
               <div
                 class="info-popover"
                 id="info-price-max"
@@ -1737,7 +1840,16 @@
                   <span aria-hidden="true">i</span>
                 </button>
               </div>
-              <input type="number" id="price-step" inputmode="decimal" value="15" min="1" step="1" />
+              <input
+                type="number"
+                id="price-step"
+                inputmode="decimal"
+                value="15"
+                min="1"
+                step="1"
+                aria-describedby="price-step-error"
+              />
+              <p class="field-hint field-hint--error" id="price-step-error" aria-live="polite"></p>
               <div
                 class="info-popover"
                 id="info-price-step"
@@ -1775,8 +1887,15 @@
                   <span aria-hidden="true">i</span>
                 </button>
               </div>
-              <input type="text" id="price-points" placeholder="e.g. 95, 125, 155" autocomplete="off" />
+              <input
+                type="text"
+                id="price-points"
+                placeholder="e.g. 95, 125, 155"
+                autocomplete="off"
+                aria-describedby="price-points-error"
+              />
               <p class="field-hint">Use comma separated values to override the range above.</p>
+              <p class="field-hint field-hint--error" id="price-points-error" aria-live="polite"></p>
               <div
                 class="info-popover"
                 id="info-price-points"
@@ -1856,6 +1975,11 @@
           <div>
             <h2 id="retainer-title">Retainer</h2>
             <p>Translate your goals into either a monthly rate or the workload to sustain that rate.</p>
+            <p class="retainer-explainer">
+              Retainers are one of several service formats fruit-industry specialists offer, bundling season-long orchard monitoring,
+              crop forecasting, and rapid harvest support.
+              <a href="resources.html#fruit-retainer">Read the fruit retainer explainer.</a>
+            </p>
           </div>
           <div class="retainer-card__controls" role="group" aria-label="Retainer focus">
             <button type="button" data-retainer-view="rate" aria-pressed="true">Rate needed</button>
@@ -2175,6 +2299,88 @@
         .filter(item => item >= 0);
     }
 
+    function isEmptyValue(value) {
+      if (value == null) {
+        return true;
+      }
+      if (typeof value === 'string') {
+        return value.trim().length === 0;
+      }
+      return false;
+    }
+
+    function percentValidator(message = 'Enter a percentage between 0 and 100.') {
+      return value => {
+        if (isEmptyValue(value)) {
+          return { valid: true };
+        }
+        const numeric = parseNumber(value);
+        if (!Number.isFinite(numeric) || numeric < 0 || numeric > 100) {
+          return { valid: false, message };
+        }
+        return { valid: true };
+      };
+    }
+
+    function nonNegativeValidator(message = 'Enter a value of 0 or more.') {
+      return value => {
+        if (isEmptyValue(value)) {
+          return { valid: true };
+        }
+        const numeric = parseNumber(value);
+        if (!Number.isFinite(numeric) || numeric < 0) {
+          return { valid: false, message };
+        }
+        return { valid: true };
+      };
+    }
+
+    function positiveNumberValidator(message = 'Enter a value greater than 0.') {
+      return value => {
+        if (isEmptyValue(value)) {
+          return { valid: true };
+        }
+        const numeric = parseNumber(value);
+        if (!Number.isFinite(numeric) || numeric <= 0) {
+          return { valid: false, message };
+        }
+        return { valid: true };
+      };
+    }
+
+    function createListValidator({ allowEmpty = true, message = 'Enter numbers separated by commas.', minItems = 1 } = {}) {
+      return value => {
+        if (isEmptyValue(value)) {
+          return { valid: allowEmpty, message: allowEmpty ? '' : message };
+        }
+        const items = parseList(value);
+        if (!items.length || items.length < minItems) {
+          return { valid: false, message };
+        }
+        return { valid: true };
+      };
+    }
+
+    function createRangeOrderValidator({ otherPath, type = 'min', message = 'Enter a valid range.' }) {
+      return (value, state) => {
+        if (!otherPath) {
+          return { valid: true };
+        }
+        if (isEmptyValue(value) || isEmptyValue(state?.[otherPath])) {
+          return { valid: true };
+        }
+        const current = parseNumber(value);
+        const other = parseNumber(state[otherPath]);
+        if (!Number.isFinite(current) || !Number.isFinite(other)) {
+          return { valid: true };
+        }
+        if (type === 'min') {
+          return current <= other ? { valid: true } : { valid: false, message };
+        }
+        return current >= other ? { valid: true } : { valid: false, message };
+      };
+    }
+
     function stringifyStateNumber(value, precision = 2) {
       if (!Number.isFinite(value)) {
         return '';
@@ -2267,9 +2473,9 @@
       const incomeTarget = parseNumber(state.incomeTarget);
       const incomePeriod = state.incomePeriod === 'annual' ? 'annual' : 'monthly';
       const incomeType = state.incomeType === 'gross' ? 'gross' : 'net';
-      const bufferPercent = clamp(parsePercent(state.bufferPercent), 0, 0.95);
-      const taxRate = clamp(parsePercent(state.taxRate), 0, 0.95);
-      const taxReserveRate = clamp(parsePercent(state.taxReservePercent), 0, 0.95);
+      const bufferPercent = clamp(parsePercent(state.bufferPercent), 0, 1);
+      const taxRate = clamp(parsePercent(state.taxRate), 0, 1);
+      const taxReserveRate = clamp(parsePercent(state.taxReservePercent), 0, 1);
       const fixedCosts = Math.max(parseNumber(state.fixedCosts) || 0, 0);
       const variableCost = Math.max(parseNumber(state.variableCost) || 0, 0);
       const travelDaysPerBooking = Math.max(parseNumber(state.travelDaysPerBooking) || 0, 0);
@@ -2476,8 +2682,8 @@
       const messages = [];
       let updatedValue = rawValue;
       let changed = false;
-      const parsedTaxRate = clamp(parsePercent(state.taxRate), 0, 0.95);
-      const parsedReserveRate = clamp(parsePercent(state.taxReservePercent), 0, 0.95);
+      const parsedTaxRate = clamp(parsePercent(state.taxRate), 0, 1);
+      const parsedReserveRate = clamp(parsePercent(state.taxReservePercent), 0, 1);
       const taxRate = Number.isFinite(parsedTaxRate) ? parsedTaxRate : 0;
       const reserveRate = Number.isFinite(parsedReserveRate) ? parsedReserveRate : 0;
       const combinedRate = Math.min(Math.max(taxRate + reserveRate, 0), 0.97);
@@ -2619,7 +2825,9 @@
         messageElement,
         messageElementId,
         beforeDispatch,
-        dispatch
+        dispatch,
+        validators = [],
+        invalidMessage
       } = options;
 
       const resolvedMessageElement = messageElementId
@@ -2646,32 +2854,64 @@
         required,
         message: required ? (message || 'This field is required.') : '',
         messageElement: resolvedMessageElement || null,
-        read: typeof read === 'function' ? read : () => (typeof element.value === 'string' ? element.value : '')
+        read: typeof read === 'function' ? read : () => (typeof element.value === 'string' ? element.value : ''),
+        validators: Array.isArray(validators) ? validators.filter(validator => typeof validator === 'function') : [],
+        invalidMessage: invalidMessage || 'Enter a valid value.'
       });
 
       return element;
     }
 
     function updateBindingValidation(binding, state) {
-      if (!binding.required) {
-        binding.element.removeAttribute('aria-invalid');
-        if (binding.messageElement) {
-          binding.messageElement.textContent = '';
-        }
-        return;
-      }
       const rawValue = state[binding.path];
       const value = typeof rawValue === 'string' ? rawValue.trim() : rawValue;
-      const isValid = typeof value === 'string' ? value.length > 0 : Boolean(value);
-      if (isValid) {
+      const hasValue = !(typeof value === 'string' && value.length === 0) && value !== null && value !== undefined && value !== '';
+
+      let errorMessage = '';
+
+      if (binding.required && !hasValue) {
+        errorMessage = binding.message || 'This field is required.';
+      }
+
+      if (!errorMessage && binding.validators?.length) {
+        binding.validators.some(validator => {
+          try {
+            const result = validator(value, state);
+            if (typeof result === 'string') {
+              if (result) {
+                errorMessage = result;
+                return true;
+              }
+              return false;
+            }
+            if (result && typeof result === 'object') {
+              if (result.valid === false) {
+                errorMessage = result.message || binding.invalidMessage;
+                return true;
+              }
+              return false;
+            }
+            if (result === false) {
+              errorMessage = binding.invalidMessage;
+              return true;
+            }
+          } catch (error) {
+            errorMessage = binding.invalidMessage;
+            return true;
+          }
+          return false;
+        });
+      }
+
+      if (errorMessage) {
+        binding.element.setAttribute('aria-invalid', 'true');
+        if (binding.messageElement) {
+          binding.messageElement.textContent = errorMessage;
+        }
+      } else {
         binding.element.removeAttribute('aria-invalid');
         if (binding.messageElement) {
           binding.messageElement.textContent = '';
-        }
-      } else {
-        binding.element.setAttribute('aria-invalid', 'true');
-        if (binding.messageElement) {
-          binding.messageElement.textContent = binding.message;
         }
       }
     }
@@ -3043,6 +3283,26 @@
     let activeInfo = null;
     let previousFocus = null;
 
+    const INFO_FOCUS_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+    function getInfoFocusableElements(popover) {
+      if (!popover) {
+        return [];
+      }
+      return Array.from(popover.querySelectorAll(INFO_FOCUS_SELECTOR)).filter(element => {
+        if (!(element instanceof HTMLElement)) {
+          return false;
+        }
+        if (element.hasAttribute('disabled')) {
+          return false;
+        }
+        if (element.getAttribute('aria-hidden') === 'true') {
+          return false;
+        }
+        return element.tabIndex >= 0;
+      });
+    }
+
     function positionInfoPopover(button, popover) {
       if (!button || !popover) {
         return;
@@ -3087,12 +3347,16 @@
       if (!activeInfo) {
         return;
       }
-      const { button, popover, onPointerDown, onKeyDown, onReposition } = activeInfo;
+      const { button, popover, onPointerDown, onKeyDown, onReposition, onFocusIn } = activeInfo;
       document.removeEventListener('pointerdown', onPointerDown, true);
       document.removeEventListener('keydown', onKeyDown, true);
       window.removeEventListener('resize', onReposition);
       window.removeEventListener('scroll', onReposition, true);
+      if (onFocusIn) {
+        document.removeEventListener('focusin', onFocusIn, true);
+      }
       popover.setAttribute('aria-hidden', 'true');
+      popover.setAttribute('aria-modal', 'false');
       popover.setAttribute('hidden', '');
       popover.style.visibility = '';
       popover.style.top = '';
@@ -3134,6 +3398,28 @@
           event.preventDefault();
           event.stopPropagation();
           closeInfoPopover();
+          return;
+        }
+        if (event.key === 'Tab' && activeInfo?.popover === popover) {
+          const focusables = activeInfo.focusables?.length
+            ? activeInfo.focusables
+            : (activeInfo.focusables = getInfoFocusableElements(popover));
+          if (!focusables.length) {
+            event.preventDefault();
+            popover.focus();
+            return;
+          }
+          const currentIndex = focusables.indexOf(document.activeElement);
+          let nextIndex = currentIndex;
+          if (event.shiftKey) {
+            nextIndex = currentIndex <= 0 ? focusables.length - 1 : currentIndex - 1;
+          } else {
+            nextIndex = currentIndex === -1 || currentIndex >= focusables.length - 1 ? 0 : currentIndex + 1;
+          }
+          if (focusables[nextIndex] instanceof HTMLElement) {
+            focusables[nextIndex].focus();
+          }
+          event.preventDefault();
         }
       };
 
@@ -3143,16 +3429,44 @@
         }
       };
 
-      activeInfo = { button, popover, onPointerDown, onKeyDown, onReposition };
+      const onFocusIn = event => {
+        if (activeInfo?.popover !== popover) {
+          return;
+        }
+        if (popover.contains(event.target)) {
+          return;
+        }
+        const focusables = activeInfo.focusables?.length
+          ? activeInfo.focusables
+          : getInfoFocusableElements(popover);
+        const fallback = focusables[0] ?? popover;
+        requestAnimationFrame(() => {
+          if (activeInfo?.popover === popover && fallback instanceof HTMLElement) {
+            fallback.focus();
+          }
+        });
+      };
+
+      activeInfo = {
+        button,
+        popover,
+        onPointerDown,
+        onKeyDown,
+        onReposition,
+        onFocusIn,
+        focusables: []
+      };
 
       document.addEventListener('pointerdown', onPointerDown, true);
       document.addEventListener('keydown', onKeyDown, true);
+      document.addEventListener('focusin', onFocusIn, true);
       window.addEventListener('resize', onReposition);
       window.addEventListener('scroll', onReposition, true);
 
       button.setAttribute('aria-expanded', 'true');
       popover.removeAttribute('hidden');
       popover.setAttribute('aria-hidden', 'false');
+      popover.setAttribute('aria-modal', 'true');
       popover.dataset.open = 'true';
       popover.style.visibility = 'hidden';
       popover.style.top = '0px';
@@ -3164,9 +3478,12 @@
         }
         positionInfoPopover(button, popover);
         popover.style.visibility = 'visible';
-        const focusTarget = popover.querySelector('[data-info-close]')
-          || popover.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
-          || popover;
+        const focusables = getInfoFocusableElements(popover);
+        activeInfo.focusables = focusables;
+        let focusTarget = popover.querySelector('[data-info-close]');
+        if (!(focusTarget instanceof HTMLElement) || focusTarget.tabIndex < 0) {
+          focusTarget = focusables[0] ?? popover;
+        }
         if (focusTarget instanceof HTMLElement) {
           focusTarget.focus();
         }
@@ -3174,23 +3491,95 @@
     }
 
     bindInput('currency-symbol', 'currency', { element: currencyInput });
-    bindInput('buffer-percent', 'bufferPercent', { element: bufferInput });
-    bindInput('tax-rate', 'taxRate', { element: taxRateInput });
-    bindInput('tax-reserve', 'taxReservePercent', { element: taxReserveInput });
-    bindInput('fixed-costs', 'fixedCosts', { element: fixedCostsInput });
-    bindInput('variable-cost', 'variableCost', { element: variableCostInput });
+    bindInput('buffer-percent', 'bufferPercent', {
+      element: bufferInput,
+      validators: [percentValidator()],
+      messageElementId: 'buffer-percent-error'
+    });
+    bindInput('tax-rate', 'taxRate', {
+      element: taxRateInput,
+      validators: [percentValidator('Enter a percentage between 0 and 100.')],
+      messageElementId: 'tax-rate-error'
+    });
+    bindInput('tax-reserve', 'taxReservePercent', {
+      element: taxReserveInput,
+      validators: [percentValidator('Enter a percentage between 0 and 100.')],
+      messageElementId: 'tax-reserve-error'
+    });
+    bindInput('fixed-costs', 'fixedCosts', {
+      element: fixedCostsInput,
+      validators: [nonNegativeValidator()],
+      messageElementId: 'fixed-costs-error'
+    });
+    bindInput('variable-cost', 'variableCost', {
+      element: variableCostInput,
+      validators: [nonNegativeValidator()],
+      messageElementId: 'variable-cost-error'
+    });
     bindInput('travel-days-per-booking', 'travelDaysPerBooking', { element: travelDaysPerBookingInput });
-    bindInput('travel-cost-per-day', 'travelCostPerDay', { element: travelCostPerDayInput });
+    bindInput('travel-cost-per-day', 'travelCostPerDay', {
+      element: travelCostPerDayInput,
+      validators: [nonNegativeValidator()],
+      messageElementId: 'travel-cost-per-day-error'
+    });
     bindInput('expected-bookings', 'expectedBookings', { element: expectedBookingsInput });
-    bindInput('bookings-options', 'bookingsOptions', { element: bookingsOptionsInput });
+    bindInput('bookings-options', 'bookingsOptions', {
+      element: bookingsOptionsInput,
+      validators: [
+        createListValidator({
+          allowEmpty: false,
+          message: 'Add at least one booking count (e.g. 8, 10, 12).'
+        })
+      ],
+      messageElementId: 'bookings-options-error'
+    });
     bindInput('hours-per-booking', 'hoursPerBooking', { element: hoursPerBookingInput });
     bindInput('months-off', 'monthsOff', { element: monthsOffInput });
     bindInput('weekly-hours', 'weeklyHours', { element: weeklyHoursInput });
-    bindInput('utilization', 'utilization', { element: utilizationInput });
-    bindInput('price-min', 'priceMin', { element: priceMinInput });
-    bindInput('price-max', 'priceMax', { element: priceMaxInput });
-    bindInput('price-step', 'priceStep', { element: priceStepInput });
-    bindInput('price-points', 'pricePoints', { element: pricePointsInput });
+    bindInput('utilization', 'utilization', {
+      element: utilizationInput,
+      validators: [percentValidator('Enter a percentage between 0 and 100.')],
+      messageElementId: 'utilization-error'
+    });
+    bindInput('price-min', 'priceMin', {
+      element: priceMinInput,
+      validators: [
+        nonNegativeValidator(),
+        createRangeOrderValidator({
+          otherPath: 'priceMax',
+          type: 'min',
+          message: 'Keep the minimum at or below the maximum.'
+        })
+      ],
+      messageElementId: 'price-min-error'
+    });
+    bindInput('price-max', 'priceMax', {
+      element: priceMaxInput,
+      validators: [
+        nonNegativeValidator(),
+        createRangeOrderValidator({
+          otherPath: 'priceMin',
+          type: 'max',
+          message: 'Keep the maximum at or above the minimum.'
+        })
+      ],
+      messageElementId: 'price-max-error'
+    });
+    bindInput('price-step', 'priceStep', {
+      element: priceStepInput,
+      validators: [positiveNumberValidator('Enter a step greater than 0.')],
+      messageElementId: 'price-step-error'
+    });
+    bindInput('price-points', 'pricePoints', {
+      element: pricePointsInput,
+      validators: [
+        createListValidator({
+          allowEmpty: true,
+          message: 'Use commas between numbers like 95, 125, 155.'
+        })
+      ],
+      messageElementId: 'price-points-error'
+    });
 
     bindInput('income-target', 'incomeTarget', {
       element: incomeTargetInput,
