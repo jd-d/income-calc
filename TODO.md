@@ -45,11 +45,9 @@ This file maps small, shippable sprints to enrich the simple **income-calc** (si
 
 ## Sprint 4 – First service card (Retainer only)
 **Goal:** Prove the service-card pattern with a single service.
-- [ ] Card “Retainer” with two views: **Rate needed** and **Volume needed**.
-- [ ] Use capacity + cost utilities; factor hours-per-unit and travel overhead.
-- [ ] Mobile-friendly, two-column mini-metrics.
+- _(Tasks moved to DONE on 2025-11-01.)_
 **Done when:**
-- [ ] With only Retainer, app answers “how much to charge?” or “how many units?”.
+- [x] With only Retainer, app answers “how much to charge?” or “how many units?”. _(2025-11-01)_
 
 ## Sprint 5 – Config-driven multi-service
 **Goal:** Add services without new logic.
@@ -135,6 +133,9 @@ To be executed after the sprint planning
 - [x] Sprint 3: Utility: aggregate **fixed monthly**, **per-hour**, **per-travel-day** costs. (2025-11-01)
 - [x] Sprint 3: Display monthly and annual totals from that one function. (2025-11-01)
 - [x] Sprint 3: Add **tax reserve percent** input that feeds Net calculation. (2025-11-01)
+- [x] Sprint 4: Card “Retainer” with two views: Rate needed and Volume needed. (2025-11-01)
+- [x] Sprint 4: Use capacity plus cost utilities; factor hours-per-unit and travel overhead. (2025-11-01)
+- [x] Sprint 4: Mobile-friendly two-column mini-metrics for the Retainer card. (2025-11-01)
 - [x] Replace the class-based pricing template with a service-focused income planner layout so terminology matches our use case. (2025-10-28)
 - [x] Fix that green table cell backgrounds don't display when not in fixed lesson price mode any more. (Superseded by planner redesign – 2025-10-28)
 - [x] On touch screen when finger is on table you can't scroll up and down, can only scroll when finger right on the side, which isn't practical, scrolling up and down of whole page/site should be possible when finger on table. (Superseded by planner redesign – 2025-10-28)
