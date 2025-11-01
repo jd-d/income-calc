@@ -587,6 +587,17 @@
       color: var(--text-primary);
     }
 
+    .retainer-service__summary {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .retainer-service__summary a {
+      color: var(--accent-strong);
+      font-weight: 600;
+    }
+
     .retainer-service__badges {
       display: flex;
       flex-wrap: wrap;
@@ -2031,9 +2042,8 @@
             <h2 id="retainer-title">Service mix planners</h2>
             <p>Translate your goals into either a monthly rate or the workload to sustain that rate for each offering.</p>
             <p class="retainer-explainer">
-              Representation Retainers, Advisory projects, QC Sprints, and Training cohorts each have their own card below. Update the
-              assumptions to see how every service contributes to revenue, capacity, and take-home pay.
-              <a href="resources.html#fruit-retainer">Read the fruit retainer explainer.</a>
+              Rate needed sizes the minimum price per service while Volume needed shows the bookings required when you hold a price steady. Read more about each card, the defaults, and how to interpret these views in the
+              <a href="resources.html#services-explainer">services explainer</a>.
             </p>
           </div>
           <div class="retainer-card__controls" role="group" aria-label="Service focus">
@@ -2925,6 +2935,21 @@
         header.appendChild(badges);
       }
 
+      const summary = document.createElement('p');
+      summary.className = 'retainer-service__summary';
+      summary.hidden = true;
+      header.appendChild(summary);
+
+      if (service.id === 'retainer') {
+        const reference = document.createElement('p');
+        reference.className = 'retainer-service__summary';
+        const link = document.createElement('a');
+        link.href = 'resources.html#fruit-retainer';
+        link.textContent = 'Read the fruit retainer explainer.';
+        reference.appendChild(link);
+        header.appendChild(reference);
+      }
+
       root.appendChild(header);
 
       const ratePanel = document.createElement('div');
@@ -2976,6 +3001,7 @@
       return {
         config: service,
         root,
+        summaryEl: summary,
         rate: {
           panel: ratePanel,
           metrics: {
@@ -3010,6 +3036,10 @@
           }
         });
       });
+      if (entry.summaryEl) {
+        entry.summaryEl.textContent = '';
+        entry.summaryEl.hidden = true;
+      }
     }
 
     const resultsWrapper = document.getElementById('results-wrapper');
@@ -3448,36 +3478,37 @@
       });
 
       if (retainerNote) {
-        const noteParts = servicesData
-          .map(data => {
-            const { config } = data;
-            const segments = [];
-            if (data.hasExpectedUnits) {
-              segments.push(`Planned ${formatServiceUnits(data.expectedUnits, config)} per month.`);
-            }
-            const workloadParts = [];
-            if (Number.isFinite(summary.hoursPerBooking) && summary.hoursPerBooking > 0) {
-              workloadParts.push(`${formatNumber(summary.hoursPerBooking, 1)} h service`);
-            }
-            if (Number.isFinite(summary.travelDaysPerBooking) && summary.travelDaysPerBooking > 0) {
-              workloadParts.push(`${formatNumber(summary.travelDaysPerBooking, 2)} travel days`);
-            }
-            if (workloadParts.length) {
-              segments.push(`Per ${getServiceLabelLower(config)}: ${workloadParts.join(' + ')}.`);
-            }
-            if (!segments.length) {
-              return '';
-            }
-            return `${config.label}: ${segments.join(' ')}`.trim();
-          })
-          .filter(Boolean);
-        retainerNote.textContent = noteParts.join(' ');
+        retainerNote.textContent = 'Switch between Rate needed and Volume needed to compare pricing versus workload for each service.';
       }
 
       servicesData.forEach(data => {
         const { entry, config } = data;
         const rateMetrics = entry.rate.metrics;
         const volumeMetrics = entry.volume.metrics;
+
+        if (entry.summaryEl) {
+          const summarySegments = [];
+          if (data.hasExpectedUnits) {
+            summarySegments.push(`Planned ${formatServiceUnits(data.expectedUnits, config)} per month.`);
+          }
+          const workloadParts = [];
+          if (Number.isFinite(summary.hoursPerBooking) && summary.hoursPerBooking > 0) {
+            workloadParts.push(`${formatNumber(summary.hoursPerBooking, 1)} h service`);
+          }
+          if (Number.isFinite(summary.travelDaysPerBooking) && summary.travelDaysPerBooking > 0) {
+            workloadParts.push(`${formatNumber(summary.travelDaysPerBooking, 2)} travel days`);
+          }
+          if (workloadParts.length) {
+            summarySegments.push(`Per ${getServiceLabelLower(config)}: ${workloadParts.join(' + ')}.`);
+          }
+          if (summarySegments.length) {
+            entry.summaryEl.textContent = summarySegments.join(' ');
+            entry.summaryEl.hidden = false;
+          } else {
+            entry.summaryEl.textContent = '';
+            entry.summaryEl.hidden = true;
+          }
+        }
 
         if (rateMetrics.charge.valueEl) {
           rateMetrics.charge.valueEl.textContent = data.hasRecommendedRate && data.hasExpectedUnits
