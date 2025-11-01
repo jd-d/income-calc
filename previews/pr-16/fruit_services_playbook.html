@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fruit Trade Services Playbook — v1.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --panel: #11151d;
+      --muted: #94a3b8;
+      --text: #e6edf6;
+      --accent: #66e3ff;
+      --accent-2: #a7f3d0;
+      --border: #1f2633;
+      --green: #22c55e;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --card-radius: 16px;
+      --shadow: 0 6px 24px rgba(0,0,0,.35);
+    }
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      line-height: 1.55;
+    }
+    .wrap {
+      max-width: 1024px;
+      margin: 48px auto 120px;
+      padding: 0 20px;
+    }
+    header.page {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .eyebrow {
+      color: var(--accent);
+      letter-spacing: .08em;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+    h1 {
+      font-size: 34px;
+      line-height: 1.15;
+      margin: 0 0 6px;
+      font-weight: 800;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .panel {
+      background: linear-gradient(180deg, #0e131b, #0c1219);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .toc a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .toc a:hover { text-decoration: underline; }
+    h2, h3 { margin-top: 32px; }
+    h2 { font-size: 26px; }
+    h3 { font-size: 20px; }
+    h4 { margin-top: 18px; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .note {
+      font-size: 14px;
+      color: var(--muted);
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0 8px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: top;
+    }
+    th {
+      background: #0f1621;
+      text-align: left;
+      font-weight: 700;
+      color: #c7d2fe;
+      font-size: 14px;
+    }
+    tr:last-child td { border-bottom: none; }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    .kpi {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: #0f1a28;
+      border: 1px dashed #1e293b;
+      margin: 4px 6px 0 0;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+    code, pre {
+      background: #0f1621;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      color: #d9e2f1;
+      font-size: 13px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .callout {
+      border-left: 4px solid var(--accent);
+      padding: 10px 12px;
+      background: #0c131d;
+      margin: 10px 0;
+      color: #cfd7e6;
+    }
+    .caps { text-transform: uppercase; letter-spacing: .06em; font-weight: 700; font-size: 12px; color: #9fb4ff; }
+    .small { font-size: 13px; color: var(--muted); }
+    .divider { height: 1px; background: var(--border); margin: 26px 0; }
+    a {
+      color: var(--accent);
+    }
+    .pill { display:inline-block; background:#111827; border:1px solid #1f2937; color:#cbd5e1; padding:4px 10px; border-radius:999px; font-size:12px; margin-right:6px}
+    footer { margin-top: 64px; color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="page">
+      <div class="eyebrow">Fruit Trade Services</div>
+      <h1>Fruit Trade Services Playbook <span class="pill">v1.0</span></h1>
+      <div class="sub">A practical menu of what you can offer, how to package it, and how it fits your life. <span class="pill">As of November 01, 2025</span></div>
+    </header>
+
+    <section class="panel toc">
+      <strong>How to use this playbook</strong>
+      <p class="small">
+        Start with the Quick Start Map to pick a direction (steady vs. hands-on). Then open the detailed service pages in Part C to scope, price, and set
+        simple KPIs. Use the bundles in Part E to combine services that play well together. Print the appendices for intake, KPIs, and SoW snippets.
+      </p>
+      <div class="grid-3">
+        <div>
+          <div class="caps">Contents</div>
+          <ul>
+            <li><a href="#part-a">Part A — Quick Start Map</a></li>
+            <li><a href="#part-b">Part B — Service Catalog (at a glance)</a></li>
+            <li><a href="#part-c">Part C — Detailed Service Chapters (3+1)</a></li>
+            <li><a href="#part-d">Part D — Scoping & Pricing Playbook</a></li>
+            <li><a href="#part-e">Part E — Bundles & Pathways</a></li>
+            <li><a href="#part-f">Part F — Risk Library & Playbooks</a></li>
+            <li><a href="#part-g">Part G — Light Policies & Terms</a></li>
+            <li><a href="#appendices">Appendices (incl. Sales Toolkit, Capacity Worksheet, Glossary, Change Log)</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="caps">Service tags</div>
+          <div class="small">Look for these quick hints throughout:</div>
+          <div>
+            <span class="tag">Low travel</span>
+            <span class="tag">Seasonal</span>
+            <span class="tag">High day-rate</span>
+            <span class="tag">Steady</span>
+            <span class="tag">Bursty</span>
+            <span class="tag">Add-on</span>
+          </div>
+        </div>
+        <div>
+          <div class="caps">Pricing model hints</div>
+          <div class="small">Choose per-visit, per-day, fixed package, or retainer. Use Min / Target / Stretch fences.</div>
+        </div>
+      </div>
+    </section>
+
+    <h2 id="part-a">Part A — Quick Start Map</h2>
+    <section class="panel">
+      <p><strong>At-a-Glance Matrix (1–5)</strong> — quick scores with short notes (higher is “more” of that factor).</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Profitability</th>
+            <th>Predictability</th>
+            <th>Follow-up Load</th>
+            <th>Travel</th>
+            <th>Seasonality</th>
+            <th>Setup Overhead</th>
+            <th>Lead Time</th>
+            <th>Pairs Well With</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="#rep-retainers">Representation Retainers</a> <span class="tag">Steady</span><span class="tag">Low travel</span></td>
+            <td>4 — Monthly fees</td>
+            <td>5 — Week-to-week cadence</td>
+            <td>3 — Claims & nudges</td>
+            <td>2 — Mostly remote</td>
+            <td>3 — Mild peaks</td>
+            <td>2 — Light setup</td>
+            <td>3 — Warm intros help</td>
+            <td>Market Notes, QC (as-needed)</td>
+          </tr>
+          <tr>
+            <td><a href="#ops-advisory">Operations Advisory</a> <span class="tag">High day-rate</span><span class="tag">Bursty</span></td>
+            <td>5 — Day-rate blocks</td>
+            <td>3 — Project bursts</td>
+            <td>2 — After handover</td>
+            <td>2–3 — Optional on-site</td>
+            <td>3 — Best near peaks</td>
+            <td>3 — Workshops/templates</td>
+            <td>2 — Fast to start</td>
+            <td>Training, Dashboards</td>
+          </tr>
+          <tr>
+            <td><a href="#qc-inspections">QC Inspections</a> <span class="tag">Seasonal</span><span class="tag">Hands-on</span></td>
+            <td>4 — Per-visit pricing</td>
+            <td>2 — Arrival-driven</td>
+            <td>3 — Some claims follow-up</td>
+            <td>4 — Field-heavy</td>
+            <td>5 — Peaks at arrivals</td>
+            <td>2 — Standard report</td>
+            <td>2 — On demand</td>
+            <td>Claims, Spec Review</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="divider"></div>
+      <h3>Seasonality sketch (illustrative)</h3>
+      <p class="small">Example weekly effort by month (0–10 scale). Exact curves depend on your crops & lanes.</p>
+      <div class="panel" style="padding:16px">
+        <!-- Simple inline SVG line chart -->
+        <svg viewBox="0 0 640 220" role="img" aria-label="Seasonality chart" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="640" height="220" fill="#0c131d" stroke="#1f2633"/>
+          <g stroke="#1f2633">
+            <line x1="40" y1="30" x2="610" y2="30" /><line x1="40" y1="50" x2="610" y2="50" /><line x1="40" y1="70" x2="610" y2="70" /><line x1="40" y1="90" x2="610" y2="90" /><line x1="40" y1="110" x2="610" y2="110" /><line x1="40" y1="130" x2="610" y2="130" /><line x1="40" y1="150" x2="610" y2="150" /><line x1="40" y1="170" x2="610" y2="170" /><line x1="40" y1="190" x2="610" y2="190" />
+            <line x1="40" y1="30" x2="40" y2="190" /><line x1="92" y1="30" x2="92" y2="190" /><line x1="144" y1="30" x2="144" y2="190" /><line x1="196" y1="30" x2="196" y2="190" /><line x1="248" y1="30" x2="248" y2="190" /><line x1="300" y1="30" x2="300" y2="190" /><line x1="352" y1="30" x2="352" y2="190" /><line x1="404" y1="30" x2="404" y2="190" /><line x1="456" y1="30" x2="456" y2="190" /><line x1="508" y1="30" x2="508" y2="190" /><line x1="560" y1="30" x2="560" y2="190" />
+          </g>
+          <g fill="#94a3b8" font-size="11">
+            <text x="6" y="34">10</text>
+            <text x="6" y="194">0</text>
+            <text x="32" y="206">J</text><text x="84" y="206">F</text><text x="136" y="206">M</text><text x="188" y="206">A</text><text x="240" y="206">M</text><text x="292" y="206">J</text><text x="344" y="206">J</text><text x="396" y="206">A</text><text x="448" y="206">S</text><text x="500" y="206">O</text><text x="552" y="206">N</text><text x="604" y="206">D</text>
+          </g>
+          <polyline fill="none" stroke="#66e3ff" stroke-width="2"
+            points="40,120 92,120 144,116 196,112 248,110 300,112 352,116 404,118 456,120 508,120 560,122 610,122" />
+          <polyline fill="none" stroke="#a7f3d0" stroke-width="2"
+            points="40,150 92,130 144,110 196,90 248,110 300,130 352,150 404,140 456,120 508,100 560,120 610,140" />
+          <polyline fill="none" stroke="#f59e0b" stroke-width="2"
+            points="40,150 92,140 144,120 196,100 248,80 300,70 352,80 404,90 456,110 508,130 560,150 610,160" />
+          <g fill="#cbd5e1" font-size="12">
+            <rect x="420" y="36" width="200" height="52" rx="8" ry="8" fill="#0f1621" stroke="#1f2633"/>
+            <circle cx="438" cy="54" r="5" fill="#66e3ff"/><text x="450" y="58">Representation Retainers</text>
+            <circle cx="438" cy="70" r="5" fill="#a7f3d0"/><text x="450" y="74">Operations Advisory</text>
+            <circle cx="438" cy="86" r="5" fill="#f59e0b"/><text x="450" y="90">QC Inspections</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="divider"></div>
+      <h3>Fast paths</h3>
+      <ul>
+        <li><strong>Low travel, steady:</strong> Representation Retainer + Market Notes + Light Dashboards.</li>
+        <li><strong>Hands-on, high day-rate:</strong> QC Inspections + Claims Handling + Buyer Roadshow (seasonal).</li>
+        <li><strong>Skilling up teams:</strong> Training + Spec Review + Post-Season Review.</li>
+      </ul>
+    </section>
+
+    <h2 id="part-b">Part B — Service Catalog (at a glance)</h2>
+    <section class="panel">
+      <p>All potential offerings. The three detailed services live in <a href="#part-c">Part C</a>. Others can be detailed later.</p>
+      <div class="grid-3 small">
+        <ul>
+          <li>Representation Retainers</li>
+          <li>Operations Advisory (projects / day-rate)</li>
+          <li>QC Inspections (per-visit)</li>
+          <li>Claims Handling &amp; Dispute Support</li>
+          <li>Supplier Onboarding Checks</li>
+          <li>Season Kick-off Planning</li>
+        </ul>
+        <ul>
+          <li>Promo/Offer Support</li>
+          <li>Tender/RFP Help</li>
+          <li>Spec &amp; Packaging Review</li>
+          <li>Logistics Check-ins</li>
+          <li>Emergency Fire-Fighting Sprint</li>
+          <li>Buyer Meeting Roadshow</li>
+        </ul>
+        <ul>
+          <li>Simple Dashboards</li>
+          <li>Season Outlook Briefings</li>
+          <li>Staff Onboarding (Intake/QC)</li>
+          <li>Post-Season Review</li>
+          <li>Market Intelligence (monthly notes)</li>
+        </ul>
+      </div>
+    </section>
+
+    <h2 id="part-c">Part C — Detailed Service Chapters</h2>
+
+    <!-- 1) Representation Retainers -->
+    <section class="panel" id="rep-retainers">
+      <h3>1) Representation Retainers</h3>
+      <p><strong>Plain description.</strong> A steady monthly arrangement where you act as the client’s commercial point person.
+      You keep relationships warm with suppliers or buyers, prepare/confirm offers and purchase orders, keep tabs on documents and arrivals,
+      and flag problems early. Goal: fewer surprises, quicker decisions, and calmer weeks.</p>
+
+      <div class="grid-2">
+        <div>
+          <p><strong>Who hires &amp; when it’s a fit.</strong><br/>
+          Importer/retailer → upstream coordination. Grower/exporter → downstream contact & follow-through.
+          Best for clients who need reliable week-to-week support but not a full-time hire.</p>
+        </div>
+        <div>
+          <p><strong>Effort rhythm.</strong><br/>Steady 9–5 pattern with mild peaks at season change or promo weeks. Follow-ups: light to moderate.</p>
+        </div>
+      </div>
+
+      <h4>Options &amp; tiers</h4>
+      <table>
+        <thead>
+          <tr><th>Tier</th><th>Inclusions</th><th>Typical Hours</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Lite</td>
+            <td>1 pipeline call/week; up to <strong>5</strong> active offers; simple ETA nudges; claims triage up to <strong>2</strong>/month</td>
+            <td>~5 hrs/week</td>
+            <td>Scope fence for extra calls/claims</td>
+          </tr>
+          <tr>
+            <td>Standard</td>
+            <td>Lite + mid-week check-ins; simple buyer/supplier meetings; weekly summary note; up to <strong>10</strong> active offers; claims triage up to <strong>4</strong>/month</td>
+            <td>~8 hrs/week</td>
+            <td>Good baseline for most clients</td>
+          </tr>
+          <tr>
+            <td>Plus</td>
+            <td>Standard + monthly on-site day or roadshow block + pre-season planning call; up to <strong>15</strong> active offers; claims triage up to <strong>6</strong>/month</td>
+            <td>~12 hrs/week + 1 on-site day/mo</td>
+            <td>Convert extra on-sites to add-ons</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="grid-2">
+        <div>
+          <h4>Included vs not (scope fence)</h4>
+          <table>
+            <thead><tr><th>Included</th><th>Out-of-scope (add-on)</th></tr></thead>
+            <tbody>
+              <tr><td>Routine comms, offer/PO confirmation</td><td>Process redesign</td></tr>
+              <tr><td>Document nudges, simple claim triage</td><td>Multi-day travel blocks</td></tr>
+              <tr><td>Short market notes</td><td>Heavy QC fieldwork, formal training, deep studies</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h4>Deliverables &amp; KPIs (targets)</h4>
+          <div class="small">Weekly pipeline summary; list of active offers/POs; open issues & owners.</div>
+          <div>
+            <span class="kpi">Reply &lt; 24h</span>
+            <span class="kpi">Docs on-time ≥ 95%</span>
+            <span class="kpi">Claim cycle ≤ 7 days</span>
+            <span class="kpi">≥ 6 active offers (Std)</span>
+            <span class="kpi">No-surprises ≥ 4/5</span>
+          </div>
+        </div>
+      </div>
+
+      <h4>RACI (who does what)</h4>
+      <table>
+        <thead><tr><th>Area</th><th>You</th><th>Client</th><th>Forwarder</th><th>Warehouse</th></tr></thead>
+        <tbody>
+          <tr><td>Offers &amp; POs</td><td>Prepare / confirm</td><td><strong>Decide</strong> price/PO</td><td>—</td><td>—</td></tr>
+          <tr><td>Logistics</td><td>Coordinate / chase docs</td><td>Approve exceptions</td><td><strong>Execute</strong> transport</td><td>—</td></tr>
+          <tr><td>Intake/QC</td><td>Trigger checks</td><td>Approve claims route</td><td>—</td><td><strong>Execute</strong> handling</td></tr>
+          <tr><td>Claims</td><td>Triage &amp; evidence</td><td><strong>Decide</strong> settlement</td><td>—</td><td>Provide facts/photos</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Pricing fences (example)</h4>
+      <table>
+        <thead><tr><th>Package</th><th>Min</th><th>Target</th><th>Stretch</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Retainer – Lite</td><td>€850</td><td>€1,100</td><td>€1,350</td><td>~5 hrs/wk, 2 claims/mo, remote</td></tr>
+          <tr><td>Retainer – Standard</td><td>€1,200</td><td>€1,600</td><td>€2,100</td><td>~8 hrs/wk, 4 claims/mo, remote</td></tr>
+          <tr><td>Retainer – Plus</td><td>€1,800</td><td>€2,300</td><td>€2,900</td><td>~12 hrs/wk + 1 on-site day/mo</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Risks &amp; plays</h4>
+      <ul class="small">
+        <li>Scope creep → use tier fence & hand-off rules.</li>
+        <li>Decision delays → agree a single decision owner & cut-off times.</li>
+        <li>Claims drag on → time-box triage; escalate to paid claim-handling.</li>
+      </ul>
+
+      <h4>Profit levers</h4>
+      <ul class="small">
+        <li>Template weekly summary; batch calls; “quiet if no news.”</li>
+        <li>Cluster on-sites into one monthly block.</li>
+      </ul>
+
+      <h4>Cross-sells &amp; pairings</h4>
+      <p class="small">Market Intelligence (steady add-on), QC Inspections (as-needed), Ops Advisory (fix recurring problems).</p>
+
+      <h4>Inputs you need</h4>
+      <ul class="small">
+        <li>Key contacts; product/spec overview; current issues; decision owner; target windows; comms channels.</li>
+      </ul>
+
+      <h4>Mini SoW (pasteable)</h4>
+      <pre>You will act as our commercial point person for {products/markets}. Scope includes weekly pipeline call, preparing/confirming offers/POs,
+simple ETA/document follow-ups, and claims triage up to {Y}/month. Weekly summary each Friday.
+Out-of-scope items (multi-day travel, heavy QC fieldwork, training, process redesign, deep market studies) are quoted separately.</pre>
+    </section>
+
+    <!-- 2) Operations Advisory -->
+    <section class="panel" id="ops-advisory">
+      <h3>2) Operations Advisory (projects / day-rate)</h3>
+      <p><strong>Plain description.</strong> Short, focused projects that fix a process or reach a specific outcome—e.g., faster intake flow,
+      clearer specs, fewer claims, or a smoother season kick-off. Work is scoped in days so everyone knows what gets done and when.</p>
+
+      <div class="grid-2">
+        <div>
+          <p><strong>Who hires &amp; fit.</strong><br/>Any client with a known pain point: “we miss windows,” “claims drag on,” “specs keep shifting.”</p>
+        </div>
+        <div>
+          <p><strong>Effort rhythm.</strong><br/>Bursty during workshops and trials; calmer during follow-ups. Easy to schedule around other work.</p>
+        </div>
+      </div>
+
+      <h4>Options &amp; tiers</h4>
+      <table>
+        <thead><tr><th>Option</th><th>Focus</th><th>Typical Days</th><th>Deliverables</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Diagnostic</td>
+            <td>Interviews + light doc review → quick wins</td>
+            <td>1–2</td>
+            <td>Findings note; next-steps list</td>
+          </tr>
+          <tr>
+            <td>Fix Sprint</td>
+            <td>Redesign a small process (e.g., claims)</td>
+            <td>3–5</td>
+            <td>New flow; checklist; brief training</td>
+          </tr>
+          <tr>
+            <td>Implementation Block</td>
+            <td>Design + training + first-month check-ins</td>
+            <td>6–10</td>
+            <td>SOP one-pager; templates; 2–4 check-ins</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="grid-2">
+        <div>
+          <h4>Included vs not (scope fence)</h4>
+          <table>
+            <thead><tr><th>Included</th><th>Out-of-scope (add-on)</th></tr></thead>
+            <tbody>
+              <tr><td>Workshops/interviews</td><td>Long-term run-the-process</td></tr>
+              <tr><td>Current-state map &amp; new steps/templates</td><td>Heavy travel beyond agreed days</td></tr>
+              <tr><td>Simple dashboard sheet &amp; handover</td><td>Custom software builds</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h4>Deliverables &amp; KPIs (targets)</h4>
+          <div class="small">Before/after map; one-page “how to run it”; checklist; training micro-guide.</div>
+          <div>
+            <span class="kpi">Cycle time ↓ 30%+</span>
+            <span class="kpi">First-time-right ≥ 90%</span>
+            <span class="kpi">≤ 2 handoffs/task</span>
+            <span class="kpi">Claim cycle ≤ 7–10 days</span>
+          </div>
+        </div>
+      </div>
+
+      <h4>Pricing fences (example)</h4>
+      <table>
+        <thead><tr><th>Package</th><th>Min</th><th>Target</th><th>Stretch</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Diagnostic (per day)</td><td>€600</td><td>€750</td><td>€900</td><td>1–2 days; interviews + findings</td></tr>
+          <tr><td>Fix Sprint (per day)</td><td>€700</td><td>€900</td><td>€1,150</td><td>3–5 days; redesign + checklist</td></tr>
+          <tr><td>Implementation (per day)</td><td>€750</td><td>€1,000</td><td>€1,250</td><td>6–10 days; training + check-ins</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Risks &amp; plays</h4>
+      <ul class="small">
+        <li>Stakeholder drift → single owner; weekly 30-min check-in.</li>
+        <li>Scope ballooning → change-note process.</li>
+        <li>“Shelfware” SOPs → include short training + first-week shadow.</li>
+      </ul>
+
+      <h4>Profit levers</h4>
+      <ul class="small">
+        <li>Reuse templates; group workshops; time-box interviews; deliver “one-pager + checklist.”</li>
+      </ul>
+
+      <h4>Cross-sells &amp; pairings</h4>
+      <p class="small">Training (embed changes), Representation Retainer (sustain), Simple Dashboards.</p>
+
+      <h4>Inputs you need</h4>
+      <ul class="small">
+        <li>Process owner; example cases; existing SOP/spec; constraints; calendar for test week.</li>
+      </ul>
+
+      <h4>Mini SoW (pasteable)</h4>
+      <pre>We will run a {3–5 day} advisory sprint to map the current {process}, define a simpler flow, and hand over a one-page SOP, checklist,
+and training micro-guide. Includes up to {N} interviews/workshops and {M} follow-up check-ins.
+Changes to scope or extra days are quoted via change note.</pre>
+    </section>
+
+    <!-- 3) QC Inspections -->
+    <section class="panel" id="qc-inspections">
+      <h3>3) QC Inspections (per-visit)</h3>
+      <p><strong>Plain description.</strong> On-site checks at a warehouse, market, or port to see if arrivals match expectations.
+      You sample, take clear photos, note defects, and send a same-day report so the client can accept, reroute, or claim with confidence.
+      Priced per visit, with simple travel rules.</p>
+
+      <div class="grid-2">
+        <div>
+          <p><strong>Who hires &amp; fit.</strong><br/>Any client receiving fruit who needs quick, trustworthy eyes on the ground—especially in peaks.</p>
+        </div>
+        <div>
+          <p><strong>Effort rhythm.</strong><br/>Bursty during season peaks; calm otherwise. Field time + short desk time.</p>
+        </div>
+      </div>
+
+      <h4>Options &amp; tiers</h4>
+      <table>
+        <thead><tr><th>Option</th><th>Scope</th><th>Report</th><th>Travel</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Single Visit</td>
+            <td>One lot in one location</td>
+            <td>Photos + pass/fail vs grid (same-day)</td>
+            <td>Local zone</td>
+          </tr>
+          <tr>
+            <td>Multi-Lot Visit</td>
+            <td>Up to <strong>3</strong> lots in one location</td>
+            <td>Consolidated report (same-day)</td>
+            <td>Local zone</td>
+          </tr>
+          <tr>
+            <td>Cluster Day</td>
+            <td><strong>3–4</strong> nearby stops in one day</td>
+            <td>Per-stop notes + day summary</td>
+            <td>Day cap + zone surcharge as needed</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="grid-2">
+        <div>
+          <h4>Included vs not (scope fence)</h4>
+          <table>
+            <thead><tr><th>Included</th><th>Out-of-scope (add-on)</th></tr></thead>
+            <tbody>
+              <tr><td>Sampling &amp; 10–20 photos per lot</td><td>Lab testing</td></tr>
+              <tr><td>Brief defect notes; pass/fail grid</td><td>Full spec rewriting</td></tr>
+              <tr><td>Same-day report &amp; next-step advice</td><td>Claims negotiation</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h4>Deliverables &amp; KPIs (targets)</h4>
+          <div class="small">Mobile-friendly photo report; clear calls; quick “what now” recommendation.</div>
+          <div>
+            <span class="kpi">Report TAT ≤ 6h</span>
+            <span class="kpi">Acceptance rate ≥ 85%</span>
+            <span class="kpi">≤ 20% escalations</span>
+            <span class="kpi">Dispute cycle ≤ 5 days</span>
+          </div>
+        </div>
+      </div>
+
+      <h4>Pricing fences (example)</h4>
+      <table>
+        <thead><tr><th>Package</th><th>Min</th><th>Target</th><th>Stretch</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Single Visit (local)</td><td>€180</td><td>€220</td><td>€260</td><td>1 lot; same-day report</td></tr>
+          <tr><td>Multi-Lot Visit (local)</td><td>€240</td><td>€290</td><td>€350</td><td>≤ 3 lots; one location</td></tr>
+          <tr><td>Cluster Day</td><td>€450</td><td>€600</td><td>€750</td><td>3–4 stops; day cap + surcharges</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Risks &amp; plays</h4>
+      <ul class="small">
+        <li>Moving target spec → lock a picture-based grid before visiting.</li>
+        <li>Access delays → require on-site contact + 30-min buffer window.</li>
+        <li>Disputes → escalate to “Claims Handling” add-on with clear pricing.</li>
+      </ul>
+
+      <h4>Profit levers</h4>
+      <ul class="small">
+        <li>Cluster stops; reuse report template; schedule off-peak hours where possible.</li>
+      </ul>
+
+      <h4>Cross-sells &amp; pairings</h4>
+      <p class="small">Claims Handling, Spec Review, Training for intake teams.</p>
+
+      <h4>Inputs you need</h4>
+      <ul class="small">
+        <li>Address; on-site contact; lot references; time window; target spec (photo-led accept/reject grid).</li>
+      </ul>
+
+      <h4>Mini SoW (pasteable)</h4>
+      <pre>We will perform a quality check at {location} for lot(s) {IDs}. Scope includes sampling, 10–20 photos per lot,
+brief notes against the agreed photo-grid, and a same-day pass/fail report with next-step advice.
+Lab tests, spec rewrites, and claim negotiations are out-of-scope and can be quoted if needed.</pre>
+    </section>
+
+    <!-- 4) Claims Handling & Dispute Support (mini-chapter) -->
+    <section class="panel" id="claims-handling">
+      <h3>4) Claims Handling &amp; Dispute Support (add-on)</h3>
+      <p><strong>Plain description.</strong> Structured follow-through to resolve quality/shortage disputes:
+      build an evidence pack, contact counterparties, and drive to a fair outcome on time.</p>
+
+      <div class="grid-2">
+        <div>
+          <h4>Scope & steps</h4>
+          <ol class="small">
+            <li>Evidence pack: photos, measurements, timeline, documents.</li>
+            <li>Counterparty contact: share evidence; agree target timeline.</li>
+            <li>Negotiation: options (credit, rework, disposal) with decision owner.</li>
+          </ol>
+        </div>
+        <div>
+          <h4>Deliverables & KPIs (targets)</h4>
+          <div>
+            <span class="kpi">Claim cycle ≤ 10 days</span>
+            <span class="kpi">Evidence pack within 24h</span>
+            <span class="kpi">≥ 80% resolved without escalation</span>
+          </div>
+        </div>
+      </div>
+
+      <h4>Pricing fences (example)</h4>
+      <table>
+        <thead><tr><th>Package</th><th>Min</th><th>Target</th><th>Stretch</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Per-claim (simple)</td><td>€120</td><td>€160</td><td>€220</td><td>Clear evidence; 1 counterparty</td></tr>
+          <tr><td>Per-claim (complex)</td><td>€250</td><td>€350</td><td>€500</td><td>Multi-party; rework/disposal logistics</td></tr>
+          <tr><td>Retainer add-on</td><td>€250</td><td>€400</td><td>€600</td><td>+X claims/mo on top of retainer cap</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Included vs not</h4>
+      <table>
+        <thead><tr><th>Included</th><th>Out-of-scope (add-on)</th></tr></thead>
+        <tbody>
+          <tr><td>Evidence pack; contact; timeline tracking</td><td>Lab testing; legal counsel</td></tr>
+          <tr><td>Negotiation to resolution</td><td>Multi-site re-inspection tours</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <h2 id="part-d">Part D — Scoping &amp; Pricing Playbook</h2>
+    <section class="panel">
+      <h3>1) Universal scoping checklist</h3>
+      <table>
+        <thead><tr><th>Question</th><th>Why it matters</th></tr></thead>
+        <tbody>
+          <tr><td>What is the concrete outcome?</td><td>Prevents scope creep; defines done.</td></tr>
+          <tr><td>Who is the decision owner?</td><td>Unblocks delays; sets escalation path.</td></tr>
+          <tr><td>What is the time window?</td><td>Aligns availability & seasonality.</td></tr>
+          <tr><td>Volumes / lots / lanes?</td><td>Right-sizes hours, travel, and KPIs.</td></tr>
+          <tr><td>Specs & prior issues?</td><td>Surfaces risks early; guides checks.</td></tr>
+          <tr><td>Communication channel?</td><td>Speeds decisions; keeps record.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2) Scope fence recipes</h3>
+      <div class="grid-2 small">
+        <div>
+          <p><strong>Retainer</strong>: weekly rhythm, hour bands, claims cap, “quiet if no news.” Extras → add-ons.</p>
+          <p><strong>Per-day</strong>: fixed outcomes per day, capped days, change-note for extras.</p>
+        </div>
+        <div>
+          <p><strong>Per-visit</strong>: visits/lot caps, report turnaround, cluster rules, travel zones.</p>
+          <p><strong>Fixed package</strong>: named deliverables, timeline, explicit exclusions.</p>
+        </div>
+      </div>
+
+      <h3>3) KPIs you can actually observe</h3>
+      <p class="small">Prefer counts and turnaround times you can see weekly. Keep dashboards simple.</p>
+
+      <h3>4) Seasonality & surge rules</h3>
+      <ul class="small">
+        <li>Pre-agree surge: after N urgent calls/claims, bill day-rate add-on.</li>
+        <li>Define blackout dates and travel day caps per month.</li>
+      </ul>
+
+      <h3>5) Travel rules</h3>
+      <ul class="small">
+        <li>Cluster visits geographically; group buyer meetings into a roadshow day.</li>
+        <li>Define local vs regional zones up front.</li>
+      </ul>
+
+      <h3>6) Pricing fences & comfort buffer</h3>
+      <ul class="small">
+        <li><strong>Min</strong>: acceptable floor if scope is clean and cadence is steady.</li>
+        <li><strong>Target</strong>: preferred price that reflects your true effort.</li>
+        <li><strong>Stretch</strong>: covers risk, rush, or complexity.</li>
+      </ul>
+
+      <h3>7) Costs, tax, and take-home realism</h3>
+      <p class="small">Reserve a % for taxes/insurance; reflect travel and material costs; sanity-check weekly hours against your desired schedule.</p>
+
+      <h3>8) Travel zones & surcharges</h3>
+      <table>
+        <thead><tr><th>Zone</th><th>Definition</th><th>Travel Rule</th></tr></thead>
+        <tbody>
+          <tr><td>Local</td><td>≤ 40 km</td><td>Included in base; cluster allowed</td></tr>
+          <tr><td>Regional</td><td>41–120 km</td><td>+ €0.45/km or pre-agreed day cap</td></tr>
+          <tr><td>Out-of-region</td><td>&gt; 120 km</td><td>Travel day surcharge or fixed per-trip fee</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <h2 id="part-e">Part E — Bundles &amp; Pathways</h2>
+    <section class="panel">
+      <div class="grid-3 small">
+        <div>
+          <h4>Low-travel, steady</h4>
+          <ul>
+            <li>Representation Retainer</li>
+            <li>Market Intelligence</li>
+            <li>Light Dashboards</li>
+          </ul>
+          <div class="note">Appeals to clients who want calm coordination and clear weekly notes.</div>
+        </div>
+        <div>
+          <h4>Hands-on, higher day-rate</h4>
+          <ul>
+            <li>QC Inspections</li>
+            <li>Claims Handling</li>
+            <li>Buyer Roadshow (clustered)</li>
+          </ul>
+          <div class="note">Great for peak-season, arrival-heavy lanes.</div>
+        </div>
+        <div>
+          <h4>Problem → Process</h4>
+          <ul>
+            <li>Fire-Fighting Sprint</li>
+            <li>Ops Advisory (Fix Sprint)</li>
+            <li>Training + Handover</li>
+          </ul>
+          <div class="note">Turn a hot issue into a simple, repeatable flow.</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <p class="small">Mix and match to fit your hours, travel cap, and income targets. Keep an eye on follow-up load and seasonality.</p>
+    </section>
+
+    <h2 id="part-f">Part F — Risk Library &amp; Playbooks</h2>
+    <section class="panel">
+      <table>
+        <thead><tr><th>Risk</th><th>Early signs</th><th>First 3 moves</th><th>Escalate / Exit</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Late docs / missed windows</td>
+            <td>No ETA confirmation; repeated “tomorrow”</td>
+            <td>Set cut-off; ping owner; offer alt slot</td>
+            <td>Escalate to ops lead; add day-rate</td>
+          </tr>
+          <tr>
+            <td>Spec drift / unclear accept criteria</td>
+            <td>Conflicting emails/photos</td>
+            <td>Lock photo-grid; confirm in writing; apply</td>
+            <td>Pause checks; re-scope visit/package</td>
+          </tr>
+          <tr>
+            <td>Claims drag on</td>
+            <td>Silence; moved goalposts</td>
+            <td>Evidence pack; target timeline; owner</td>
+            <td>Switch to paid claim handling</td>
+          </tr>
+          <tr>
+            <td>Scope creep (quiet add-ons)</td>
+            <td>“Just one more…” trend</td>
+            <td>Point to fence; log change; price</td>
+            <td>Hold line or exit politely</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <h2 id="part-g">Part G — Light Policies &amp; Terms</h2>
+    <section class="panel small">
+      <ul>
+        <li><strong>Cancellation:</strong> &ge; 3 business days: no fee; &lt; 3 days: 50% of first day/visit; same-day/no-show: 100% of first day/visit.</li>
+        <li><strong>Rush / out-of-hours:</strong> +25% evenings/weekends; +40% public holidays.</li>
+        <li><strong>Travel:</strong> Zones as per Part D; travel day surcharge or €0.45/km beyond Local.</li>
+        <li><strong>Materials:</strong> At cost with prior approval.</li>
+        <li><strong>Confidentiality:</strong> Mutual NDA language available on request.</li>
+        <li><strong>Liability cap:</strong> Capped at fees paid for the specific engagement.</li>
+        <li><strong>Payment terms:</strong> 14 days net; retainers monthly in advance.</li>
+      </ul>
+    </section>
+
+    <h2 id="appendices">Appendices</h2>
+    <section class="panel">
+      <h3>A) Client Intake Form (printable)</h3>
+      <table>
+        <tbody>
+          <tr><td>Company & contacts</td><td>________________________</td></tr>
+          <tr><td>Products / lanes</td><td>________________________</td></tr>
+          <tr><td>Outcome (what does “done” look like?)</td><td>________________________</td></tr>
+          <tr><td>Decision owner</td><td>________________________</td></tr>
+          <tr><td>Time window (start–end)</td><td>________________________</td></tr>
+          <tr><td>Specs / prior issues</td><td>________________________</td></tr>
+          <tr><td>Comms channel</td><td>________________________</td></tr>
+        </tbody>
+      </table>
+
+      <h3>B) SoW snippets (per pricing style)</h3>
+      <pre><strong>Retainer</strong> – Scope includes weekly pipeline call, preparing/confirming offers/POs, simple ETA/document follow-ups, and claims triage up to {Y}/month.
+Extras (process redesign, multi-day travel, heavy QC fieldwork, training, deep market studies) are quoted separately.
+Billing monthly in advance. Min/Target/Stretch pricing applies.
+
+<strong>Per-day</strong> – We will deliver the following outcomes within {N} days: {deliverables}.
+Days beyond {N} require a change note. Travel days billed at {rule}. Materials at cost with prior approval.
+
+<strong>Per-visit</strong> – We will perform {visits} in the {zone} zone with same-day reports and a photo-led pass/fail grid.
+Cluster rules apply; beyond-zone visits billed with a travel surcharge.</pre>
+
+      <h3>C) KPI glossary (non-jargon)</h3>
+      <ul class="small">
+        <li><strong>Turnaround time (TAT):</strong> how fast you send the report or reply.</li>
+        <li><strong>Acceptance rate:</strong> % of lots that pass on first check.</li>
+        <li><strong>Claim cycle time:</strong> days from issue raised to resolution.</li>
+        <li><strong>No-surprises score:</strong> 1–5 signal that issues were flagged early.</li>
+        <li><strong>First-time-right:</strong> % of tasks done without rework.</li>
+      </ul>
+
+      <h3>D) Seasonality grid (blank)</h3>
+      <table>
+        <thead><tr><th>Month</th><th>Notes / Peaks</th></tr></thead>
+        <tbody>
+          <tr><td>Jan</td><td>________________________</td></tr><tr><td>Feb</td><td>________________________</td></tr><tr><td>Mar</td><td>________________________</td></tr><tr><td>Apr</td><td>________________________</td></tr><tr><td>May</td><td>________________________</td></tr><tr><td>Jun</td><td>________________________</td></tr><tr><td>Jul</td><td>________________________</td></tr><tr><td>Aug</td><td>________________________</td></tr><tr><td>Sep</td><td>________________________</td></tr><tr><td>Oct</td><td>________________________</td></tr><tr><td>Nov</td><td>________________________</td></tr><tr><td>Dec</td><td>________________________</td></tr>
+        </tbody>
+      </table>
+
+      <h3>E) Travel planner (cluster checklist)</h3>
+      <ul class="small">
+        <li>Group sites in one geographic pocket.</li>
+        <li>Set a max of {N} travel days per month.</li>
+        <li>Define local vs regional zones up front.</li>
+        <li>Confirm on-site contact & 30-min buffer window.</li>
+      </ul>
+
+      <h3>F) Sales Toolkit</h3>
+      <div class="grid-2">
+        <div>
+          <h4>Discovery call agenda (30–40 min)</h4>
+          <ol class="small">
+            <li>Goals & “done looks like”.</li>
+            <li>Where it hurts (claims, delays, quality, forecasting).</li>
+            <li>Volumes/lanes & season windows.</li>
+            <li>Decision owner & timing.</li>
+            <li>Agree next step: sample package + pricing fence.</li>
+          </ol>
+        </div>
+        <div>
+          <h4>Short proposal email (template)</h4>
+<pre>Subject: Next steps — {Service} for {Company}
+Hi {Name},
+Thanks for the call. Here’s a simple option I recommend:
+- Package: {Lite/Standard/Plus or Day/Visit count}
+- Scope (included): {3 bullets}
+- Outside scope (optional): {2 bullets}
+- Pricing (Min / Target / Stretch): €{min} / €{target} / €{stretch}
+- KPIs we’ll watch: {3–4}
+If this looks right, I’ll send the SoW for signature.
+Best, {You}</pre>
+        </div>
+      </div>
+
+      <h4>Pipeline table (work-in-progress)</h4>
+      <table>
+        <thead><tr><th>Lead</th><th>Service</th><th>Fit?</th><th>Next step</th><th>Probability</th><th>Value</th><th>Close date</th></tr></thead>
+        <tbody>
+          <tr><td>—</td><td>—</td><td>Yes/No/Maybe</td><td>Call / Proposal / Trial</td><td>10–90%</td><td>€—</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <h3>G) Weekly capacity worksheet</h3>
+      <table>
+        <thead><tr><th>Item</th><th>Target</th><th>Your number</th></tr></thead>
+        <tbody>
+          <tr><td>Hours available per week</td><td>e.g., 32</td><td>____</td></tr>
+          <tr><td>Max travel days per month</td><td>e.g., 4</td><td>____</td></tr>
+          <tr><td>Retainer clients (Lite/Std/Plus)</td><td>e.g., 1 / 2 / 1</td><td>____</td></tr>
+          <tr><td>Ops days per month</td><td>e.g., 6</td><td>____</td></tr>
+          <tr><td>QC visits per month</td><td>e.g., 12</td><td>____</td></tr>
+        </tbody>
+      </table>
+
+      <h3>H) Included vs Optional (global one-pager)</h3>
+      <table>
+        <thead><tr><th>Included in Standard Scope</th><th>Optional Add-Ons</th></tr></thead>
+        <tbody>
+          <tr><td>Weekly pipeline call & summary</td><td>Extra meetings / roadshows</td></tr>
+          <tr><td>Offer/PO confirmation</td><td>Process redesign (Ops Advisory)</td></tr>
+          <tr><td>Doc/ETA nudges</td><td>Heavy QC fieldwork / multiple visits</td></tr>
+          <tr><td>Claims triage up to cap</td><td>Formal training / deep studies</td></tr>
+        </tbody>
+      </table>
+
+      <h3>I) Glossary (plain-English)</h3>
+      <div class="small">
+        <ul>
+          <li><strong>9–5 / steady:</strong> Work that fits normal office hours without frequent emergencies.</li>
+          <li><strong>Add-on:</strong> Extra work not in the main scope, billed separately.</li>
+          <li><strong>Blackout dates:</strong> Dates you don’t take work or travel.</li>
+          <li><strong>Change note:</strong> A short written agreement to expand scope or days and adjust price.</li>
+          <li><strong>Claim:</strong> A complaint about quality/quantity that may lead to credit or other remedy.</li>
+          <li><strong>Claim cycle time:</strong> Days from raising a claim to resolving it.</li>
+          <li><strong>Cluster / roadshow:</strong> Planning several site or buyer visits in one trip/day.</li>
+          <li><strong>Comms channel:</strong> Agreed place for updates (email, WhatsApp, etc.).</li>
+          <li><strong>Decision owner:</strong> The person who makes the final call on price, POs, or disputes.</li>
+          <li><strong>Dispute cycle:</strong> Days from disagreement to a signed solution.</li>
+          <li><strong>ETA:</strong> Estimated time of arrival.</li>
+          <li><strong>Evidence pack:</strong> Photos, measurements, and documents used to support a claim.</li>
+          <li><strong>First-time-right:</strong> Doing a task correctly without needing rework.</li>
+          <li><strong>Follow-up load:</strong> The amount of chasing and checking needed after the main task.</li>
+          <li><strong>Fences (pricing):</strong> Min / Target / Stretch price points you present to a client.</li>
+          <li><strong>KPI:</strong> Key performance indicator — a simple number that shows performance.</li>
+          <li><strong>Lane:</strong> A route/country pair or corridor for shipping/selling.</li>
+          <li><strong>Lot:</strong> A batch of fruit with the same identity shipped/received together.</li>
+          <li><strong>On-site:</strong> Work done at a physical location like a warehouse or market.</li>
+          <li><strong>Pass/fail grid (photo-led):</strong> A simple picture-based rule for accept or reject.</li>
+          <li><strong>PO (Purchase Order):</strong> The client’s order document confirming a buy.</li>
+          <li><strong>RACI:</strong> A table that says who is Responsible, Accountable, Consulted, and Informed.</li>
+          <li><strong>Retainer:</strong> A monthly fee for ongoing support/service.</li>
+          <li><strong>Seasonality:</strong> Regular peaks/slumps over the year tied to harvest or demand.</li>
+          <li><strong>Scope creep:</strong> The work slowly expands beyond what was agreed.</li>
+          <li><strong>Simple dashboard:</strong> A basic sheet or table with just the few KPIs that matter.</li>
+          <li><strong>SOP:</strong> Standard operating procedure — a simple “how we do it” guide.</li>
+          <li><strong>Spec:</strong> Specification — what “good” looks like for the fruit or packaging.</li>
+          <li><strong>Stretch price:</strong> A higher price that covers extra risk, speed, or complexity.</li>
+          <li><strong>Surge:</strong> A short period when workload spikes, often in season peaks.</li>
+          <li><strong>TAT:</strong> Turnaround time — how quickly you respond or deliver.</li>
+          <li><strong>Travel day surcharge:</strong> A fee when a whole/half day is consumed by travel.</li>
+          <li><strong>Triaging (claims):</strong> Sorting a new issue so it goes to the right path fast.</li>
+          <li><strong>Weekly pipeline:</strong> The current list of offers, POs, and shipments in motion.</li>
+        </ul>
+      </div>
+
+      <h3>J) Change log</h3>
+      <ul class="small">
+        <li><strong>v1.0 — November 01, 2025:</strong> Added pricing fences, RACI, travel zones, numeric KPI targets, Claims Handling chapter, Sales Toolkit, Capacity Worksheet, Included vs Optional one-pager, and Glossary.</li>
+      </ul>
+    </section>
+
+    <footer>
+      Built for a fruit professional choosing services with clear scope, pricing fences, and simple KPIs. Print-friendly (content-ready).
+    </footer>
+  </div>
+</body>
+</html>
