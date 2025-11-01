@@ -501,6 +501,105 @@
       font-weight: 600;
     }
 
+    .retainer-card__header {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .retainer-card__header p {
+      margin: 6px 0 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .retainer-card__controls {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid var(--button-border);
+      background: var(--field-bg);
+      gap: 4px;
+    }
+
+    .retainer-card__controls button {
+      border: none;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .retainer-card__controls button[aria-pressed="true"] {
+      background: var(--button-hover);
+      color: var(--text-primary);
+      box-shadow: inset 0 0 0 1px var(--accent);
+    }
+
+    .retainer-note {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .retainer-views {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .retainer-view[hidden] {
+      display: none !important;
+    }
+
+    .retainer-mini-metrics {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .retainer-mini-metric {
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--table-cell-border);
+      background: var(--table-cell-bg);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .retainer-mini-metric__label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .retainer-mini-metric__value {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .retainer-mini-metric__hint {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    @media (min-width: 720px) {
+      .retainer-card__header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
     .table-card h2 {
       margin-bottom: -6px;
     }
@@ -1226,6 +1325,85 @@
                 </div>
               </div>
             </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="travel-days-per-booking">Travel days per booking</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-travel-days-per-booking"
+                  aria-label="Show info about travel days per booking"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input type="number" id="travel-days-per-booking" inputmode="decimal" value="0" min="0" step="0.25" />
+              <div
+                class="info-popover"
+                id="info-travel-days-per-booking"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-travel-days-per-booking-title"
+                aria-describedby="info-travel-days-per-booking-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-travel-days-per-booking-title">Travel days per booking</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close travel days details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-travel-days-per-booking-body">
+                  <p>Capture travel or on-location overhead that removes you from other work. Enter partial days as decimals.</p>
+                  <p>Example: 0.5 covers a half-day of travel or setup for each booking.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="travel-cost-per-day">Travel cost per day</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-travel-cost-per-day"
+                  aria-label="Show info about travel cost per day"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <div class="input-with-suffix">
+                <input type="number" id="travel-cost-per-day" inputmode="decimal" value="0" min="0" step="5" />
+                <span>/ day</span>
+              </div>
+              <div
+                class="info-popover"
+                id="info-travel-cost-per-day"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-travel-cost-per-day-title"
+                aria-describedby="info-travel-cost-per-day-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-travel-cost-per-day-title">Travel cost per day</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close travel cost details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-travel-cost-per-day-body">
+                  <p>Include mileage, accommodation, or subsistence costs associated with each travel day. These scale with the travel days you set above.</p>
+                  <p>Example: 85 covers fuel, parking, and meals per travel day.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
           </div>
         </fieldset>
 
@@ -1673,6 +1851,71 @@
         ></p>
       </section>
 
+      <section class="card retainer-card" id="retainer-card" aria-labelledby="retainer-title">
+        <div class="retainer-card__header">
+          <div>
+            <h2 id="retainer-title">Retainer</h2>
+            <p>Translate your goals into either a monthly rate or the workload to sustain that rate.</p>
+          </div>
+          <div class="retainer-card__controls" role="group" aria-label="Retainer focus">
+            <button type="button" data-retainer-view="rate" aria-pressed="true">Rate needed</button>
+            <button type="button" data-retainer-view="volume" aria-pressed="false">Volume needed</button>
+          </div>
+        </div>
+        <p class="retainer-note" id="retainer-note"></p>
+        <p class="status-message" id="retainer-status"></p>
+        <div class="retainer-views" id="retainer-views" hidden>
+          <div class="retainer-view" data-retainer-panel="rate">
+            <div class="retainer-mini-metrics">
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Charge per retainer</span>
+                <span class="retainer-mini-metric__value" id="retainer-rate-value">–</span>
+                <p class="retainer-mini-metric__hint" id="retainer-rate-hint"></p>
+              </div>
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Take-home at this rate</span>
+                <span class="retainer-mini-metric__value" id="retainer-rate-net">–</span>
+                <p class="retainer-mini-metric__hint">After costs, buffer, and taxes.</p>
+              </div>
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Monthly hours committed</span>
+                <span class="retainer-mini-metric__value" id="retainer-rate-hours">–</span>
+                <p class="retainer-mini-metric__hint" id="retainer-rate-hours-hint"></p>
+              </div>
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Travel overhead</span>
+                <span class="retainer-mini-metric__value" id="retainer-rate-travel">–</span>
+                <p class="retainer-mini-metric__hint">Adds to costs and capacity usage.</p>
+              </div>
+            </div>
+          </div>
+          <div class="retainer-view" data-retainer-panel="volume" hidden>
+            <div class="retainer-mini-metrics">
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Retainers needed</span>
+                <span class="retainer-mini-metric__value" id="retainer-volume-units">–</span>
+                <p class="retainer-mini-metric__hint" id="retainer-volume-units-hint"></p>
+              </div>
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Revenue at baseline rate</span>
+                <span class="retainer-mini-metric__value" id="retainer-volume-revenue">–</span>
+                <p class="retainer-mini-metric__hint" id="retainer-volume-rate"></p>
+              </div>
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Billable hours required</span>
+                <span class="retainer-mini-metric__value" id="retainer-volume-hours">–</span>
+                <p class="retainer-mini-metric__hint" id="retainer-volume-hours-hint"></p>
+              </div>
+              <div class="retainer-mini-metric">
+                <span class="retainer-mini-metric__label">Capacity used</span>
+                <span class="retainer-mini-metric__value" id="retainer-volume-capacity">–</span>
+                <p class="retainer-mini-metric__hint" id="retainer-volume-capacity-hint"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="card table-card" aria-labelledby="table-title">
         <div>
           <h2 id="table-title">Scenario table</h2>
@@ -1727,6 +1970,8 @@
       taxReservePercent: '',
       fixedCosts: '',
       variableCost: '',
+      travelDaysPerBooking: '',
+      travelCostPerDay: '',
       expectedBookings: '',
       bookingsOptions: '',
       hoursPerBooking: '',
@@ -1795,10 +2040,14 @@
 
     let lastIncomePeriod = 'monthly';
     let lastIncomeType = 'net';
+    let activeRetainerView = 'rate';
+    let lastDerivedValues = null;
+    let lastSummary = null;
 
     // utils --------------------------------------------------
     const MONTHS_PER_YEAR = 12;
     const WEEKS_PER_YEAR = 52;
+    const HOURS_PER_TRAVEL_DAY = 8;
     const numberFormatter0 = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
     const numberFormatter1 = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     const numberFormatter2 = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -2023,6 +2272,8 @@
       const taxReserveRate = clamp(parsePercent(state.taxReservePercent), 0, 0.95);
       const fixedCosts = Math.max(parseNumber(state.fixedCosts) || 0, 0);
       const variableCost = Math.max(parseNumber(state.variableCost) || 0, 0);
+      const travelDaysPerBooking = Math.max(parseNumber(state.travelDaysPerBooking) || 0, 0);
+      const travelCostPerDay = Math.max(parseNumber(state.travelCostPerDay) || 0, 0);
       const expectedBookings = Math.max(parseNumber(state.expectedBookings) || 0, 0);
       const bookingsOptions = parseList(state.bookingsOptions);
       const hoursPerBooking = Math.max(parseNumber(state.hoursPerBooking) || 0, 0);
@@ -2066,6 +2317,8 @@
         taxReserveRate,
         fixedCosts,
         variableCost,
+        travelDaysPerBooking,
+        travelCostPerDay,
         expectedBookings,
         bookingsOptions,
         hoursPerBooking,
@@ -2099,12 +2352,14 @@
       const bufferMultiplier = 1 + (Number.isFinite(values.bufferPercent) ? values.bufferPercent : 0);
       const workingMonths = Math.max(MONTHS_PER_YEAR - values.monthsOff, 0);
       const hoursPerBooking = Math.max(values.hoursPerBooking, 0);
-      const costHoursPerBooking = hoursPerBooking > 0 ? hoursPerBooking : 1;
+      const travelDaysPerBooking = Math.max(values.travelDaysPerBooking, 0);
+      const travelDayRate = Math.max(values.travelCostPerDay, 0);
+      const travelHoursPerBooking = travelDaysPerBooking * HOURS_PER_TRAVEL_DAY;
+      const effectiveHoursPerBooking = hoursPerBooking + travelHoursPerBooking;
+      const costHoursPerBooking = effectiveHoursPerBooking > 0 ? effectiveHoursPerBooking : 1;
       const hourlyCostRate = values.variableCost > 0
-        ? (hoursPerBooking > 0 ? values.variableCost / costHoursPerBooking : values.variableCost)
+        ? (effectiveHoursPerBooking > 0 ? values.variableCost / costHoursPerBooking : values.variableCost)
         : 0;
-      const travelDayRate = 0;
-      const travelDaysPerBooking = 0;
       const expectedCostHours = costHoursPerBooking * values.expectedBookings;
       const expectedTravelDays = travelDaysPerBooking * values.expectedBookings;
 
@@ -2128,14 +2383,15 @@
       const billableHoursPerYear = billableHoursPerWeek * WEEKS_PER_YEAR * Math.min(Math.max(workingFraction, 0), 1);
       const billableHoursPerMonth = workingMonths > 0 ? billableHoursPerYear / workingMonths : 0;
 
-      const hoursFromBookings = values.hoursPerBooking * values.expectedBookings;
-      const plannedMonthlyHours = Number.isFinite(hoursFromBookings) ? hoursFromBookings : NaN;
+      const serviceHoursFromBookings = hoursPerBooking * values.expectedBookings;
+      const totalHoursFromBookings = effectiveHoursPerBooking * values.expectedBookings;
+      const plannedMonthlyHours = Number.isFinite(totalHoursFromBookings) ? totalHoursFromBookings : NaN;
       const monthlyBillableHours = Number.isFinite(plannedMonthlyHours) && plannedMonthlyHours > 0
         ? plannedMonthlyHours
         : billableHoursPerMonth;
       const recommendedHourly = monthlyBillableHours > 0
         ? revenueRequired / monthlyBillableHours
-        : (values.hoursPerBooking > 0 ? recommendedPrice / values.hoursPerBooking : NaN);
+        : (effectiveHoursPerBooking > 0 ? recommendedPrice / effectiveHoursPerBooking : NaN);
 
       const hasPlannedHours = Number.isFinite(plannedMonthlyHours) && plannedMonthlyHours > 0;
       const capacityExceeded = hasPlannedHours && (billableHoursPerMonth <= 0 || (plannedMonthlyHours - billableHoursPerMonth) > 0.1);
@@ -2172,6 +2428,7 @@
           fixedMonthly: values.fixedCosts,
           hourlyRate: hourlyCostRate,
           costHoursPerBooking,
+          effectiveHoursPerBooking,
           travelDayRate,
           travelDaysPerBooking,
           activeMonths: workingMonths,
@@ -2180,10 +2437,17 @@
         variableCost: values.variableCost,
         fixedCosts: values.fixedCosts,
         hoursPerBooking: values.hoursPerBooking,
+        travelDaysPerBooking,
+        travelCostPerDay: travelDayRate,
+        travelHoursPerBooking,
+        effectiveHoursPerBooking,
         billableHoursPerYear,
         billableHoursPerMonth,
         monthlyBillableHours,
         plannedMonthlyHours,
+        expectedServiceHours: serviceHoursFromBookings,
+        expectedTotalHours: totalHoursFromBookings,
+        expectedTravelDays,
         capacityExceeded,
         workingMonths,
         billableHoursPerWeek,
@@ -2277,6 +2541,8 @@
     const taxReserveInput = document.getElementById('tax-reserve');
     const fixedCostsInput = document.getElementById('fixed-costs');
     const variableCostInput = document.getElementById('variable-cost');
+    const travelDaysPerBookingInput = document.getElementById('travel-days-per-booking');
+    const travelCostPerDayInput = document.getElementById('travel-cost-per-day');
     const expectedBookingsInput = document.getElementById('expected-bookings');
     const bookingsOptionsInput = document.getElementById('bookings-options');
     const hoursPerBookingInput = document.getElementById('hours-per-booking');
@@ -2298,6 +2564,27 @@
     const summaryHourly = document.getElementById('summary-hourly');
     const summaryNote = document.getElementById('summary-note');
     const summaryCapacityWarning = document.getElementById('summary-capacity-warning');
+
+    const retainerCard = document.getElementById('retainer-card');
+    const retainerNote = document.getElementById('retainer-note');
+    const retainerStatus = document.getElementById('retainer-status');
+    const retainerViews = document.getElementById('retainer-views');
+    const retainerViewPanels = Array.from(document.querySelectorAll('[data-retainer-panel]'));
+    const retainerToggleButtons = Array.from(document.querySelectorAll('[data-retainer-view]'));
+    const retainerRateValue = document.getElementById('retainer-rate-value');
+    const retainerRateHint = document.getElementById('retainer-rate-hint');
+    const retainerRateNet = document.getElementById('retainer-rate-net');
+    const retainerRateHours = document.getElementById('retainer-rate-hours');
+    const retainerRateHoursHint = document.getElementById('retainer-rate-hours-hint');
+    const retainerRateTravel = document.getElementById('retainer-rate-travel');
+    const retainerVolumeUnits = document.getElementById('retainer-volume-units');
+    const retainerVolumeUnitsHint = document.getElementById('retainer-volume-units-hint');
+    const retainerVolumeRevenue = document.getElementById('retainer-volume-revenue');
+    const retainerVolumeRate = document.getElementById('retainer-volume-rate');
+    const retainerVolumeHours = document.getElementById('retainer-volume-hours');
+    const retainerVolumeHoursHint = document.getElementById('retainer-volume-hours-hint');
+    const retainerVolumeCapacity = document.getElementById('retainer-volume-capacity');
+    const retainerVolumeCapacityHint = document.getElementById('retainer-volume-capacity-hint');
 
     const resultsWrapper = document.getElementById('results-wrapper');
     const resultsHead = document.getElementById('results-head');
@@ -2473,8 +2760,8 @@
       const monthlyCosts = costTotals.monthlyTotal;
       const grossProfit = revenue - monthlyCosts;
       const netIncome = grossProfit * Math.max(1 - summary.combinedTaxRate, 0);
-      const totalHours = summary.hoursPerBooking > 0
-        ? summary.hoursPerBooking * bookings
+      const totalHours = summary.effectiveHoursPerBooking > 0
+        ? summary.effectiveHoursPerBooking * bookings
         : summary.billableHoursPerMonth;
       const hourlyNet = totalHours > 0 ? netIncome / totalHours : NaN;
 
@@ -2534,6 +2821,190 @@
       tableNote.textContent = `${targetText} Tap a highlighted cell to spot combinations that exceed your goal.`.trim();
     }
 
+    function applyRetainerView() {
+      if (!retainerCard) {
+        return;
+      }
+      retainerToggleButtons.forEach(button => {
+        const view = button.dataset.retainerView === 'volume' ? 'volume' : 'rate';
+        const isActive = view === activeRetainerView;
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+      retainerViewPanels.forEach(panel => {
+        const view = panel.dataset.retainerPanel === 'volume' ? 'volume' : 'rate';
+        panel.hidden = view !== activeRetainerView;
+      });
+    }
+
+    function renderRetainerCard(values, summary) {
+      if (!retainerCard) {
+        return;
+      }
+      if (!summary) {
+        if (retainerStatus) {
+          retainerStatus.hidden = false;
+          retainerStatus.textContent = 'Enter an income target to size a retainer package.';
+        }
+        if (retainerViews) {
+          retainerViews.hidden = true;
+        }
+        if (retainerNote) {
+          retainerNote.textContent = '';
+        }
+        return;
+      }
+
+      if (retainerViews) {
+        retainerViews.hidden = false;
+      }
+
+      const expected = summary.expectedBookings;
+      const hasExpected = Number.isFinite(expected) && expected > 0;
+      const recommendedPrice = summary.recommendedPrice;
+      const baselineRateCandidates = [values.priceMin, recommendedPrice, values.priceMax];
+      const baselineRate = baselineRateCandidates.find(rate => Number.isFinite(rate) && rate > 0) ?? NaN;
+      const unitsAtBaseline = Number.isFinite(baselineRate) && baselineRate > 0
+        ? summary.revenueRequired / baselineRate
+        : NaN;
+      const effectiveHoursPerBooking = summary.effectiveHoursPerBooking;
+      const serviceHoursPerBooking = summary.hoursPerBooking;
+      const travelDaysPerBooking = summary.travelDaysPerBooking;
+      const serviceHoursPerMonth = summary.expectedServiceHours;
+      const totalHoursPerMonth = summary.expectedTotalHours;
+      const travelDaysPerMonth = summary.expectedTravelDays;
+      const travelHoursPerMonth = Number.isFinite(travelDaysPerMonth)
+        ? travelDaysPerMonth * HOURS_PER_TRAVEL_DAY
+        : NaN;
+      const baselineHours = Number.isFinite(unitsAtBaseline) && Number.isFinite(effectiveHoursPerBooking)
+        ? unitsAtBaseline * effectiveHoursPerBooking
+        : NaN;
+      const baselineServiceHours = Number.isFinite(unitsAtBaseline) && Number.isFinite(serviceHoursPerBooking)
+        ? unitsAtBaseline * serviceHoursPerBooking
+        : NaN;
+      const baselineTravelDays = Number.isFinite(unitsAtBaseline) && Number.isFinite(travelDaysPerBooking)
+        ? unitsAtBaseline * travelDaysPerBooking
+        : NaN;
+      const baselineTravelHours = Number.isFinite(baselineTravelDays)
+        ? baselineTravelDays * HOURS_PER_TRAVEL_DAY
+        : NaN;
+      const capacityFraction = Number.isFinite(baselineHours) && summary.billableHoursPerMonth > 0
+        ? baselineHours / summary.billableHoursPerMonth
+        : NaN;
+
+      const parts = [];
+      if (hasExpected) {
+        parts.push(`Planned: ${formatNumber(expected, expected % 1 === 0 ? 0 : 1)} retainers / month.`);
+      }
+      const workloadParts = [];
+      if (Number.isFinite(serviceHoursPerBooking) && serviceHoursPerBooking > 0) {
+        workloadParts.push(`${formatNumber(serviceHoursPerBooking, 1)} h service`);
+      }
+      if (Number.isFinite(travelDaysPerBooking) && travelDaysPerBooking > 0) {
+        workloadParts.push(`${formatNumber(travelDaysPerBooking, 2)} travel days`);
+      }
+      if (workloadParts.length) {
+        parts.push(`Per retainer: ${workloadParts.join(' + ')}.`);
+      }
+      if (retainerNote) {
+        retainerNote.textContent = parts.join(' ');
+      }
+
+      const statusMessages = [];
+      if (!hasExpected) {
+        statusMessages.push('Add expected retainers per month to unlock the recommended rate.');
+      }
+      if (!Number.isFinite(baselineRate) || baselineRate <= 0) {
+        statusMessages.push('Set a price range minimum to translate your goal into units.');
+      }
+      if (retainerStatus) {
+        retainerStatus.hidden = statusMessages.length === 0;
+        retainerStatus.textContent = statusMessages.join(' ');
+      }
+
+      if (retainerRateValue) {
+        retainerRateValue.textContent = hasExpected && Number.isFinite(recommendedPrice)
+          ? formatCurrency(summary.currency, recommendedPrice, { digits: 2 })
+          : '–';
+      }
+      if (retainerRateHint) {
+        retainerRateHint.textContent = hasExpected
+          ? `Hits your goal with ${formatNumber(expected, expected % 1 === 0 ? 0 : 1)} retainers.`
+          : 'Add an expected retainers figure to calculate a rate.';
+      }
+      if (retainerRateNet) {
+        retainerRateNet.textContent = Number.isFinite(summary.netAtRecommended)
+          ? formatCurrency(summary.currency, summary.netAtRecommended, { digits: 0 })
+          : '–';
+      }
+      if (retainerRateHours) {
+        retainerRateHours.textContent = hasExpected && Number.isFinite(totalHoursPerMonth)
+          ? `${formatNumber(totalHoursPerMonth, 1)} h`
+          : '–';
+      }
+      if (retainerRateHoursHint) {
+        if (hasExpected && Number.isFinite(serviceHoursPerMonth)) {
+          const serviceText = `${formatNumber(serviceHoursPerMonth, 1)} h service`;
+          const travelText = Number.isFinite(travelHoursPerMonth) && travelHoursPerMonth > 0
+            ? ` + ${formatNumber(travelHoursPerMonth, 1)} h travel`
+            : '';
+          retainerRateHoursHint.textContent = `${serviceText}${travelText}`;
+        } else {
+          retainerRateHoursHint.textContent = 'Hours update when expected retainers are set.';
+        }
+      }
+      if (retainerRateTravel) {
+        retainerRateTravel.textContent = hasExpected && Number.isFinite(travelDaysPerMonth)
+          ? `${formatNumber(travelDaysPerMonth, travelDaysPerMonth >= 2 ? 1 : 2)} days`
+          : '0 days';
+      }
+
+      if (retainerVolumeUnits) {
+        retainerVolumeUnits.textContent = Number.isFinite(unitsAtBaseline)
+          ? formatNumber(unitsAtBaseline, unitsAtBaseline % 1 === 0 ? 0 : 1)
+          : '–';
+      }
+      if (retainerVolumeUnitsHint) {
+        retainerVolumeUnitsHint.textContent = Number.isFinite(unitsAtBaseline)
+          ? `Needed each month to cover ${formatCurrency(summary.currency, summary.netMonthlyTarget, { digits: 0 })} net.`
+          : 'Enter a realistic rate to convert your goal into units.';
+      }
+      if (retainerVolumeRevenue) {
+        retainerVolumeRevenue.textContent = formatCurrency(summary.currency, summary.revenueRequired, { digits: 0 });
+      }
+      if (retainerVolumeRate) {
+        retainerVolumeRate.textContent = Number.isFinite(baselineRate)
+          ? `Based on ${formatCurrency(summary.currency, baselineRate, { digits: 2 })} each.`
+          : 'Set a price minimum to estimate units.';
+      }
+      if (retainerVolumeHours) {
+        retainerVolumeHours.textContent = Number.isFinite(baselineHours)
+          ? `${formatNumber(baselineHours, 1)} h`
+          : '–';
+      }
+      if (retainerVolumeHoursHint) {
+        if (Number.isFinite(baselineServiceHours)) {
+          const travelText = Number.isFinite(baselineTravelHours) && baselineTravelHours > 0
+            ? ` + ${formatNumber(baselineTravelHours, 1)} h travel`
+            : '';
+          retainerVolumeHoursHint.textContent = `${formatNumber(baselineServiceHours, 1)} h service${travelText}`;
+        } else {
+          retainerVolumeHoursHint.textContent = 'Hours update once a rate is available.';
+        }
+      }
+      if (retainerVolumeCapacity) {
+        retainerVolumeCapacity.textContent = Number.isFinite(capacityFraction)
+          ? formatPercent(capacityFraction)
+          : '–';
+      }
+      if (retainerVolumeCapacityHint) {
+        retainerVolumeCapacityHint.textContent = Number.isFinite(summary.billableHoursPerMonth) && summary.billableHoursPerMonth > 0
+          ? `Of ${formatNumber(summary.billableHoursPerMonth, 1)} h monthly capacity.`
+          : 'Add capacity assumptions to benchmark workload.';
+      }
+
+      applyRetainerView();
+    }
+
     function render() {
       syncBoundInputs(calcState);
       if (incomeTargetConversionHint) {
@@ -2541,9 +3012,33 @@
       }
       const values = deriveValues(calcState);
       const summary = computeSummary(values);
+      lastDerivedValues = values;
+      lastSummary = summary;
       renderSummary(values, summary);
+      renderRetainerCard(values, summary);
       renderTable(values, summary);
     }
+
+    function setRetainerView(nextView) {
+      if (!retainerCard) {
+        return;
+      }
+      const normalized = nextView === 'volume' ? 'volume' : 'rate';
+      if (normalized === activeRetainerView) {
+        return;
+      }
+      activeRetainerView = normalized;
+      applyRetainerView();
+      if (lastDerivedValues) {
+        renderRetainerCard(lastDerivedValues, lastSummary);
+      }
+    }
+
+    retainerToggleButtons.forEach(button => {
+      button.addEventListener('click', () => setRetainerView(button.dataset.retainerView));
+    });
+
+    applyRetainerView();
 
     let activeInfo = null;
     let previousFocus = null;
@@ -2684,6 +3179,8 @@
     bindInput('tax-reserve', 'taxReservePercent', { element: taxReserveInput });
     bindInput('fixed-costs', 'fixedCosts', { element: fixedCostsInput });
     bindInput('variable-cost', 'variableCost', { element: variableCostInput });
+    bindInput('travel-days-per-booking', 'travelDaysPerBooking', { element: travelDaysPerBookingInput });
+    bindInput('travel-cost-per-day', 'travelCostPerDay', { element: travelCostPerDayInput });
     bindInput('expected-bookings', 'expectedBookings', { element: expectedBookingsInput });
     bindInput('bookings-options', 'bookingsOptions', { element: bookingsOptionsInput });
     bindInput('hours-per-booking', 'hoursPerBooking', { element: hoursPerBookingInput });
