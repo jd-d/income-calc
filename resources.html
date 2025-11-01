@@ -178,6 +178,44 @@
       font-size: 1.6rem;
     }
 
+    .service-overview {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .service-overview__intro {
+      margin: 0;
+      color: var(--text-muted);
+    }
+
+    .service-overview__list {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .service-overview__item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .service-overview__item dt {
+      font-family: var(--font-heading);
+      font-weight: 500;
+      font-size: 1.15rem;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .service-overview__item dd {
+      margin: 0;
+      color: var(--text-muted);
+    }
+
     .retainer-details {
       list-style: disc;
       padding-left: 20px;
@@ -248,6 +286,51 @@
         <h1>Helpful resources</h1>
         <p class="lead">Dive deeper into common Dutch freelancer costs with these curated guides.</p>
       </header>
+      <section class="resource-card" id="services-explainer" aria-labelledby="services-explainer-title">
+        <h2 id="services-explainer-title">Service explainer</h2>
+        <div class="service-overview">
+          <p class="service-overview__intro">
+            The Service mix planner mirrors the offerings from the fruit services playbook. Each card starts with playbook defaults
+            for price, volume, travel, and hours so you can compare how those engagements stack against your income goal.
+          </p>
+          <p class="service-overview__intro">
+            Choose <strong>Rate needed</strong> when you want the minimum price that reaches your target with the current workload.
+            Switch to <strong>Volume needed</strong> to see how many bookings you must deliver when you commit to a given price.
+            Both views update live as you adjust assumptions in the calculator.
+          </p>
+          <dl class="service-overview__list">
+            <div class="service-overview__item">
+              <dt>Representation Retainers</dt>
+              <dd>
+                Ongoing export-channel management anchored by standing retainers. The planner keeps the rate flexible so you can
+                adjust monthly pricing while the volume defaults match the fruit playbook. See the
+                <a href="#fruit-retainer">Fruit retainer breakdown</a> for packaging guidance and sample deliverables.
+              </dd>
+            </div>
+            <div class="service-overview__item">
+              <dt>Advisory</dt>
+              <dd>
+                Deep-dive field or packhouse days. Units are locked to reflect limited availability, while the rate stays open for
+                negotiation based on crop complexity or travel.
+              </dd>
+            </div>
+            <div class="service-overview__item">
+              <dt>QC Sprint</dt>
+              <dd>
+                Fixed-price quality control visits designed for fast packhouse audits. The rate is fixed in the planner so you can
+                focus on how many visits fit alongside retainers and advisory days.
+              </dd>
+            </div>
+            <div class="service-overview__item">
+              <dt>Training</dt>
+              <dd>
+                Crew coaching cohorts that run a handful of times each season. Both the price and cohort count are locked to the
+                playbook so you can gauge their contribution to annual revenue without adjusting every lever.
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
       <section class="resource-card" id="fruit-retainer" aria-labelledby="fruit-retainer-title">
         <h2 id="fruit-retainer-title">Fruit retainer breakdown</h2>
         <p class="resource-description">
