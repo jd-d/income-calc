@@ -151,6 +151,61 @@
     }
     .pill { display:inline-block; background:#111827; border:1px solid #1f2937; color:#cbd5e1; padding:4px 10px; border-radius:999px; font-size:12px; margin-right:6px}
     footer { margin-top: 64px; color: var(--muted); font-size: 13px; }
+    @media (max-width: 768px) {
+      .wrap {
+        margin: 32px auto 72px;
+        padding: 0 16px;
+      }
+      header.page {
+        gap: 12px;
+      }
+      h1 {
+        font-size: 30px;
+      }
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        min-width: 600px;
+        border-radius: 14px;
+      }
+      table thead,
+      table tbody {
+        width: 100%;
+      }
+      th,
+      td {
+        font-size: 13px;
+        padding: 9px 10px;
+      }
+      th {
+        font-size: 13px;
+      }
+    }
+    @media (max-width: 520px) {
+      .wrap {
+        margin: 24px auto 60px;
+      }
+      h1 {
+        font-size: 26px;
+      }
+      .sub {
+        font-size: 13px;
+      }
+      table {
+        font-size: 12px;
+      }
+      th,
+      td {
+        font-size: 12px;
+        padding: 8px 9px;
+      }
+    }
     @media print {
       :root {
         --bg: #ffffff;
