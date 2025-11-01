@@ -39,11 +39,9 @@ This file maps small, shippable sprints to enrich the simple **income-calc** (si
 
 ## Sprint 3 – Cost aggregation MVP
 **Goal:** One place for all costs to avoid drift.
-- [ ] Utility: aggregate **fixed monthly**, **per-hour**, **per-travel-day** costs.
-- [ ] Display monthly and annual totals from that one function.
-- [ ] Add **tax reserve percent** input that feeds Net calculation.
+- _(Tasks moved to DONE on 2025-11-01.)_
 **Done when:**
-- [ ] All cost displays use the same function.
+- [x] All cost displays use the same function. _(2025-11-01)_
 
 ## Sprint 4 – First service card (Retainer only)
 **Goal:** Prove the service-card pattern with a single service.
@@ -134,6 +132,9 @@ To be executed after the sprint planning
 - [ ] Investigate auto-detecting locale number formatting for placeholders and examples.
 
 # DONE
+- [x] Sprint 3: Utility: aggregate **fixed monthly**, **per-hour**, **per-travel-day** costs. (2025-11-01)
+- [x] Sprint 3: Display monthly and annual totals from that one function. (2025-11-01)
+- [x] Sprint 3: Add **tax reserve percent** input that feeds Net calculation. (2025-11-01)
 - [x] Replace the class-based pricing template with a service-focused income planner layout so terminology matches our use case. (2025-10-28)
 - [x] Fix that green table cell backgrounds don't display when not in fixed lesson price mode any more. (Superseded by planner redesign – 2025-10-28)
 - [x] On touch screen when finger is on table you can't scroll up and down, can only scroll when finger right on the side, which isn't practical, scrolling up and down of whole page/site should be possible when finger on table. (Superseded by planner redesign – 2025-10-28)

@@ -1113,6 +1113,45 @@
             </div>
             <div class="control">
               <div class="control__label-row">
+                <label for="tax-reserve">Tax reserve (%)</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-tax-reserve"
+                  aria-label="Show info about the tax reserve"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <input type="number" id="tax-reserve" inputmode="decimal" value="5" min="0" max="50" step="1" />
+              <p class="field-hint">Reserve extra cash beyond the tax rate for quarterly payments or surprises.</p>
+              <div
+                class="info-popover"
+                id="info-tax-reserve"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-tax-reserve-title"
+                aria-describedby="info-tax-reserve-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-tax-reserve-title">Tax reserve</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close tax reserve details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-tax-reserve-body">
+                  <p>Set aside an additional percentage of revenue for quarterly tax payments, social charges, or unexpected bills.</p>
+                  <p>Example: a 5% reserve keeps an extra buffer for future obligations.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
                 <label for="fixed-costs">Fixed costs per month</label>
                 <button
                   type="button"
@@ -1604,6 +1643,14 @@
             <dd id="summary-revenue">–</dd>
           </div>
           <div class="summary-item">
+            <dt>Total operating costs per month</dt>
+            <dd id="summary-costs-monthly">–</dd>
+          </div>
+          <div class="summary-item">
+            <dt>Total operating costs per year</dt>
+            <dd id="summary-costs-annual">–</dd>
+          </div>
+          <div class="summary-item">
             <dt>Recommended price / booking</dt>
             <dd id="summary-price">–</dd>
           </div>
@@ -1677,6 +1724,7 @@
       incomeType: 'net',
       bufferPercent: '',
       taxRate: '',
+      taxReservePercent: '',
       fixedCosts: '',
       variableCost: '',
       expectedBookings: '',
@@ -1814,6 +1862,59 @@
       return `${numberFormatter1.format(value * 100)}%`;
     }
 
+    function sanitizeNonNegative(value) {
+      if (!Number.isFinite(value)) {
+        return 0;
+      }
+      return value > 0 ? value : 0;
+    }
+
+    function aggregateCosts({
+      fixedMonthly = 0,
+      perHour = {},
+      perTravelDay = {},
+      activeMonths = MONTHS_PER_YEAR,
+      monthsPerYear = MONTHS_PER_YEAR
+    } = {}) {
+      const sanitizedFixedMonthly = sanitizeNonNegative(fixedMonthly);
+      const hourlyRate = sanitizeNonNegative(perHour.rate ?? 0);
+      const hourlyQuantity = sanitizeNonNegative(perHour.quantity ?? 0);
+      const travelRate = sanitizeNonNegative(perTravelDay.rate ?? 0);
+      const travelQuantity = sanitizeNonNegative(perTravelDay.quantity ?? 0);
+      const sanitizedMonthsPerYear = sanitizeNonNegative(monthsPerYear);
+      const sanitizedActiveMonths = Math.min(
+        sanitizeNonNegative(activeMonths),
+        sanitizedMonthsPerYear
+      );
+
+      const monthlyFixed = sanitizedFixedMonthly;
+      const monthlyHourly = hourlyRate * hourlyQuantity;
+      const monthlyTravel = travelRate * travelQuantity;
+      const monthlyTotal = monthlyFixed + monthlyHourly + monthlyTravel;
+
+      const annualFixed = monthlyFixed * sanitizedMonthsPerYear;
+      const annualHourly = monthlyHourly * sanitizedActiveMonths;
+      const annualTravel = monthlyTravel * sanitizedActiveMonths;
+      const annualTotal = annualFixed + annualHourly + annualTravel;
+
+      return {
+        monthlyTotal,
+        annualTotal,
+        breakdown: {
+          monthly: {
+            fixed: monthlyFixed,
+            hourly: monthlyHourly,
+            travel: monthlyTravel
+          },
+          annual: {
+            fixed: annualFixed,
+            hourly: annualHourly,
+            travel: annualTravel
+          }
+        }
+      };
+    }
+
     function parseList(value) {
       if (typeof value !== 'string') {
         return [];
@@ -1919,6 +2020,7 @@
       const incomeType = state.incomeType === 'gross' ? 'gross' : 'net';
       const bufferPercent = clamp(parsePercent(state.bufferPercent), 0, 0.95);
       const taxRate = clamp(parsePercent(state.taxRate), 0, 0.95);
+      const taxReserveRate = clamp(parsePercent(state.taxReservePercent), 0, 0.95);
       const fixedCosts = Math.max(parseNumber(state.fixedCosts) || 0, 0);
       const variableCost = Math.max(parseNumber(state.variableCost) || 0, 0);
       const expectedBookings = Math.max(parseNumber(state.expectedBookings) || 0, 0);
@@ -1961,6 +2063,7 @@
         incomeType,
         bufferPercent,
         taxRate,
+        taxReserveRate,
         fixedCosts,
         variableCost,
         expectedBookings,
@@ -1983,23 +2086,43 @@
       const monthlyTarget = values.incomePeriod === 'annual'
         ? values.incomeTarget / MONTHS_PER_YEAR
         : values.incomeTarget;
+      const baseTaxRate = Number.isFinite(values.taxRate) ? values.taxRate : 0;
+      const reserveRate = Number.isFinite(values.taxReserveRate) ? values.taxReserveRate : 0;
+      const combinedTaxRate = Math.min(Math.max(baseTaxRate + reserveRate, 0), 0.97);
       const grossMonthlyTarget = values.incomeType === 'net'
-        ? monthlyTarget / Math.max(1 - values.taxRate, 0.0001)
+        ? monthlyTarget / Math.max(1 - combinedTaxRate, 0.0001)
         : monthlyTarget;
       const netMonthlyTarget = values.incomeType === 'net'
         ? monthlyTarget
-        : monthlyTarget * (1 - values.taxRate);
+        : monthlyTarget * Math.max(1 - combinedTaxRate, 0);
 
       const bufferMultiplier = 1 + (Number.isFinite(values.bufferPercent) ? values.bufferPercent : 0);
-      const variableMonthly = values.variableCost * values.expectedBookings;
-      const revenueBeforeBuffer = grossMonthlyTarget + values.fixedCosts + variableMonthly;
+      const workingMonths = Math.max(MONTHS_PER_YEAR - values.monthsOff, 0);
+      const hoursPerBooking = Math.max(values.hoursPerBooking, 0);
+      const costHoursPerBooking = hoursPerBooking > 0 ? hoursPerBooking : 1;
+      const hourlyCostRate = values.variableCost > 0
+        ? (hoursPerBooking > 0 ? values.variableCost / costHoursPerBooking : values.variableCost)
+        : 0;
+      const travelDayRate = 0;
+      const travelDaysPerBooking = 0;
+      const expectedCostHours = costHoursPerBooking * values.expectedBookings;
+      const expectedTravelDays = travelDaysPerBooking * values.expectedBookings;
+
+      const costs = aggregateCosts({
+        fixedMonthly: values.fixedCosts,
+        perHour: { rate: hourlyCostRate, quantity: expectedCostHours },
+        perTravelDay: { rate: travelDayRate, quantity: expectedTravelDays },
+        activeMonths: workingMonths,
+        monthsPerYear: MONTHS_PER_YEAR
+      });
+
+      const revenueBeforeBuffer = grossMonthlyTarget + costs.monthlyTotal;
       const revenueRequired = revenueBeforeBuffer * bufferMultiplier;
 
       const recommendedPrice = values.expectedBookings > 0
         ? revenueRequired / values.expectedBookings
         : NaN;
 
-      const workingMonths = Math.max(MONTHS_PER_YEAR - values.monthsOff, 0);
       const workingFraction = workingMonths / MONTHS_PER_YEAR;
       const billableHoursPerWeek = Math.max(values.weeklyHours * values.utilization, 0);
       const billableHoursPerYear = billableHoursPerWeek * WEEKS_PER_YEAR * Math.min(Math.max(workingFraction, 0), 1);
@@ -2018,7 +2141,7 @@
       const capacityExceeded = hasPlannedHours && (billableHoursPerMonth <= 0 || (plannedMonthlyHours - billableHoursPerMonth) > 0.1);
 
       const netAtRecommended = values.expectedBookings > 0
-        ? ((recommendedPrice * values.expectedBookings) - variableMonthly - values.fixedCosts) * (1 - values.taxRate)
+        ? ((recommendedPrice * values.expectedBookings) - costs.monthlyTotal) * Math.max(1 - combinedTaxRate, 0)
         : NaN;
 
       const pricePoints = buildPricePoints({
@@ -2035,6 +2158,8 @@
       return {
         currency: values.currency,
         taxRate: values.taxRate,
+        taxReserveRate: reserveRate,
+        combinedTaxRate,
         netMonthlyTarget,
         grossMonthlyTarget,
         bufferMultiplier,
@@ -2042,6 +2167,16 @@
         recommendedPrice,
         recommendedHourly,
         netAtRecommended,
+        costs,
+        costModel: {
+          fixedMonthly: values.fixedCosts,
+          hourlyRate: hourlyCostRate,
+          costHoursPerBooking,
+          travelDayRate,
+          travelDaysPerBooking,
+          activeMonths: workingMonths,
+          monthsPerYear: MONTHS_PER_YEAR
+        },
         variableCost: values.variableCost,
         fixedCosts: values.fixedCosts,
         hoursPerBooking: values.hoursPerBooking,
@@ -2078,17 +2213,20 @@
       let updatedValue = rawValue;
       let changed = false;
       const parsedTaxRate = clamp(parsePercent(state.taxRate), 0, 0.95);
+      const parsedReserveRate = clamp(parsePercent(state.taxReservePercent), 0, 0.95);
       const taxRate = Number.isFinite(parsedTaxRate) ? parsedTaxRate : 0;
+      const reserveRate = Number.isFinite(parsedReserveRate) ? parsedReserveRate : 0;
+      const combinedRate = Math.min(Math.max(taxRate + reserveRate, 0), 0.97);
 
       if (lastIncomeType !== normalizedType) {
         changed = true;
         if (lastIncomeType === 'net' && normalizedType === 'gross') {
-          const divisor = Math.max(1 - taxRate, 0.0001);
+          const divisor = Math.max(1 - combinedRate, 0.0001);
           updatedValue = updatedValue / divisor;
-          messages.push(`Converted to gross using ${formatPercent(taxRate)} tax.`);
+          messages.push(`Converted to gross using ${formatPercent(combinedRate)} total tax and reserve.`);
         } else if (lastIncomeType === 'gross' && normalizedType === 'net') {
-          updatedValue = updatedValue * Math.max(1 - taxRate, 0);
-          messages.push(`Converted to net using ${formatPercent(taxRate)} tax.`);
+          updatedValue = updatedValue * Math.max(1 - combinedRate, 0);
+          messages.push(`Converted to net using ${formatPercent(combinedRate)} total tax and reserve.`);
         }
       }
 
@@ -2136,6 +2274,7 @@
     const incomeTypeSelect = document.getElementById('income-type');
     const bufferInput = document.getElementById('buffer-percent');
     const taxRateInput = document.getElementById('tax-rate');
+    const taxReserveInput = document.getElementById('tax-reserve');
     const fixedCostsInput = document.getElementById('fixed-costs');
     const variableCostInput = document.getElementById('variable-cost');
     const expectedBookingsInput = document.getElementById('expected-bookings');
@@ -2152,6 +2291,8 @@
     const summaryNet = document.getElementById('summary-net');
     const summaryGross = document.getElementById('summary-gross');
     const summaryRevenue = document.getElementById('summary-revenue');
+    const summaryCostsMonthly = document.getElementById('summary-costs-monthly');
+    const summaryCostsAnnual = document.getElementById('summary-costs-annual');
     const summaryPrice = document.getElementById('summary-price');
     const summaryNetEstimate = document.getElementById('summary-net-estimate');
     const summaryHourly = document.getElementById('summary-hourly');
@@ -2274,6 +2415,8 @@
         summaryNet.textContent = '–';
         summaryGross.textContent = '–';
         summaryRevenue.textContent = '–';
+        summaryCostsMonthly.textContent = '–';
+        summaryCostsAnnual.textContent = '–';
         summaryPrice.textContent = '–';
         summaryNetEstimate.textContent = '–';
         summaryHourly.textContent = '–';
@@ -2284,12 +2427,17 @@
       summaryNet.textContent = formatCurrency(summary.currency, summary.netMonthlyTarget, { digits: 0 });
       summaryGross.textContent = formatCurrency(summary.currency, summary.grossMonthlyTarget, { digits: 0 });
       summaryRevenue.textContent = formatCurrency(summary.currency, summary.revenueRequired, { digits: 0 });
+      summaryCostsMonthly.textContent = formatCurrency(summary.currency, summary.costs.monthlyTotal, { digits: 0 });
+      summaryCostsAnnual.textContent = formatCurrency(summary.currency, summary.costs.annualTotal, { digits: 0 });
       summaryPrice.textContent = formatCurrency(summary.currency, summary.recommendedPrice, { digits: 2 });
       summaryNetEstimate.textContent = formatCurrency(summary.currency, summary.netAtRecommended, { digits: 0 });
       summaryHourly.textContent = formatCurrency(summary.currency, summary.recommendedHourly, { digits: 2 });
 
       const bufferText = Number.isFinite(values.bufferPercent)
         ? `Safety buffer applied: ${formatPercent(values.bufferPercent)}.`
+        : '';
+      const reserveText = Number.isFinite(values.taxReserveRate) && values.taxReserveRate > 0
+        ? `Tax reserve applied: ${formatPercent(values.taxReserveRate)} in addition to taxes.`
         : '';
       const bookingsText = summary.expectedBookings > 0
         ? `Calculations assume ${formatNumber(summary.expectedBookings, 1)} bookings per month.`
@@ -2299,7 +2447,7 @@
         : (values.weeklyHours > 0 || values.utilization > 0 || values.monthsOff > 0
           ? 'Billable capacity is currently zero; adjust months off, weekly hours, or utilization to free up time.'
           : 'Set your schedule assumptions to estimate billable capacity.');
-      summaryNote.textContent = [bookingsText, bufferText, capacityText].filter(Boolean).join(' ');
+      summaryNote.textContent = [bookingsText, bufferText, reserveText, capacityText].filter(Boolean).join(' ');
 
       if (summaryCapacityWarning && summary.capacityExceeded) {
         const planned = formatNumber(summary.plannedMonthlyHours, 1);
@@ -2313,9 +2461,18 @@
 
     function buildResultCell({ summary, bookings, price }) {
       const revenue = price * bookings;
-      const variableCosts = summary.variableCost * bookings;
-      const grossProfit = revenue - variableCosts - summary.fixedCosts;
-      const netIncome = grossProfit * (1 - summary.taxRate);
+      const costHours = summary.costModel.costHoursPerBooking * bookings;
+      const costTravelDays = summary.costModel.travelDaysPerBooking * bookings;
+      const costTotals = aggregateCosts({
+        fixedMonthly: summary.costModel.fixedMonthly,
+        perHour: { rate: summary.costModel.hourlyRate, quantity: costHours },
+        perTravelDay: { rate: summary.costModel.travelDayRate, quantity: costTravelDays },
+        activeMonths: summary.costModel.activeMonths,
+        monthsPerYear: summary.costModel.monthsPerYear
+      });
+      const monthlyCosts = costTotals.monthlyTotal;
+      const grossProfit = revenue - monthlyCosts;
+      const netIncome = grossProfit * Math.max(1 - summary.combinedTaxRate, 0);
       const totalHours = summary.hoursPerBooking > 0
         ? summary.hoursPerBooking * bookings
         : summary.billableHoursPerMonth;
@@ -2524,6 +2681,7 @@
     bindInput('currency-symbol', 'currency', { element: currencyInput });
     bindInput('buffer-percent', 'bufferPercent', { element: bufferInput });
     bindInput('tax-rate', 'taxRate', { element: taxRateInput });
+    bindInput('tax-reserve', 'taxReservePercent', { element: taxReserveInput });
     bindInput('fixed-costs', 'fixedCosts', { element: fixedCostsInput });
     bindInput('variable-cost', 'variableCost', { element: variableCostInput });
     bindInput('expected-bookings', 'expectedBookings', { element: expectedBookingsInput });
