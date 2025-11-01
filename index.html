@@ -323,6 +323,50 @@
       position: relative;
     }
 
+    .input-with-suffix {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--field-bg);
+      border: 1px solid var(--field-border);
+      border-radius: 14px;
+      padding: 0 12px 0 0;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .input-with-suffix:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .input-with-suffix input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      padding: 10px 12px;
+      border-radius: 14px;
+      outline: none;
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    .input-with-suffix span {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      padding-right: 4px;
+    }
+
+    .input-with-suffix input::-webkit-outer-spin-button,
+    .input-with-suffix input::-webkit-inner-spin-button {
+      margin: 0;
+      -webkit-appearance: none;
+    }
+
     .control__label-row {
       display: flex;
       align-items: center;
@@ -444,6 +488,17 @@
       margin: 0;
       color: var(--text-muted);
       font-size: 0.95rem;
+    }
+
+    .summary-warning {
+      margin: 6px 0 0;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--table-cell-warn-border);
+      background: var(--table-cell-warn);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      font-weight: 600;
     }
 
     .table-card h2 {
@@ -1255,36 +1310,36 @@
             </div>
             <div class="control">
               <div class="control__label-row">
-                <label for="billable-hours-week">Billable hours per week</label>
+                <label for="months-off">Months off per year</label>
                 <button
                   type="button"
                   class="info-button"
-                  data-info-target="info-billable-hours-week"
-                  aria-label="Show info about billable hours per week"
+                  data-info-target="info-months-off"
+                  aria-label="Show info about months off per year"
                   aria-expanded="false"
                 >
                   <span aria-hidden="true">i</span>
                 </button>
               </div>
-              <input type="number" id="billable-hours-week" inputmode="decimal" value="24" min="0" step="1" />
+              <input type="number" id="months-off" inputmode="decimal" value="2" min="0" max="12" step="0.5" />
               <div
                 class="info-popover"
-                id="info-billable-hours-week"
+                id="info-months-off"
                 role="dialog"
                 aria-modal="false"
                 aria-hidden="true"
-                aria-labelledby="info-billable-hours-week-title"
-                aria-describedby="info-billable-hours-week-body"
+                aria-labelledby="info-months-off-title"
+                aria-describedby="info-months-off-body"
                 tabindex="-1"
                 hidden
               >
                 <div class="info-popover__header">
-                  <h3 class="info-popover__title" id="info-billable-hours-week-title">Billable hours</h3>
-                  <button type="button" class="info-popover__close" data-info-close aria-label="Close billable hours details">×</button>
+                  <h3 class="info-popover__title" id="info-months-off-title">Time away from work</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close months off details">×</button>
                 </div>
-                <div class="info-popover__body" id="info-billable-hours-week-body">
-                  <p>Describe how many hours you can devote to paid work each week. When bookings are low or unset, the planner falls back to this limit for hourly rate estimates.</p>
-                  <p>Example: 24 hours reserves time for admin and marketing outside of bookings.</p>
+                <div class="info-popover__body" id="info-months-off-body">
+                  <p>Reserve time for holidays, professional development, or recovery. The planner removes these months when estimating your available billable hours.</p>
+                  <p>Example: 2 months off leaves roughly 10 working months across the year.</p>
                 </div>
                 <div class="info-popover__footer">
                   <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
@@ -1293,36 +1348,77 @@
             </div>
             <div class="control">
               <div class="control__label-row">
-                <label for="working-weeks-year">Working weeks per year</label>
+                <label for="weekly-hours">Total weekly hours</label>
                 <button
                   type="button"
                   class="info-button"
-                  data-info-target="info-working-weeks-year"
-                  aria-label="Show info about working weeks"
+                  data-info-target="info-weekly-hours"
+                  aria-label="Show info about total weekly hours"
                   aria-expanded="false"
                 >
                   <span aria-hidden="true">i</span>
                 </button>
               </div>
-              <input type="number" id="working-weeks-year" inputmode="decimal" value="46" min="0" max="52" step="1" />
+              <input type="number" id="weekly-hours" inputmode="decimal" value="32" min="0" step="1" />
               <div
                 class="info-popover"
-                id="info-working-weeks-year"
+                id="info-weekly-hours"
                 role="dialog"
                 aria-modal="false"
                 aria-hidden="true"
-                aria-labelledby="info-working-weeks-year-title"
-                aria-describedby="info-working-weeks-year-body"
+                aria-labelledby="info-weekly-hours-title"
+                aria-describedby="info-weekly-hours-body"
                 tabindex="-1"
                 hidden
               >
                 <div class="info-popover__header">
-                  <h3 class="info-popover__title" id="info-working-weeks-year-title">Working weeks</h3>
-                  <button type="button" class="info-popover__close" data-info-close aria-label="Close working weeks details">×</button>
+                  <h3 class="info-popover__title" id="info-weekly-hours-title">Weekly schedule</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close weekly hours details">×</button>
                 </div>
-                <div class="info-popover__body" id="info-working-weeks-year-body">
-                  <p>Account for holidays or down time across the year. The planner converts weekly capacity into a monthly equivalent using this number.</p>
-                  <p>Example: 46 weeks leaves six weeks for vacation and recovery.</p>
+                <div class="info-popover__body" id="info-weekly-hours-body">
+                  <p>Describe the total hours you plan to work in a typical week, including marketing or admin time. The planner combines this with utilization to estimate billable capacity.</p>
+                  <p>Example: 32 hours per week keeps evenings free while maintaining a full schedule.</p>
+                </div>
+                <div class="info-popover__footer">
+                  <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <div class="control__label-row">
+                <label for="utilization">Utilization</label>
+                <button
+                  type="button"
+                  class="info-button"
+                  data-info-target="info-utilization"
+                  aria-label="Show info about utilization"
+                  aria-expanded="false"
+                >
+                  <span aria-hidden="true">i</span>
+                </button>
+              </div>
+              <div class="input-with-suffix">
+                <input type="number" id="utilization" inputmode="decimal" value="75" min="0" max="100" step="1" aria-describedby="utilization-suffix" />
+                <span id="utilization-suffix" aria-hidden="true">%</span>
+              </div>
+              <div
+                class="info-popover"
+                id="info-utilization"
+                role="dialog"
+                aria-modal="false"
+                aria-hidden="true"
+                aria-labelledby="info-utilization-title"
+                aria-describedby="info-utilization-body"
+                tabindex="-1"
+                hidden
+              >
+                <div class="info-popover__header">
+                  <h3 class="info-popover__title" id="info-utilization-title">Billable focus</h3>
+                  <button type="button" class="info-popover__close" data-info-close aria-label="Close utilization details">×</button>
+                </div>
+                <div class="info-popover__body" id="info-utilization-body">
+                  <p>Utilization is the percentage of your weekly hours that can be billed to clients. The remainder covers admin, sales, or downtime.</p>
+                  <p>Example: 75% utilization on a 32 hour week yields 24 billable hours.</p>
                 </div>
                 <div class="info-popover__footer">
                   <button type="button" class="info-popover__how-to" data-info-how-to>Read how to use this planner</button>
@@ -1521,6 +1617,13 @@
           </div>
         </dl>
         <p class="summary-note" id="summary-note"></p>
+        <p
+          class="summary-warning"
+          id="summary-capacity-warning"
+          role="alert"
+          aria-live="polite"
+          hidden
+        ></p>
       </section>
 
       <section class="card table-card" aria-labelledby="table-title">
@@ -1579,8 +1682,11 @@
       expectedBookings: '',
       bookingsOptions: '',
       hoursPerBooking: '',
-      billableHoursWeek: '',
-      workingWeeks: '',
+      monthsOff: '',
+      weeklyHours: '',
+      utilization: '',
+      billableHoursWeek: '', // legacy support
+      workingWeeks: '', // legacy support
       priceMin: '',
       priceMax: '',
       priceStep: '',
@@ -1644,6 +1750,7 @@
 
     // utils --------------------------------------------------
     const MONTHS_PER_YEAR = 12;
+    const WEEKS_PER_YEAR = 52;
     const numberFormatter0 = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
     const numberFormatter1 = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     const numberFormatter2 = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -1718,6 +1825,63 @@
         .filter(item => item >= 0);
     }
 
+    function stringifyStateNumber(value, precision = 2) {
+      if (!Number.isFinite(value)) {
+        return '';
+      }
+      const factor = 10 ** precision;
+      const rounded = Math.round(value * factor) / factor;
+      return `${rounded}`;
+    }
+
+    function hasPersistedCapacityFields(state) {
+      if (!state || typeof state !== 'object') {
+        return false;
+      }
+      return ['monthsOff', 'weeklyHours', 'utilization'].some(key => {
+        const value = state[key];
+        if (typeof value === 'string') {
+          return value.trim().length > 0;
+        }
+        return value != null;
+      });
+    }
+
+    function migrateLegacyCapacityFields(state) {
+      if (!state || typeof state !== 'object') {
+        return {};
+      }
+
+      const migrated = {};
+      const parsedLegacyHours = parseNumber(state.billableHoursWeek);
+      const legacyBillableHoursWeek = Number.isFinite(parsedLegacyHours) ? Math.max(parsedLegacyHours, 0) : NaN;
+      const parsedWorkingWeeks = parseNumber(state.workingWeeks);
+      const legacyWorkingWeeks = Number.isFinite(parsedWorkingWeeks)
+        ? clamp(parsedWorkingWeeks, 0, WEEKS_PER_YEAR)
+        : NaN;
+
+      if (Number.isFinite(legacyWorkingWeeks)) {
+        const workingFraction = Math.min(Math.max(legacyWorkingWeeks / WEEKS_PER_YEAR, 0), 1);
+        const derivedMonthsOff = clamp(MONTHS_PER_YEAR * (1 - workingFraction), 0, MONTHS_PER_YEAR);
+        if (Number.isFinite(derivedMonthsOff)) {
+          const roundedMonthsOff = Math.round(derivedMonthsOff * 2) / 2;
+          migrated.monthsOff = stringifyStateNumber(roundedMonthsOff, 2);
+        }
+      }
+
+      if (Number.isFinite(legacyBillableHoursWeek)) {
+        migrated.weeklyHours = stringifyStateNumber(Math.max(legacyBillableHoursWeek, 0), 2);
+        const parsedUtilization = clamp(parsePercent(state.utilization), 0, 1);
+        if (Number.isFinite(parsedUtilization)) {
+          migrated.utilization = stringifyStateNumber(parsedUtilization * 100, 2);
+        } else {
+          migrated.utilization = '100';
+        }
+      }
+
+      return migrated;
+    }
+
     function buildPricePoints({ rangeMin, rangeMax, rangeStep, customPoints, recommended }) {
       const values = new Set();
       if (Array.isArray(customPoints) && customPoints.length) {
@@ -1760,8 +1924,31 @@
       const expectedBookings = Math.max(parseNumber(state.expectedBookings) || 0, 0);
       const bookingsOptions = parseList(state.bookingsOptions);
       const hoursPerBooking = Math.max(parseNumber(state.hoursPerBooking) || 0, 0);
-      const billableHoursWeek = Math.max(parseNumber(state.billableHoursWeek) || 0, 0);
-      const workingWeeks = clamp(parseNumber(state.workingWeeks), 0, 52);
+      let monthsOff = clamp(parseNumber(state.monthsOff), 0, MONTHS_PER_YEAR);
+      let weeklyHours = Math.max(parseNumber(state.weeklyHours) || 0, 0);
+      let utilization = clamp(parsePercent(state.utilization), 0, 1);
+      const legacyBillableHoursWeek = Math.max(parseNumber(state.billableHoursWeek) || 0, 0);
+      const legacyWorkingWeeks = clamp(parseNumber(state.workingWeeks), 0, 52);
+
+      if (!Number.isFinite(monthsOff) && Number.isFinite(legacyWorkingWeeks)) {
+        const workingFraction = Math.min(Math.max(legacyWorkingWeeks / WEEKS_PER_YEAR, 0), 1);
+        monthsOff = clamp(MONTHS_PER_YEAR * (1 - workingFraction), 0, MONTHS_PER_YEAR);
+      }
+
+      if (!Number.isFinite(weeklyHours) && legacyBillableHoursWeek > 0) {
+        weeklyHours = legacyBillableHoursWeek;
+        if (!Number.isFinite(utilization)) {
+          utilization = 1;
+        }
+      }
+
+      if (!Number.isFinite(utilization) && weeklyHours > 0 && legacyBillableHoursWeek > 0) {
+        utilization = clamp(legacyBillableHoursWeek / weeklyHours, 0, 1);
+      }
+
+      monthsOff = Number.isFinite(monthsOff) ? monthsOff : 0;
+      weeklyHours = Number.isFinite(weeklyHours) ? weeklyHours : 0;
+      utilization = Number.isFinite(utilization) ? utilization : 0;
       const priceMin = Math.max(parseNumber(state.priceMin) || NaN, 0);
       const priceMax = Math.max(parseNumber(state.priceMax) || NaN, 0);
       const priceStep = Math.max(parseNumber(state.priceStep) || NaN, 0);
@@ -1779,8 +1966,9 @@
         expectedBookings,
         bookingsOptions,
         hoursPerBooking,
-        billableHoursWeek,
-        workingWeeks,
+        monthsOff,
+        weeklyHours,
+        utilization,
         priceMin,
         priceMax,
         priceStep,
@@ -1811,14 +1999,23 @@
         ? revenueRequired / values.expectedBookings
         : NaN;
 
+      const workingMonths = Math.max(MONTHS_PER_YEAR - values.monthsOff, 0);
+      const workingFraction = workingMonths / MONTHS_PER_YEAR;
+      const billableHoursPerWeek = Math.max(values.weeklyHours * values.utilization, 0);
+      const billableHoursPerYear = billableHoursPerWeek * WEEKS_PER_YEAR * Math.min(Math.max(workingFraction, 0), 1);
+      const billableHoursPerMonth = workingMonths > 0 ? billableHoursPerYear / workingMonths : 0;
+
       const hoursFromBookings = values.hoursPerBooking * values.expectedBookings;
-      const monthlyBillableHoursFromWeek = values.billableHoursWeek * (values.workingWeeks / MONTHS_PER_YEAR);
-      const monthlyBillableHours = Number.isFinite(hoursFromBookings) && hoursFromBookings > 0
-        ? hoursFromBookings
-        : monthlyBillableHoursFromWeek;
+      const plannedMonthlyHours = Number.isFinite(hoursFromBookings) ? hoursFromBookings : NaN;
+      const monthlyBillableHours = Number.isFinite(plannedMonthlyHours) && plannedMonthlyHours > 0
+        ? plannedMonthlyHours
+        : billableHoursPerMonth;
       const recommendedHourly = monthlyBillableHours > 0
         ? revenueRequired / monthlyBillableHours
         : (values.hoursPerBooking > 0 ? recommendedPrice / values.hoursPerBooking : NaN);
+
+      const hasPlannedHours = Number.isFinite(plannedMonthlyHours) && plannedMonthlyHours > 0;
+      const capacityExceeded = hasPlannedHours && (billableHoursPerMonth <= 0 || (plannedMonthlyHours - billableHoursPerMonth) > 0.1);
 
       const netAtRecommended = values.expectedBookings > 0
         ? ((recommendedPrice * values.expectedBookings) - variableMonthly - values.fixedCosts) * (1 - values.taxRate)
@@ -1848,7 +2045,13 @@
         variableCost: values.variableCost,
         fixedCosts: values.fixedCosts,
         hoursPerBooking: values.hoursPerBooking,
+        billableHoursPerYear,
+        billableHoursPerMonth,
         monthlyBillableHours,
+        plannedMonthlyHours,
+        capacityExceeded,
+        workingMonths,
+        billableHoursPerWeek,
         pricePoints,
         bookingsOptions,
         expectedBookings: values.expectedBookings,
@@ -1938,8 +2141,9 @@
     const expectedBookingsInput = document.getElementById('expected-bookings');
     const bookingsOptionsInput = document.getElementById('bookings-options');
     const hoursPerBookingInput = document.getElementById('hours-per-booking');
-    const billableHoursWeekInput = document.getElementById('billable-hours-week');
-    const workingWeeksInput = document.getElementById('working-weeks-year');
+    const monthsOffInput = document.getElementById('months-off');
+    const weeklyHoursInput = document.getElementById('weekly-hours');
+    const utilizationInput = document.getElementById('utilization');
     const priceMinInput = document.getElementById('price-min');
     const priceMaxInput = document.getElementById('price-max');
     const priceStepInput = document.getElementById('price-step');
@@ -1952,6 +2156,7 @@
     const summaryNetEstimate = document.getElementById('summary-net-estimate');
     const summaryHourly = document.getElementById('summary-hourly');
     const summaryNote = document.getElementById('summary-note');
+    const summaryCapacityWarning = document.getElementById('summary-capacity-warning');
 
     const resultsWrapper = document.getElementById('results-wrapper');
     const resultsHead = document.getElementById('results-head');
@@ -2060,6 +2265,11 @@
     }
 
     function renderSummary(values, summary) {
+      if (summaryCapacityWarning) {
+        summaryCapacityWarning.hidden = true;
+        summaryCapacityWarning.textContent = '';
+      }
+
       if (!summary) {
         summaryNet.textContent = '–';
         summaryGross.textContent = '–';
@@ -2084,7 +2294,21 @@
       const bookingsText = summary.expectedBookings > 0
         ? `Calculations assume ${formatNumber(summary.expectedBookings, 1)} bookings per month.`
         : 'Add an expected bookings figure to calculate a recommended price.';
-      summaryNote.textContent = `${bookingsText} ${bufferText}`.trim();
+      const capacityText = summary.billableHoursPerMonth > 0
+        ? `Billable capacity: ${formatNumber(summary.billableHoursPerMonth, 1)} hours per working month (${formatNumber(summary.billableHoursPerYear, 0)} per year).`
+        : (values.weeklyHours > 0 || values.utilization > 0 || values.monthsOff > 0
+          ? 'Billable capacity is currently zero; adjust months off, weekly hours, or utilization to free up time.'
+          : 'Set your schedule assumptions to estimate billable capacity.');
+      summaryNote.textContent = [bookingsText, bufferText, capacityText].filter(Boolean).join(' ');
+
+      if (summaryCapacityWarning && summary.capacityExceeded) {
+        const planned = formatNumber(summary.plannedMonthlyHours, 1);
+        const availableText = summary.billableHoursPerMonth > 0
+          ? `${formatNumber(summary.billableHoursPerMonth, 1)} hour${Math.abs(summary.billableHoursPerMonth - 1) < 0.05 ? '' : 's'}`
+          : 'no billable hours';
+        summaryCapacityWarning.textContent = `Warning: Planned bookings need about ${planned} billable hours each month, but you only have ${availableText} available. Tweak your schedule or expectations to stay within capacity.`;
+        summaryCapacityWarning.hidden = false;
+      }
     }
 
     function buildResultCell({ summary, bookings, price }) {
@@ -2092,7 +2316,9 @@
       const variableCosts = summary.variableCost * bookings;
       const grossProfit = revenue - variableCosts - summary.fixedCosts;
       const netIncome = grossProfit * (1 - summary.taxRate);
-      const totalHours = summary.hoursPerBooking > 0 ? summary.hoursPerBooking * bookings : summary.monthlyBillableHours;
+      const totalHours = summary.hoursPerBooking > 0
+        ? summary.hoursPerBooking * bookings
+        : summary.billableHoursPerMonth;
       const hourlyNet = totalHours > 0 ? netIncome / totalHours : NaN;
 
       const classes = ['result-cell'];
@@ -2303,8 +2529,9 @@
     bindInput('expected-bookings', 'expectedBookings', { element: expectedBookingsInput });
     bindInput('bookings-options', 'bookingsOptions', { element: bookingsOptionsInput });
     bindInput('hours-per-booking', 'hoursPerBooking', { element: hoursPerBookingInput });
-    bindInput('billable-hours-week', 'billableHoursWeek', { element: billableHoursWeekInput });
-    bindInput('working-weeks-year', 'workingWeeks', { element: workingWeeksInput });
+    bindInput('months-off', 'monthsOff', { element: monthsOffInput });
+    bindInput('weekly-hours', 'weeklyHours', { element: weeklyHoursInput });
+    bindInput('utilization', 'utilization', { element: utilizationInput });
     bindInput('price-min', 'priceMin', { element: priceMinInput });
     bindInput('price-max', 'priceMax', { element: priceMaxInput });
     bindInput('price-step', 'priceStep', { element: priceStepInput });
@@ -2436,11 +2663,23 @@
 
     const defaultCalcState = getDefaultStateFromInputs();
     const storedCalcState = readStoredState();
+    let migratedCapacityFields = {};
+    let appliedLegacyMigration = false;
+
+    if (storedCalcState && !hasPersistedCapacityFields(storedCalcState)) {
+      migratedCapacityFields = migrateLegacyCapacityFields(storedCalcState);
+      appliedLegacyMigration = Object.keys(migratedCapacityFields).length > 0;
+    }
+
     calcState = storedCalcState
-      ? normalizeCalcState({ ...defaultCalcState, ...storedCalcState })
+      ? normalizeCalcState({ ...defaultCalcState, ...storedCalcState, ...migratedCapacityFields })
       : defaultCalcState;
     lastIncomePeriod = calcState.incomePeriod;
     lastIncomeType = calcState.incomeType;
+
+    if (appliedLegacyMigration) {
+      persistState();
+    }
 
     render();
   </script>

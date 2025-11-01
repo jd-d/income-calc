@@ -40,9 +40,11 @@ jobs:
         run: |
           rm -rf dist
           mkdir -p dist
-          cp index.html dist/
-          cp 404.html dist/
-          cp -R assets dist/
+          rsync -a --delete \
+            --exclude '.git/' --exclude '.github/' --exclude 'node_modules/' \
+            --exclude 'dist/' --exclude '*.yml' --exclude '*.yaml' --exclude 'README.md' \
+            ./ dist/
+          touch dist/.nojekyll
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -73,25 +75,48 @@ jobs:
           publish_branch: gh-pages
           publish_dir: dist
 
+  comment_preview:
+    if: github.event_name == 'pull_request_target'
+    runs-on: ubuntu-latest
+    outputs:
+      comment-id:   ${{ steps.preview_comment.outputs.comment-id }}
+      preview-url:  ${{ steps.preview_comment.outputs.preview-url }}
+      preview-dir:  ${{ steps.preview_comment.outputs.preview-dir }}
+      comment-marker: ${{ steps.preview_comment.outputs.comment-marker }}
+    steps:
+      - name: Create new "preparing" comment (per commit)
+        id: preview_comment
+        uses: actions/github-script@v7
+        env:
+          DIR: previews/pr-${{ github.event.number }}
+          SHA: ${{ github.sha }}
+        with:
+          script: |
+            const dir = process.env.DIR;
+            const sha = (process.env.SHA || '').slice(0,7);
+            const base = `https://${context.repo.owner}.github.io/${context.repo.repo}`;
+            const url = `${base}/${dir}/`;
+            const now = new Date().toISOString();
+            const marker = `<!-- preview-dir:${dir} preview-commit:${sha} -->`;
+            const body = `${marker}\u23F3 Preview is preparing (commit ${sha}, ${now}). Will be available at: ${url}`;
+
+            const { data } = await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
+
+            core.setOutput('comment-id', String(data.id));
+            core.setOutput('preview-url', url);
+            core.setOutput('preview-dir', dir);
+            core.setOutput('comment-marker', marker);
+
   deploy_preview:
-    needs: build
-    if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
+    needs: [build, comment_preview]
+    if: github.event_name == 'pull_request_target'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        if: github.event_name != 'pull_request_target'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Checkout pull request head
-        if: github.event_name == 'pull_request_target'
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - id: pr
         run: echo "dir=previews/pr-${{ github.event.number }}" >> "$GITHUB_OUTPUT"
@@ -110,73 +135,14 @@ jobs:
           publish_dir: dist
           destination_dir: ${{ steps.pr.outputs.dir }}
 
-      - name: Comment preview status on PR
-        id: preview_comment
-        uses: actions/github-script@v7
-        env:
-          DIR: ${{ steps.pr.outputs.dir }}
-        with:
-          script: |
-            const dir = process.env.DIR;
-            if (!dir) {
-              core.setFailed('Preview directory not provided.');
-              return;
-            }
-
-            const base = `https://${context.repo.owner}.github.io/${context.repo.repo}`;
-            const url = `${base}/${dir}/`;
-            const marker = `<!-- preview-dir:${dir} -->`;
-            const preparingBody = `${marker}\n\u23F3 Preview is preparing. I'll post the ready link here once it's live.`;
-            const botLogin = 'github-actions[bot]';
-
-            const comments = await github.paginate(github.rest.issues.listComments, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              per_page: 100
-            });
-
-            const existing = comments.find((comment) => {
-              if (comment.user?.login !== botLogin) {
-                return false;
-              }
-              return comment.body?.includes(marker);
-            });
-
-            let commentId;
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body: preparingBody
-              });
-              commentId = existing.id;
-              core.info(`Updated existing preview comment (${commentId}) with preparing message.`);
-            } else {
-              const { data } = await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: preparingBody
-              });
-              commentId = data.id;
-              core.info(`Created preview comment (${commentId}) with preparing message.`);
-            }
-
-            core.setOutput('comment-id', String(commentId));
-            core.setOutput('preview-url', url);
-            core.setOutput('preview-dir', dir);
-            core.setOutput('comment-marker', marker);
-
       - name: Wait for preview deployment
         id: wait_for_preview
         uses: actions/github-script@v7
         env:
-          COMMENT_ID: ${{ steps.preview_comment.outputs.comment-id }}
-          PREVIEW_URL: ${{ steps.preview_comment.outputs.preview-url }}
-          PREVIEW_DIR: ${{ steps.preview_comment.outputs.preview-dir }}
-          COMMENT_MARKER: ${{ steps.preview_comment.outputs.comment-marker }}
+          COMMENT_ID:     ${{ needs.comment_preview.outputs.comment-id }}
+          PREVIEW_URL:    ${{ needs.comment_preview.outputs.preview-url }}
+          PREVIEW_DIR:    ${{ needs.comment_preview.outputs.preview-dir }}
+          COMMENT_MARKER: ${{ needs.comment_preview.outputs.comment-marker }}
           DELAY_MS: 5000
           MAX_ATTEMPTS: 60
         with:
@@ -297,10 +263,10 @@ jobs:
         if: always()
         uses: actions/github-script@v7
         env:
-          COMMENT_ID: ${{ steps.wait_for_preview.outputs.comment-id || steps.preview_comment.outputs.comment-id }}
-          FINAL_BODY: ${{ steps.wait_for_preview.outputs.final-body }}
-          FALLBACK_URL: ${{ steps.preview_comment.outputs.preview-url }}
-          COMMENT_MARKER: ${{ steps.preview_comment.outputs.comment-marker }}
+          COMMENT_ID:   ${{ needs.comment_preview.outputs.comment-id }}
+          FINAL_BODY:   ${{ steps.wait_for_preview.outputs.final-body }}
+          FALLBACK_URL: ${{ needs.comment_preview.outputs.preview-url }}
+          COMMENT_MARKER: ${{ needs.comment_preview.outputs.comment-marker }}
         with:
           script: |
             const commentId = process.env.COMMENT_ID;
