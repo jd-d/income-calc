@@ -564,6 +564,55 @@
       gap: 16px;
     }
 
+    .retainer-service {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--table-cell-border);
+      background: var(--field-bg);
+    }
+
+    .retainer-service__header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .retainer-service__title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .retainer-service__badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .retainer-service__badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--button-border);
+      background: var(--button-bg);
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .retainer-service__panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     .retainer-view[hidden] {
       display: none !important;
     }
@@ -605,6 +654,12 @@
 
     @media (min-width: 720px) {
       .retainer-card__header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .retainer-service__header {
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
@@ -1988,56 +2043,7 @@
         </div>
         <p class="retainer-note" id="retainer-note"></p>
         <p class="status-message" id="retainer-status"></p>
-        <div class="retainer-views" id="retainer-views" hidden>
-          <div class="retainer-view" data-retainer-panel="rate">
-            <div class="retainer-mini-metrics">
-              <div class="retainer-mini-metric">
-                <span class="retainer-mini-metric__label">Charge per retainer</span>
-                <span class="retainer-mini-metric__value" id="retainer-rate-value">–</span>
-                <p class="retainer-mini-metric__hint" id="retainer-rate-hint"></p>
-              </div>
-              <div class="retainer-mini-metric">
-                <span class="retainer-mini-metric__label">Take-home at this rate</span>
-                <span class="retainer-mini-metric__value" id="retainer-rate-net">–</span>
-                <p class="retainer-mini-metric__hint">After costs, buffer, and taxes.</p>
-              </div>
-              <div class="retainer-mini-metric">
-                <span class="retainer-mini-metric__label">Monthly hours committed</span>
-                <span class="retainer-mini-metric__value" id="retainer-rate-hours">–</span>
-                <p class="retainer-mini-metric__hint" id="retainer-rate-hours-hint"></p>
-              </div>
-              <div class="retainer-mini-metric">
-                <span class="retainer-mini-metric__label">Travel overhead</span>
-                <span class="retainer-mini-metric__value" id="retainer-rate-travel">–</span>
-                <p class="retainer-mini-metric__hint">Adds to costs and capacity usage.</p>
-              </div>
-            </div>
-          </div>
-          <div class="retainer-view" data-retainer-panel="volume" hidden>
-            <div class="retainer-mini-metrics">
-              <div class="retainer-mini-metric">
-                <span class="retainer-mini-metric__label">Retainers needed</span>
-                <span class="retainer-mini-metric__value" id="retainer-volume-units">–</span>
-                <p class="retainer-mini-metric__hint" id="retainer-volume-units-hint"></p>
-              </div>
-              <div class="retainer-mini-metric">
-                <span class="retainer-mini-metric__label">Revenue at baseline rate</span>
-                <span class="retainer-mini-metric__value" id="retainer-volume-revenue">–</span>
-                <p class="retainer-mini-metric__hint" id="retainer-volume-rate"></p>
-              </div>
-              <div class="retainer-mini-metric">
-                <span class="retainer-mini-metric__label">Billable hours required</span>
-                <span class="retainer-mini-metric__value" id="retainer-volume-hours">–</span>
-                <p class="retainer-mini-metric__hint" id="retainer-volume-hours-hint"></p>
-              </div>
-              <div class="retainer-mini-metric">
-                <span class="retainer-mini-metric__label">Capacity used</span>
-                <span class="retainer-mini-metric__value" id="retainer-volume-capacity">–</span>
-                <p class="retainer-mini-metric__hint" id="retainer-volume-capacity-hint"></p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="retainer-views" id="retainer-views" hidden></div>
       </section>
 
       <section class="card table-card" aria-labelledby="table-title">
@@ -2172,6 +2178,59 @@
     const MONTHS_PER_YEAR = 12;
     const WEEKS_PER_YEAR = 52;
     const HOURS_PER_TRAVEL_DAY = 8;
+    const SERVICE_CONFIG = [
+      {
+        id: 'retainer',
+        label: 'Retainer',
+        unitLabel: 'Retainer',
+        unitLabelPlural: 'Retainers',
+        defaults: {
+          rate: 1600,
+          units: 4
+        },
+        overrides: {}
+      },
+      {
+        id: 'advisory',
+        label: 'Advisory',
+        unitLabel: 'Advisory day',
+        unitLabelPlural: 'Advisory days',
+        defaults: {
+          rate: 900,
+          units: 6
+        },
+        overrides: {
+          lockUnits: true
+        }
+      },
+      {
+        id: 'qc',
+        label: 'QC Sprint',
+        unitLabel: 'QC visit',
+        unitLabelPlural: 'QC visits',
+        defaults: {
+          rate: 550,
+          units: 8
+        },
+        overrides: {
+          lockRate: true
+        }
+      },
+      {
+        id: 'training',
+        label: 'Training',
+        unitLabel: 'Training cohort',
+        unitLabelPlural: 'Training cohorts',
+        defaults: {
+          rate: 3200,
+          units: 2
+        },
+        overrides: {
+          lockRate: true,
+          lockUnits: true
+        }
+      }
+    ];
     const numberFormatter0 = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
     const numberFormatter1 = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     const numberFormatter2 = new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -2775,22 +2834,183 @@
     const retainerNote = document.getElementById('retainer-note');
     const retainerStatus = document.getElementById('retainer-status');
     const retainerViews = document.getElementById('retainer-views');
-    const retainerViewPanels = Array.from(document.querySelectorAll('[data-retainer-panel]'));
     const retainerToggleButtons = Array.from(document.querySelectorAll('[data-retainer-view]'));
-    const retainerRateValue = document.getElementById('retainer-rate-value');
-    const retainerRateHint = document.getElementById('retainer-rate-hint');
-    const retainerRateNet = document.getElementById('retainer-rate-net');
-    const retainerRateHours = document.getElementById('retainer-rate-hours');
-    const retainerRateHoursHint = document.getElementById('retainer-rate-hours-hint');
-    const retainerRateTravel = document.getElementById('retainer-rate-travel');
-    const retainerVolumeUnits = document.getElementById('retainer-volume-units');
-    const retainerVolumeUnitsHint = document.getElementById('retainer-volume-units-hint');
-    const retainerVolumeRevenue = document.getElementById('retainer-volume-revenue');
-    const retainerVolumeRate = document.getElementById('retainer-volume-rate');
-    const retainerVolumeHours = document.getElementById('retainer-volume-hours');
-    const retainerVolumeHoursHint = document.getElementById('retainer-volume-hours-hint');
-    const retainerVolumeCapacity = document.getElementById('retainer-volume-capacity');
-    const retainerVolumeCapacityHint = document.getElementById('retainer-volume-capacity-hint');
+    let retainerViewPanels = [];
+    const retainerServiceEntries = retainerViews
+      ? SERVICE_CONFIG.map(service => createRetainerServiceNode(service))
+      : [];
+
+    if (retainerViews && retainerServiceEntries.length) {
+      const fragment = document.createDocumentFragment();
+      retainerServiceEntries.forEach(entry => {
+        fragment.appendChild(entry.root);
+      });
+      retainerViews.appendChild(fragment);
+      retainerViewPanels = retainerServiceEntries.flatMap(entry => [entry.rate.panel, entry.volume.panel]);
+    }
+
+    function getServiceLabel(service, count = 1) {
+      const singular = service.unitLabel || service.label;
+      const plural = service.unitLabelPlural || `${singular}s`;
+      return count === 1 ? singular : plural;
+    }
+
+    function getServiceLabelLower(service, count = 1) {
+      return getServiceLabel(service, count).toLowerCase();
+    }
+
+    function formatServiceUnits(count, service, options = {}) {
+      if (!Number.isFinite(count)) {
+        return '–';
+      }
+      const digits = options.digits ?? (count % 1 === 0 ? 0 : 1);
+      const label = options.capitalize === true
+        ? getServiceLabel(service, count)
+        : getServiceLabelLower(service, count);
+      return `${formatNumber(count, digits)} ${label}`;
+    }
+
+    function createRetainerMetric(labelText, options = {}) {
+      const { hintText = '', staticHint = false } = options;
+      const metric = document.createElement('div');
+      metric.className = 'retainer-mini-metric';
+      const label = document.createElement('span');
+      label.className = 'retainer-mini-metric__label';
+      label.textContent = labelText;
+      const value = document.createElement('span');
+      value.className = 'retainer-mini-metric__value';
+      value.textContent = '–';
+      metric.appendChild(label);
+      metric.appendChild(value);
+      let hint = null;
+      if (options.createHint !== false) {
+        hint = document.createElement('p');
+        hint.className = 'retainer-mini-metric__hint';
+        hint.textContent = hintText;
+        if (staticHint) {
+          hint.dataset.static = 'true';
+        }
+        metric.appendChild(hint);
+      }
+      return { root: metric, valueEl: value, hintEl: hint, staticHint };
+    }
+
+    function createRetainerServiceNode(service) {
+      const root = document.createElement('article');
+      root.className = 'retainer-service';
+      root.dataset.serviceId = service.id;
+
+      const header = document.createElement('div');
+      header.className = 'retainer-service__header';
+      const title = document.createElement('h3');
+      title.className = 'retainer-service__title';
+      title.textContent = service.label;
+      header.appendChild(title);
+
+      const badges = document.createElement('div');
+      badges.className = 'retainer-service__badges';
+      if (service?.overrides?.lockRate) {
+        const badge = document.createElement('span');
+        badge.className = 'retainer-service__badge';
+        badge.textContent = 'Rate locked';
+        badges.appendChild(badge);
+      }
+      if (service?.overrides?.lockUnits) {
+        const badge = document.createElement('span');
+        badge.className = 'retainer-service__badge';
+        badge.textContent = 'Units locked';
+        badges.appendChild(badge);
+      }
+      if (badges.childElementCount > 0) {
+        header.appendChild(badges);
+      }
+
+      root.appendChild(header);
+
+      const ratePanel = document.createElement('div');
+      ratePanel.className = 'retainer-service__panel retainer-view';
+      ratePanel.dataset.retainerPanel = 'rate';
+
+      const rateMetrics = document.createElement('div');
+      rateMetrics.className = 'retainer-mini-metrics';
+      const chargeMetric = createRetainerMetric(`Charge per ${service.unitLabel || service.label}`);
+      const takeHomeMetric = createRetainerMetric('Take-home at this rate', {
+        hintText: 'After costs, buffer, and taxes.',
+        staticHint: true
+      });
+      const hoursMetric = createRetainerMetric('Monthly hours committed');
+      const travelMetric = createRetainerMetric('Travel overhead', {
+        hintText: 'Adds to costs and capacity usage.',
+        staticHint: true
+      });
+      rateMetrics.append(
+        chargeMetric.root,
+        takeHomeMetric.root,
+        hoursMetric.root,
+        travelMetric.root
+      );
+      ratePanel.appendChild(rateMetrics);
+      root.appendChild(ratePanel);
+
+      const volumePanel = document.createElement('div');
+      volumePanel.className = 'retainer-service__panel retainer-view';
+      volumePanel.dataset.retainerPanel = 'volume';
+      volumePanel.hidden = true;
+
+      const volumeMetrics = document.createElement('div');
+      volumeMetrics.className = 'retainer-mini-metrics';
+      const unitsLabel = service.unitLabelPlural || `${service.unitLabel || service.label}s`;
+      const unitsMetric = createRetainerMetric(`${unitsLabel} needed`);
+      const revenueMetric = createRetainerMetric('Revenue at baseline rate');
+      const hoursNeededMetric = createRetainerMetric('Billable hours required');
+      const capacityMetric = createRetainerMetric('Capacity used');
+      volumeMetrics.append(
+        unitsMetric.root,
+        revenueMetric.root,
+        hoursNeededMetric.root,
+        capacityMetric.root
+      );
+      volumePanel.appendChild(volumeMetrics);
+      root.appendChild(volumePanel);
+
+      return {
+        config: service,
+        root,
+        rate: {
+          panel: ratePanel,
+          metrics: {
+            charge: chargeMetric,
+            takeHome: takeHomeMetric,
+            hours: hoursMetric,
+            travel: travelMetric
+          }
+        },
+        volume: {
+          panel: volumePanel,
+          metrics: {
+            units: unitsMetric,
+            revenue: revenueMetric,
+            hours: hoursNeededMetric,
+            capacity: capacityMetric
+          }
+        }
+      };
+    }
+
+    function resetRetainerServiceEntry(entry) {
+      if (!entry) {
+        return;
+      }
+      const groups = [entry.rate.metrics, entry.volume.metrics];
+      groups.forEach(group => {
+        Object.values(group).forEach(metric => {
+          metric.valueEl.textContent = '–';
+          if (metric.hintEl && !metric.staticHint) {
+            metric.hintEl.textContent = '';
+          }
+        });
+      });
+    }
 
     const resultsWrapper = document.getElementById('results-wrapper');
     const resultsHead = document.getElementById('results-head');
@@ -3083,7 +3303,7 @@
       if (!summary) {
         if (retainerStatus) {
           retainerStatus.hidden = false;
-          retainerStatus.textContent = 'Enter an income target to size a retainer package.';
+          retainerStatus.textContent = 'Enter an income target to size the service packages.';
         }
         if (retainerViews) {
           retainerViews.hidden = true;
@@ -3091,6 +3311,7 @@
         if (retainerNote) {
           retainerNote.textContent = '';
         }
+        retainerServiceEntries.forEach(entry => resetRetainerServiceEntry(entry));
         return;
       }
 
@@ -3098,148 +3319,328 @@
         retainerViews.hidden = false;
       }
 
-      const expected = summary.expectedBookings;
-      const hasExpected = Number.isFinite(expected) && expected > 0;
-      const recommendedPrice = summary.recommendedPrice;
-      const baselineRateCandidates = [values.priceMin, recommendedPrice, values.priceMax];
-      const baselineRate = baselineRateCandidates.find(rate => Number.isFinite(rate) && rate > 0) ?? NaN;
-      const unitsAtBaseline = Number.isFinite(baselineRate) && baselineRate > 0
-        ? summary.revenueRequired / baselineRate
-        : NaN;
-      const effectiveHoursPerBooking = summary.effectiveHoursPerBooking;
-      const serviceHoursPerBooking = summary.hoursPerBooking;
-      const travelDaysPerBooking = summary.travelDaysPerBooking;
-      const serviceHoursPerMonth = summary.expectedServiceHours;
-      const totalHoursPerMonth = summary.expectedTotalHours;
-      const travelDaysPerMonth = summary.expectedTravelDays;
-      const travelHoursPerMonth = Number.isFinite(travelDaysPerMonth)
-        ? travelDaysPerMonth * HOURS_PER_TRAVEL_DAY
-        : NaN;
-      const baselineHours = Number.isFinite(unitsAtBaseline) && Number.isFinite(effectiveHoursPerBooking)
-        ? unitsAtBaseline * effectiveHoursPerBooking
-        : NaN;
-      const baselineServiceHours = Number.isFinite(unitsAtBaseline) && Number.isFinite(serviceHoursPerBooking)
-        ? unitsAtBaseline * serviceHoursPerBooking
-        : NaN;
-      const baselineTravelDays = Number.isFinite(unitsAtBaseline) && Number.isFinite(travelDaysPerBooking)
-        ? unitsAtBaseline * travelDaysPerBooking
-        : NaN;
-      const baselineTravelHours = Number.isFinite(baselineTravelDays)
-        ? baselineTravelDays * HOURS_PER_TRAVEL_DAY
-        : NaN;
-      const capacityFraction = Number.isFinite(baselineHours) && summary.billableHoursPerMonth > 0
-        ? baselineHours / summary.billableHoursPerMonth
-        : NaN;
+      const servicesData = retainerServiceEntries.map(entry => {
+        const { config } = entry;
+        const defaults = config.defaults || {};
+        const overrides = config.overrides || {};
+        const lockedRate = overrides.lockRate === true;
+        const lockedUnits = overrides.lockUnits === true;
+        const fallbackRate = Number.isFinite(defaults.rate) && defaults.rate > 0 ? defaults.rate : NaN;
+        const fallbackUnits = Number.isFinite(defaults.units) && defaults.units > 0 ? defaults.units : NaN;
 
-      const parts = [];
-      if (hasExpected) {
-        parts.push(`Planned: ${formatNumber(expected, expected % 1 === 0 ? 0 : 1)} retainers / month.`);
-      }
-      const workloadParts = [];
-      if (Number.isFinite(serviceHoursPerBooking) && serviceHoursPerBooking > 0) {
-        workloadParts.push(`${formatNumber(serviceHoursPerBooking, 1)} h service`);
-      }
-      if (Number.isFinite(travelDaysPerBooking) && travelDaysPerBooking > 0) {
-        workloadParts.push(`${formatNumber(travelDaysPerBooking, 2)} travel days`);
-      }
-      if (workloadParts.length) {
-        parts.push(`Per retainer: ${workloadParts.join(' + ')}.`);
-      }
+        const expectedFromSummary = Number.isFinite(summary.expectedBookings) && summary.expectedBookings > 0
+          ? summary.expectedBookings
+          : NaN;
+        let expectedUnits = lockedUnits ? fallbackUnits : expectedFromSummary;
+        if (!Number.isFinite(expectedUnits) || expectedUnits <= 0) {
+          expectedUnits = fallbackUnits;
+        }
+
+        let recommendedRate = Number.isFinite(summary.recommendedPrice) && summary.recommendedPrice > 0
+          ? summary.recommendedPrice
+          : NaN;
+        if (lockedRate) {
+          recommendedRate = fallbackRate;
+        } else if (!Number.isFinite(recommendedRate) || recommendedRate <= 0) {
+          recommendedRate = fallbackRate;
+        }
+
+        const baselineCandidates = [
+          Number.isFinite(values.priceMin) && values.priceMin > 0 ? values.priceMin : NaN,
+          recommendedRate,
+          Number.isFinite(values.priceMax) && values.priceMax > 0 ? values.priceMax : NaN,
+          fallbackRate
+        ];
+        let baselineRate = baselineCandidates.find(rate => Number.isFinite(rate) && rate > 0) ?? NaN;
+        if (lockedRate && Number.isFinite(recommendedRate) && recommendedRate > 0) {
+          baselineRate = recommendedRate;
+        }
+        if (
+          lockedUnits &&
+          !lockedRate &&
+          Number.isFinite(expectedUnits) && expectedUnits > 0 &&
+          Number.isFinite(summary.revenueRequired) && summary.revenueRequired > 0
+        ) {
+          baselineRate = summary.revenueRequired / expectedUnits;
+        }
+        if (!Number.isFinite(baselineRate) || baselineRate <= 0) {
+          baselineRate = fallbackRate;
+        }
+
+        let unitsNeeded = Number.isFinite(summary.revenueRequired) && Number.isFinite(baselineRate) && baselineRate > 0
+          ? summary.revenueRequired / baselineRate
+          : NaN;
+        if (lockedUnits && Number.isFinite(expectedUnits) && expectedUnits > 0) {
+          unitsNeeded = expectedUnits;
+        }
+
+        const serviceHoursPerBooking = summary.hoursPerBooking;
+        const travelDaysPerBooking = summary.travelDaysPerBooking;
+        const effectiveHoursPerBooking = summary.effectiveHoursPerBooking;
+
+        const serviceHoursPerMonth = Number.isFinite(expectedUnits) && Number.isFinite(serviceHoursPerBooking)
+          ? expectedUnits * serviceHoursPerBooking
+          : NaN;
+        const travelDaysPerMonth = Number.isFinite(expectedUnits) && Number.isFinite(travelDaysPerBooking)
+          ? expectedUnits * travelDaysPerBooking
+          : NaN;
+        const travelHoursPerMonth = Number.isFinite(travelDaysPerMonth)
+          ? travelDaysPerMonth * HOURS_PER_TRAVEL_DAY
+          : NaN;
+        const totalHoursPerMonth = Number.isFinite(expectedUnits) && Number.isFinite(effectiveHoursPerBooking)
+          ? expectedUnits * effectiveHoursPerBooking
+          : NaN;
+
+        const baselineServiceHours = Number.isFinite(unitsNeeded) && Number.isFinite(serviceHoursPerBooking)
+          ? unitsNeeded * serviceHoursPerBooking
+          : NaN;
+        const baselineTravelDays = Number.isFinite(unitsNeeded) && Number.isFinite(travelDaysPerBooking)
+          ? unitsNeeded * travelDaysPerBooking
+          : NaN;
+        const baselineTravelHours = Number.isFinite(baselineTravelDays)
+          ? baselineTravelDays * HOURS_PER_TRAVEL_DAY
+          : NaN;
+        const baselineHours = Number.isFinite(unitsNeeded) && Number.isFinite(effectiveHoursPerBooking)
+          ? unitsNeeded * effectiveHoursPerBooking
+          : NaN;
+
+        const takeHome = Number.isFinite(recommendedRate) && Number.isFinite(expectedUnits)
+          ? ((recommendedRate * expectedUnits) - summary.costs.monthlyTotal) * Math.max(1 - summary.combinedTaxRate, 0)
+          : NaN;
+        const revenueAtBaseline = Number.isFinite(baselineRate) && Number.isFinite(unitsNeeded)
+          ? baselineRate * unitsNeeded
+          : NaN;
+        const capacityFraction = Number.isFinite(baselineHours) && summary.billableHoursPerMonth > 0
+          ? baselineHours / summary.billableHoursPerMonth
+          : NaN;
+
+        const revenueGap = Number.isFinite(summary.revenueRequired) && Number.isFinite(revenueAtBaseline)
+          ? summary.revenueRequired - revenueAtBaseline
+          : NaN;
+
+        return {
+          entry,
+          config,
+          expectedUnits,
+          hasExpectedUnits: Number.isFinite(expectedUnits) && expectedUnits > 0,
+          recommendedRate,
+          hasRecommendedRate: Number.isFinite(recommendedRate) && recommendedRate > 0,
+          baselineRate,
+          hasBaselineRate: Number.isFinite(baselineRate) && baselineRate > 0,
+          unitsNeeded,
+          hasUnitsNeeded: Number.isFinite(unitsNeeded) && unitsNeeded > 0,
+          serviceHoursPerMonth,
+          travelDaysPerMonth,
+          travelHoursPerMonth,
+          totalHoursPerMonth,
+          baselineServiceHours,
+          baselineTravelHours,
+          baselineHours,
+          takeHome,
+          revenueAtBaseline,
+          capacityFraction,
+          lockedRate,
+          lockedUnits,
+          fallbackRate,
+          fallbackUnits,
+          revenueGap
+        };
+      });
+
       if (retainerNote) {
-        retainerNote.textContent = parts.join(' ');
+        const noteParts = servicesData
+          .map(data => {
+            const { config } = data;
+            const segments = [];
+            if (data.hasExpectedUnits) {
+              segments.push(`Planned ${formatServiceUnits(data.expectedUnits, config)} per month.`);
+            }
+            const workloadParts = [];
+            if (Number.isFinite(summary.hoursPerBooking) && summary.hoursPerBooking > 0) {
+              workloadParts.push(`${formatNumber(summary.hoursPerBooking, 1)} h service`);
+            }
+            if (Number.isFinite(summary.travelDaysPerBooking) && summary.travelDaysPerBooking > 0) {
+              workloadParts.push(`${formatNumber(summary.travelDaysPerBooking, 2)} travel days`);
+            }
+            if (workloadParts.length) {
+              segments.push(`Per ${getServiceLabelLower(config)}: ${workloadParts.join(' + ')}.`);
+            }
+            if (!segments.length) {
+              return '';
+            }
+            return `${config.label}: ${segments.join(' ')}`.trim();
+          })
+          .filter(Boolean);
+        retainerNote.textContent = noteParts.join(' ');
       }
+
+      servicesData.forEach(data => {
+        const { entry, config } = data;
+        const rateMetrics = entry.rate.metrics;
+        const volumeMetrics = entry.volume.metrics;
+
+        if (rateMetrics.charge.valueEl) {
+          rateMetrics.charge.valueEl.textContent = data.hasRecommendedRate && data.hasExpectedUnits
+            ? formatCurrency(summary.currency, data.recommendedRate, { digits: 2 })
+            : '–';
+        }
+        if (rateMetrics.charge.hintEl && !rateMetrics.charge.staticHint) {
+          const hintParts = [];
+          if (!data.hasExpectedUnits) {
+            hintParts.push(
+              data.lockedUnits
+                ? 'Defaults need a monthly units estimate.'
+                : `Add expected ${getServiceLabelLower(config, 2)} per month to calculate a rate.`
+            );
+          } else {
+            hintParts.push(
+              `${data.lockedUnits ? 'Playbook plans for' : 'Hits your goal with'} ${formatServiceUnits(data.expectedUnits, config)} per month.`
+            );
+          }
+          if (data.lockedRate) {
+            hintParts.push(
+              data.hasRecommendedRate
+                ? `Rate locked at ${formatCurrency(summary.currency, data.recommendedRate, { digits: 2 })}.`
+                : 'Rate locked in playbook.'
+            );
+          }
+          rateMetrics.charge.hintEl.textContent = hintParts.join(' ');
+        }
+
+        if (rateMetrics.takeHome.valueEl) {
+          rateMetrics.takeHome.valueEl.textContent = Number.isFinite(data.takeHome)
+            ? formatCurrency(summary.currency, data.takeHome, { digits: 0 })
+            : '–';
+        }
+
+        if (rateMetrics.hours.valueEl) {
+          rateMetrics.hours.valueEl.textContent = data.hasExpectedUnits && Number.isFinite(data.totalHoursPerMonth)
+            ? `${formatNumber(data.totalHoursPerMonth, 1)} h`
+            : '–';
+        }
+        if (rateMetrics.hours.hintEl && !rateMetrics.hours.staticHint) {
+          if (data.hasExpectedUnits && Number.isFinite(data.serviceHoursPerMonth)) {
+            const serviceText = `${formatNumber(data.serviceHoursPerMonth, 1)} h service`;
+            const travelText = Number.isFinite(data.travelHoursPerMonth) && data.travelHoursPerMonth > 0
+              ? ` + ${formatNumber(data.travelHoursPerMonth, 1)} h travel`
+              : '';
+            rateMetrics.hours.hintEl.textContent = `${serviceText}${travelText}`;
+          } else {
+            rateMetrics.hours.hintEl.textContent = data.lockedUnits
+              ? `Defaults use ${getServiceLabelLower(config)} counts to compute hours.`
+              : 'Hours update when expected units are set.';
+          }
+        }
+
+        if (rateMetrics.travel.valueEl) {
+          rateMetrics.travel.valueEl.textContent = data.hasExpectedUnits && Number.isFinite(data.travelDaysPerMonth)
+            ? `${formatNumber(data.travelDaysPerMonth, data.travelDaysPerMonth >= 2 ? 1 : 2)} days`
+            : '0 days';
+        }
+
+        if (volumeMetrics.units.valueEl) {
+          volumeMetrics.units.valueEl.textContent = data.hasUnitsNeeded
+            ? formatNumber(data.unitsNeeded, data.unitsNeeded % 1 === 0 ? 0 : 1)
+            : '–';
+        }
+        if (volumeMetrics.units.hintEl && !volumeMetrics.units.staticHint) {
+          const hintParts = [];
+          if (data.hasUnitsNeeded) {
+            hintParts.push(
+              data.lockedUnits
+                ? `Locked at ${formatServiceUnits(data.unitsNeeded, config)} per month.`
+                : `Needed each month to cover ${formatCurrency(summary.currency, summary.netMonthlyTarget, { digits: 0 })} net.`
+            );
+          } else if (data.lockedRate) {
+            hintParts.push('Set a valid rate to estimate units.');
+          } else {
+            hintParts.push(`Enter a baseline rate to convert your goal into ${getServiceLabelLower(config, 2)}.`);
+          }
+          volumeMetrics.units.hintEl.textContent = hintParts.join(' ');
+        }
+
+        if (volumeMetrics.revenue.valueEl) {
+          volumeMetrics.revenue.valueEl.textContent = formatCurrency(summary.currency, summary.revenueRequired, { digits: 0 });
+        }
+        if (volumeMetrics.revenue.hintEl && !volumeMetrics.revenue.staticHint) {
+          let hintText = '';
+          if (data.lockedRate) {
+            hintText = data.hasBaselineRate
+              ? `Locked rate ${formatCurrency(summary.currency, data.baselineRate, { digits: 2 })}.`
+              : 'Rate locked in playbook.';
+          } else if (data.lockedUnits) {
+            hintText = data.hasBaselineRate
+              ? `Adjust rate to ${formatCurrency(summary.currency, data.baselineRate, { digits: 2 })}.`
+              : 'Set a valid units default to size the rate.';
+          } else if (data.hasBaselineRate) {
+            hintText = `Based on ${formatCurrency(summary.currency, data.baselineRate, { digits: 2 })} each.`;
+          } else {
+            hintText = `Set a price minimum to estimate ${getServiceLabelLower(config, 2)}.`;
+          }
+          volumeMetrics.revenue.hintEl.textContent = hintText;
+        }
+
+        if (volumeMetrics.hours.valueEl) {
+          volumeMetrics.hours.valueEl.textContent = data.hasUnitsNeeded && Number.isFinite(data.baselineHours)
+            ? `${formatNumber(data.baselineHours, 1)} h`
+            : '–';
+        }
+        if (volumeMetrics.hours.hintEl && !volumeMetrics.hours.staticHint) {
+          if (Number.isFinite(data.baselineServiceHours)) {
+            const travelText = Number.isFinite(data.baselineTravelHours) && data.baselineTravelHours > 0
+              ? ` + ${formatNumber(data.baselineTravelHours, 1)} h travel`
+              : '';
+            volumeMetrics.hours.hintEl.textContent = `${formatNumber(data.baselineServiceHours, 1)} h service${travelText}`;
+          } else {
+            volumeMetrics.hours.hintEl.textContent = 'Hours update once a rate is available.';
+          }
+        }
+
+        if (volumeMetrics.capacity.valueEl) {
+          volumeMetrics.capacity.valueEl.textContent = Number.isFinite(data.capacityFraction)
+            ? formatPercent(data.capacityFraction)
+            : '–';
+        }
+        if (volumeMetrics.capacity.hintEl && !volumeMetrics.capacity.staticHint) {
+          volumeMetrics.capacity.hintEl.textContent = Number.isFinite(summary.billableHoursPerMonth) && summary.billableHoursPerMonth > 0
+            ? `Of ${formatNumber(summary.billableHoursPerMonth, 1)} h monthly capacity.`
+            : 'Add capacity assumptions to benchmark workload.';
+        }
+      });
 
       const statusMessages = [];
-      if (!hasExpected) {
-        statusMessages.push('Add expected retainers per month to unlock the recommended rate.');
+      const primary = servicesData[0];
+      if (primary) {
+        if (!primary.hasExpectedUnits) {
+          statusMessages.push(
+            primary.lockedUnits
+              ? `${primary.config.label} defaults need a monthly units estimate.`
+              : `Add expected ${getServiceLabelLower(primary.config, 2)} per month to unlock the recommended rate.`
+          );
+        }
+        if (!primary.hasBaselineRate && !primary.lockedRate) {
+          statusMessages.push(`Set a price range minimum to translate your goal into ${getServiceLabelLower(primary.config, 2)}.`);
+        }
+        if (primary.lockedRate && !primary.hasRecommendedRate) {
+          statusMessages.push(`${primary.config.label} rate defaults need a valid amount.`);
+        }
+        if (primary.lockedUnits && !primary.hasUnitsNeeded) {
+          statusMessages.push(`${primary.config.label} units defaults need a valid amount.`);
+        }
+        if (
+          primary.lockedRate &&
+          primary.lockedUnits &&
+          Number.isFinite(summary.revenueRequired) && summary.revenueRequired > 0 &&
+          Number.isFinite(primary.revenueAtBaseline) && primary.revenueAtBaseline < summary.revenueRequired
+        ) {
+          const coverage = Math.max(Math.round((primary.revenueAtBaseline / summary.revenueRequired) * 100), 0);
+          statusMessages.push(`${primary.config.label} defaults cover about ${coverage}% of the required monthly revenue.`);
+        }
       }
-      if (!Number.isFinite(baselineRate) || baselineRate <= 0) {
-        statusMessages.push('Set a price range minimum to translate your goal into units.');
-      }
+
       if (retainerStatus) {
         retainerStatus.hidden = statusMessages.length === 0;
         retainerStatus.textContent = statusMessages.join(' ');
-      }
-
-      if (retainerRateValue) {
-        retainerRateValue.textContent = hasExpected && Number.isFinite(recommendedPrice)
-          ? formatCurrency(summary.currency, recommendedPrice, { digits: 2 })
-          : '–';
-      }
-      if (retainerRateHint) {
-        retainerRateHint.textContent = hasExpected
-          ? `Hits your goal with ${formatNumber(expected, expected % 1 === 0 ? 0 : 1)} retainers.`
-          : 'Add an expected retainers figure to calculate a rate.';
-      }
-      if (retainerRateNet) {
-        retainerRateNet.textContent = Number.isFinite(summary.netAtRecommended)
-          ? formatCurrency(summary.currency, summary.netAtRecommended, { digits: 0 })
-          : '–';
-      }
-      if (retainerRateHours) {
-        retainerRateHours.textContent = hasExpected && Number.isFinite(totalHoursPerMonth)
-          ? `${formatNumber(totalHoursPerMonth, 1)} h`
-          : '–';
-      }
-      if (retainerRateHoursHint) {
-        if (hasExpected && Number.isFinite(serviceHoursPerMonth)) {
-          const serviceText = `${formatNumber(serviceHoursPerMonth, 1)} h service`;
-          const travelText = Number.isFinite(travelHoursPerMonth) && travelHoursPerMonth > 0
-            ? ` + ${formatNumber(travelHoursPerMonth, 1)} h travel`
-            : '';
-          retainerRateHoursHint.textContent = `${serviceText}${travelText}`;
-        } else {
-          retainerRateHoursHint.textContent = 'Hours update when expected retainers are set.';
-        }
-      }
-      if (retainerRateTravel) {
-        retainerRateTravel.textContent = hasExpected && Number.isFinite(travelDaysPerMonth)
-          ? `${formatNumber(travelDaysPerMonth, travelDaysPerMonth >= 2 ? 1 : 2)} days`
-          : '0 days';
-      }
-
-      if (retainerVolumeUnits) {
-        retainerVolumeUnits.textContent = Number.isFinite(unitsAtBaseline)
-          ? formatNumber(unitsAtBaseline, unitsAtBaseline % 1 === 0 ? 0 : 1)
-          : '–';
-      }
-      if (retainerVolumeUnitsHint) {
-        retainerVolumeUnitsHint.textContent = Number.isFinite(unitsAtBaseline)
-          ? `Needed each month to cover ${formatCurrency(summary.currency, summary.netMonthlyTarget, { digits: 0 })} net.`
-          : 'Enter a realistic rate to convert your goal into units.';
-      }
-      if (retainerVolumeRevenue) {
-        retainerVolumeRevenue.textContent = formatCurrency(summary.currency, summary.revenueRequired, { digits: 0 });
-      }
-      if (retainerVolumeRate) {
-        retainerVolumeRate.textContent = Number.isFinite(baselineRate)
-          ? `Based on ${formatCurrency(summary.currency, baselineRate, { digits: 2 })} each.`
-          : 'Set a price minimum to estimate units.';
-      }
-      if (retainerVolumeHours) {
-        retainerVolumeHours.textContent = Number.isFinite(baselineHours)
-          ? `${formatNumber(baselineHours, 1)} h`
-          : '–';
-      }
-      if (retainerVolumeHoursHint) {
-        if (Number.isFinite(baselineServiceHours)) {
-          const travelText = Number.isFinite(baselineTravelHours) && baselineTravelHours > 0
-            ? ` + ${formatNumber(baselineTravelHours, 1)} h travel`
-            : '';
-          retainerVolumeHoursHint.textContent = `${formatNumber(baselineServiceHours, 1)} h service${travelText}`;
-        } else {
-          retainerVolumeHoursHint.textContent = 'Hours update once a rate is available.';
-        }
-      }
-      if (retainerVolumeCapacity) {
-        retainerVolumeCapacity.textContent = Number.isFinite(capacityFraction)
-          ? formatPercent(capacityFraction)
-          : '–';
-      }
-      if (retainerVolumeCapacityHint) {
-        retainerVolumeCapacityHint.textContent = Number.isFinite(summary.billableHoursPerMonth) && summary.billableHoursPerMonth > 0
-          ? `Of ${formatNumber(summary.billableHoursPerMonth, 1)} h monthly capacity.`
-          : 'Add capacity assumptions to benchmark workload.';
       }
 
       applyRetainerView();
