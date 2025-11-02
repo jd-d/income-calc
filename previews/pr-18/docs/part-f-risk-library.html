@@ -8,13 +8,32 @@
   <script defer src="playbook.js"></script>
 </head>
 <body>
+  <header class="docs-header">
+    <div class="docs-header__inner">
+      <a class="docs-header__home" href="../index.html">
+        <span class="docs-header__home-icon" aria-hidden="true">←</span>
+        <span>Back to planner</span>
+      </a>
+      <div class="docs-header__actions">
+        <button class="docs-header__action" type="button" data-docs-print aria-label="Print playbook">
+          <span class="docs-header__action-icon" aria-hidden="true">⎙</span>
+          <span class="docs-header__action-label">Print playbook</span>
+        </button>
+        <button class="docs-header__action docs-header__action--outline docs-sidebar__toggle" type="button" data-sidebar-toggle aria-expanded="false" aria-controls="docs-sidebar">
+          <span>Sections</span>
+          <span class="docs-sidebar__toggle-icon" aria-hidden="true">▾</span>
+        </button>
+      </div>
+    </div>
+  </header>
   <div class="docs-shell">
-    <button class="docs-sidebar__toggle" type="button" data-sidebar-toggle aria-expanded="false" aria-controls="docs-sidebar">
-      <span>Sections</span>
-      <span class="docs-sidebar__toggle-icon" aria-hidden="true">▾</span>
-    </button>
     <nav id="docs-sidebar" class="docs-sidebar" aria-label="Playbook navigation">
-      <div class="docs-sidebar__title">Sections</div>
+      <div class="docs-sidebar__heading">
+        <div class="docs-sidebar__title">Sections</div>
+        <button class="docs-sidebar__close" type="button" data-sidebar-close aria-label="Close navigation">
+          <span class="docs-sidebar__close-icon" aria-hidden="true">✕</span>
+        </button>
+      </div>
       <ul class="docs-sidebar__list">
         <li><a href="index.html" class="docs-sidebar__link">Overview</a></li>
         <li><a href="part-a-quick-start-map.html#part-a" class="docs-sidebar__link">Part A – Quick Start Map</a></li>
