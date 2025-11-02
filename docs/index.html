@@ -5,10 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Fruit Trade Services Playbook – Index</title>
   <link rel="stylesheet" href="playbook.css" />
+  <script defer src="playbook.js"></script>
 </head>
 <body>
   <div class="docs-shell">
-    <nav class="docs-sidebar" aria-label="Playbook navigation">
+    <button class="docs-sidebar__toggle" type="button" data-sidebar-toggle aria-expanded="false" aria-controls="docs-sidebar">
+      <span>Sections</span>
+      <span class="docs-sidebar__toggle-icon" aria-hidden="true">▾</span>
+    </button>
+    <nav id="docs-sidebar" class="docs-sidebar" aria-label="Playbook navigation">
       <div class="docs-sidebar__title">Sections</div>
       <ul class="docs-sidebar__list">
         <li><a href="index.html" class="docs-sidebar__link is-active" aria-current="page">Overview</a></li>
@@ -111,6 +116,14 @@
 </article>
           </div>
         </section>
+        <nav class="docs-pagination" aria-label="Section navigation">
+          <span class="docs-pagination__spacer" aria-hidden="true"></span>
+          <a class="docs-pagination__link docs-pagination__link--next" href="part-a-quick-start-map.html#part-a">
+            <span class="visually-hidden">Next section:</span>
+            Part A – Quick Start Map
+            <span class="docs-pagination__arrow" aria-hidden="true">›</span>
+          </a>
+        </nav>
       </div>
     </div>
   </div>

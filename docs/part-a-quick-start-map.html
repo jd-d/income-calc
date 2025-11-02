@@ -5,10 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Fruit Trade Services Playbook – Part A – Quick Start Map</title>
   <link rel="stylesheet" href="playbook.css" />
+  <script defer src="playbook.js"></script>
 </head>
 <body>
   <div class="docs-shell">
-    <nav class="docs-sidebar" aria-label="Playbook navigation">
+    <button class="docs-sidebar__toggle" type="button" data-sidebar-toggle aria-expanded="false" aria-controls="docs-sidebar">
+      <span>Sections</span>
+      <span class="docs-sidebar__toggle-icon" aria-hidden="true">▾</span>
+    </button>
+    <nav id="docs-sidebar" class="docs-sidebar" aria-label="Playbook navigation">
       <div class="docs-sidebar__title">Sections</div>
       <ul class="docs-sidebar__list">
         <li><a href="index.html" class="docs-sidebar__link">Overview</a></li>
@@ -128,6 +133,20 @@
                 </ul>
               </section>
         </article>
+        <nav class="docs-pagination" aria-label="Section navigation">
+          <a class="docs-pagination__link docs-pagination__link--prev" href="index.html">
+            <span class="docs-pagination__arrow" aria-hidden="true">‹</span>
+            <span>
+              <span class="visually-hidden">Previous section:</span>
+              Overview
+            </span>
+          </a>
+          <a class="docs-pagination__link docs-pagination__link--next" href="part-b-service-catalog.html#part-b">
+            <span class="visually-hidden">Next section:</span>
+            Part B – Service Catalog (at a glance)
+            <span class="docs-pagination__arrow" aria-hidden="true">›</span>
+          </a>
+        </nav>
       </div>
     </div>
   </div>
