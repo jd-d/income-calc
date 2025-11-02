@@ -5,11 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Fruit Trade Services Playbook – Part C – Detailed Service Chapters</title>
   <link rel="stylesheet" href="playbook.css" />
+  <script defer src="playbook.js"></script>
 </head>
 <body>
+  <header class="docs-header">
+    <div class="docs-header__inner">
+      <a class="docs-header__home" href="../index.html">
+        <span class="docs-header__home-icon" aria-hidden="true">←</span>
+        <span>Back to planner</span>
+      </a>
+      <div class="docs-header__actions">
+        <button class="docs-header__action" type="button" data-docs-print aria-label="Print playbook">
+          <span class="docs-header__action-icon" aria-hidden="true">⎙</span>
+          <span class="docs-header__action-label">Print playbook</span>
+        </button>
+        <button class="docs-header__action docs-header__action--outline docs-sidebar__toggle" type="button" data-sidebar-toggle aria-expanded="false" aria-controls="docs-sidebar">
+          <span>Sections</span>
+          <span class="docs-sidebar__toggle-icon" aria-hidden="true">▾</span>
+        </button>
+      </div>
+    </div>
+  </header>
   <div class="docs-shell">
-    <nav class="docs-sidebar" aria-label="Playbook navigation">
-      <div class="docs-sidebar__title">Sections</div>
+    <nav id="docs-sidebar" class="docs-sidebar" aria-label="Playbook navigation">
+      <div class="docs-sidebar__heading">
+        <div class="docs-sidebar__title">Sections</div>
+        <button class="docs-sidebar__close" type="button" data-sidebar-close aria-label="Close navigation">
+          <span class="docs-sidebar__close-icon" aria-hidden="true">✕</span>
+        </button>
+      </div>
       <ul class="docs-sidebar__list">
         <li><a href="index.html" class="docs-sidebar__link">Overview</a></li>
         <li><a href="part-a-quick-start-map.html#part-a" class="docs-sidebar__link">Part A – Quick Start Map</a></li>
@@ -400,6 +424,20 @@
                 </table>
               </section>
         </article>
+        <nav class="docs-pagination" aria-label="Section navigation">
+          <a class="docs-pagination__link docs-pagination__link--prev" href="part-b-service-catalog.html#part-b">
+            <span class="docs-pagination__arrow" aria-hidden="true">‹</span>
+            <span>
+              <span class="visually-hidden">Previous section:</span>
+              Part B – Service Catalog (at a glance)
+            </span>
+          </a>
+          <a class="docs-pagination__link docs-pagination__link--next" href="part-d-scoping-and-pricing.html#part-d">
+            <span class="visually-hidden">Next section:</span>
+            Part D – Scoping &amp; Pricing Playbook
+            <span class="docs-pagination__arrow" aria-hidden="true">›</span>
+          </a>
+        </nav>
       </div>
     </div>
   </div>
