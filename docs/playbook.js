@@ -50,7 +50,7 @@
   }
 
   const collapseClass = 'is-collapsed';
-  const mediaQuery = window.matchMedia('(max-width: 768px)');
+  const mediaQuery = window.matchMedia('(max-width: 1024px)');
   const overlay = document.createElement('div');
   overlay.className = 'docs-sidebar__overlay';
   overlay.hidden = true;
