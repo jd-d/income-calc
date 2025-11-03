@@ -901,6 +901,158 @@
       margin: -2px -4px;
     }
 
+    .tour-overlay[hidden] {
+      display: none;
+    }
+
+    .tour-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+
+    .tour-overlay__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 11, 17, 0.72);
+      pointer-events: none;
+    }
+
+    body[data-theme="light"] .tour-overlay__backdrop {
+      background: rgba(15, 23, 42, 0.38);
+    }
+
+    .tour-overlay__spotlight {
+      position: fixed;
+      border-radius: 14px;
+      border: 2px solid var(--accent-strong);
+      box-shadow: 0 0 0 9999px rgba(8, 11, 17, 0.72);
+      transition: top 0.18s ease, left 0.18s ease, width 0.18s ease, height 0.18s ease;
+      pointer-events: none;
+    }
+
+    body[data-theme="light"] .tour-overlay__spotlight {
+      box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.38);
+    }
+
+    .tour-overlay__panel {
+      position: relative;
+      z-index: 1;
+      pointer-events: auto;
+      margin: clamp(16px, 4vw, 32px);
+      padding: clamp(20px, 4vw, 28px);
+      width: min(420px, 92vw);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tour-overlay__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .tour-overlay__title {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    .tour-overlay__close {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .tour-overlay__close:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+      border-radius: 999px;
+    }
+
+    .tour-overlay__step-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .tour-overlay__body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tour-overlay__controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .tour-overlay__buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .tour-overlay__button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--button-border);
+      background: var(--button-bg);
+      color: var(--button-text);
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .tour-overlay__button:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .tour-overlay__progress {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .tour-focus-target {
+      position: relative;
+      z-index: 2;
+      outline: 3px solid var(--accent-strong);
+      outline-offset: 6px;
+      transition: outline 0.2s ease;
+    }
+
+    @media (max-width: 640px) {
+      .tour-overlay {
+        align-items: flex-start;
+      }
+
+      .tour-overlay__panel {
+        width: 100%;
+        margin: 16px;
+      }
+    }
+
     @media (max-width: 640px) {
       .summary-grid {
         grid-template-columns: 1fr;
@@ -930,6 +1082,7 @@
       <div class="header-actions">
         <a href="resources.html">Helpful resources</a>
         <button type="button" id="how-to-link">How to use</button>
+        <button type="button" id="tour-launch">Guided example</button>
         <button
           type="button"
           id="theme-toggle"
@@ -1985,9 +2138,39 @@
     </main>
   </div>
 
-    <div class="dialog__content" role="document">
-      <div class="dialog__header">
-        <h2 id="how-to-title">How to use this planner</h2>
+  <div class="tour-overlay" id="tour-overlay" hidden>
+    <div class="tour-overlay__backdrop" id="tour-backdrop" tabindex="-1"></div>
+    <div class="tour-overlay__spotlight" id="tour-spotlight" aria-hidden="true"></div>
+    <section
+      class="tour-overlay__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tour-title"
+      aria-describedby="tour-step-title tour-step-description tour-progress"
+      tabindex="-1"
+    >
+      <div class="tour-overlay__header">
+        <h2 class="tour-overlay__title" id="tour-title">Guided example</h2>
+        <button type="button" class="tour-overlay__close" id="tour-close" aria-label="End tour">×</button>
+      </div>
+      <div class="tour-overlay__body">
+        <p class="tour-overlay__step-title" id="tour-step-title"></p>
+        <p id="tour-step-description" aria-live="polite"></p>
+      </div>
+      <div class="tour-overlay__controls">
+        <div class="tour-overlay__buttons">
+          <button type="button" class="tour-overlay__button" id="tour-prev">Back</button>
+          <button type="button" class="tour-overlay__button" id="tour-next">Next</button>
+        </div>
+        <button type="button" class="tour-overlay__button" id="tour-skip">Skip tour</button>
+      </div>
+      <p class="tour-overlay__progress" id="tour-progress"></p>
+    </section>
+  </div>
+
+  <div class="dialog__content" role="document">
+    <div class="dialog__header">
+      <h2 id="how-to-title">How to use this planner</h2>
         <button type="button" class="dialog__close" id="how-to-close" aria-label="Close instructions">×</button>
       </div>
       <div class="dialog__body" id="how-to-body">
@@ -2960,6 +3143,17 @@
     const themeToggle = document.getElementById('theme-toggle');
     const themeToggleLabel = document.getElementById('theme-toggle-label');
     const howToLink = document.getElementById('how-to-link');
+    const tourLaunchButton = document.getElementById('tour-launch');
+    const tourOverlay = document.getElementById('tour-overlay');
+    const tourSpotlight = document.getElementById('tour-spotlight');
+    const tourPanel = tourOverlay?.querySelector('.tour-overlay__panel') ?? null;
+    const tourStepTitle = document.getElementById('tour-step-title');
+    const tourStepDescription = document.getElementById('tour-step-description');
+    const tourProgress = document.getElementById('tour-progress');
+    const tourPrev = document.getElementById('tour-prev');
+    const tourNext = document.getElementById('tour-next');
+    const tourSkip = document.getElementById('tour-skip');
+    const tourClose = document.getElementById('tour-close');
     const incomeTargetConversionHint = document.getElementById('income-target-conversion-hint');
     const incomeTargetError = document.getElementById('income-target-error');
     const infoButtons = Array.from(document.querySelectorAll('.info-button[data-info-target]'));
@@ -3629,6 +3823,9 @@
       renderSummary(values, summary);
       renderRetainerCard(values, summary);
       renderTable(values, summary);
+      if (tourState.active) {
+        scheduleTourSpotlight();
+      }
     }
 
     function setRetainerView(nextView) {
@@ -3671,6 +3868,295 @@
           return false;
         }
         return element.tabIndex >= 0;
+      });
+    }
+
+    const TOUR_STEPS = [
+      {
+        target: '#income-target',
+        title: 'Set your goal',
+        description:
+          'Enter the income you want to take home. The monthly or annual toggle and the net or gross toggle update the amount for you.'
+      },
+      {
+        target: '#expected-bookings',
+        title: 'Describe your workload',
+        description:
+          'Estimate how many bookings you expect each month. Adjust the hours, travel, and utilization fields around this area to show the time commitment.'
+      },
+      {
+        target: 'section[aria-labelledby="summary-title"]',
+        title: 'Review the summary',
+        description:
+          'This card converts your assumptions into revenue targets, recommended prices, and hourly rates. Watch how each line reacts as you refine the inputs.'
+      },
+      {
+        target: '#retainer-card',
+        title: 'Size each service',
+        description:
+          'Switch between Rate needed and Volume needed to see how every service contributes. Defaults give you a starting point that you can tune per offering.'
+      },
+      {
+        target: 'section[aria-labelledby="table-title"]',
+        title: 'Explore scenarios',
+        description:
+          'The table compares price and booking combinations. Green cells reach your monthly net target so you can spot the mixes that work best.'
+      }
+    ];
+
+    const tourState = {
+      active: false,
+      index: 0,
+      restoreFocus: null,
+      target: null
+    };
+
+    let pendingTourSpotlight = false;
+
+    function getTourTarget(step) {
+      if (!step || !step.target) {
+        return null;
+      }
+      try {
+        const element = document.querySelector(step.target);
+        return element instanceof HTMLElement ? element : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function setTourTarget(nextTarget) {
+      if (tourState.target && tourState.target.classList) {
+        tourState.target.classList.remove('tour-focus-target');
+      }
+      tourState.target = nextTarget instanceof HTMLElement ? nextTarget : null;
+      if (tourState.target) {
+        tourState.target.classList.add('tour-focus-target');
+      }
+    }
+
+    function applyTourSpotlight({ scroll = false } = {}) {
+      if (!tourSpotlight || !tourOverlay || !tourState.active) {
+        return;
+      }
+      const step = TOUR_STEPS[tourState.index];
+      const target = getTourTarget(step);
+      setTourTarget(target);
+      if (!target) {
+        tourSpotlight.style.opacity = '0';
+        tourSpotlight.style.width = '0px';
+        tourSpotlight.style.height = '0px';
+        return;
+      }
+      if (scroll) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      }
+      const rect = target.getBoundingClientRect();
+      const padding = 14;
+      const top = Math.max(rect.top - padding, 8);
+      const left = Math.max(rect.left - padding, 8);
+      const width = rect.width + padding * 2;
+      const height = rect.height + padding * 2;
+      tourSpotlight.style.opacity = '1';
+      tourSpotlight.style.top = `${top}px`;
+      tourSpotlight.style.left = `${left}px`;
+      tourSpotlight.style.width = `${width}px`;
+      tourSpotlight.style.height = `${height}px`;
+    }
+
+    function scheduleTourSpotlight() {
+      if (!tourState.active) {
+        return;
+      }
+      if (pendingTourSpotlight) {
+        return;
+      }
+      pendingTourSpotlight = true;
+      requestAnimationFrame(() => {
+        pendingTourSpotlight = false;
+        applyTourSpotlight();
+      });
+    }
+
+    function updateTourCopy() {
+      const step = TOUR_STEPS[tourState.index];
+      if (!step) {
+        return;
+      }
+      if (tourStepTitle) {
+        tourStepTitle.textContent = step.title;
+      }
+      if (tourStepDescription) {
+        tourStepDescription.textContent = step.description;
+      }
+      if (tourProgress) {
+        tourProgress.textContent = `Step ${tourState.index + 1} of ${TOUR_STEPS.length}`;
+      }
+      if (tourPrev) {
+        tourPrev.disabled = tourState.index === 0;
+      }
+      if (tourNext) {
+        tourNext.textContent = tourState.index === TOUR_STEPS.length - 1 ? 'Finish' : 'Next';
+      }
+    }
+
+    function focusTourDefault() {
+      if (!tourPanel) {
+        return;
+      }
+      const focusables = getInfoFocusableElements(tourPanel);
+      const preferred = tourNext && !tourNext.disabled ? tourNext : focusables[0];
+      if (preferred && preferred instanceof HTMLElement) {
+        preferred.focus();
+      } else {
+        tourPanel.focus({ preventScroll: true });
+      }
+    }
+
+    function setTourStep(nextIndex, { scroll = false } = {}) {
+      if (!Number.isInteger(nextIndex)) {
+        return;
+      }
+      const bounded = Math.min(Math.max(nextIndex, 0), TOUR_STEPS.length - 1);
+      tourState.index = bounded;
+      updateTourCopy();
+      applyTourSpotlight({ scroll });
+    }
+
+    function closeTour({ restoreFocus = true } = {}) {
+      if (!tourState.active) {
+        return;
+      }
+      tourState.active = false;
+      if (tourOverlay) {
+        tourOverlay.hidden = true;
+      }
+      if (tourSpotlight) {
+        tourSpotlight.style.opacity = '0';
+        tourSpotlight.style.width = '0px';
+        tourSpotlight.style.height = '0px';
+      }
+      setTourTarget(null);
+      document.removeEventListener('keydown', handleTourKeydown, true);
+      document.removeEventListener('focusin', handleTourFocusIn, true);
+      window.removeEventListener('resize', scheduleTourSpotlight, true);
+      window.removeEventListener('scroll', scheduleTourSpotlight, true);
+      if (restoreFocus && tourState.restoreFocus && tourState.restoreFocus instanceof HTMLElement) {
+        tourState.restoreFocus.focus({ preventScroll: true });
+      }
+      tourState.restoreFocus = null;
+    }
+
+    function handleTourKeydown(event) {
+      if (!tourState.active) {
+        return;
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeTour();
+        return;
+      }
+      if (
+        event.key === 'Tab' &&
+        tourPanel &&
+        event.target instanceof Node &&
+        tourPanel.contains(event.target)
+      ) {
+        const focusables = getInfoFocusableElements(tourPanel);
+        if (focusables.length === 0) {
+          event.preventDefault();
+          tourPanel.focus({ preventScroll: true });
+          return;
+        }
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement;
+        if (event.shiftKey) {
+          if (active === first || active === tourPanel) {
+            event.preventDefault();
+            last.focus();
+          }
+        } else if (active === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    function handleTourFocusIn(event) {
+      if (!tourState.active || !tourPanel) {
+        return;
+      }
+      if (!tourOverlay || tourOverlay.hidden) {
+        return;
+      }
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+      if (tourState.target && tourState.target.contains(target)) {
+        return;
+      }
+      if (!tourPanel.contains(target)) {
+        focusTourDefault();
+      }
+    }
+
+    function openTour(startIndex = 0) {
+      if (!tourOverlay || !tourSpotlight || !tourPanel) {
+        return;
+      }
+      tourState.restoreFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      tourOverlay.hidden = false;
+      tourState.active = true;
+      setTourStep(startIndex, { scroll: true });
+      tourPanel.focus({ preventScroll: true });
+      setTimeout(focusTourDefault, 0);
+      document.addEventListener('keydown', handleTourKeydown, true);
+      document.addEventListener('focusin', handleTourFocusIn, true);
+      window.addEventListener('resize', scheduleTourSpotlight, true);
+      window.addEventListener('scroll', scheduleTourSpotlight, true);
+    }
+
+    if (
+      tourLaunchButton &&
+      tourOverlay &&
+      tourSpotlight &&
+      tourPanel &&
+      tourPrev &&
+      tourNext &&
+      tourSkip &&
+      tourClose
+    ) {
+      tourLaunchButton.addEventListener('click', () => {
+        if (tourState.active) {
+          setTourStep(0, { scroll: true });
+          focusTourDefault();
+          return;
+        }
+        openTour(0);
+      });
+
+      tourPrev.addEventListener('click', () => {
+        setTourStep(tourState.index - 1, { scroll: true });
+        focusTourDefault();
+      });
+
+      tourNext.addEventListener('click', () => {
+        if (tourState.index >= TOUR_STEPS.length - 1) {
+          closeTour();
+        } else {
+          setTourStep(tourState.index + 1, { scroll: true });
+          focusTourDefault();
+        }
+      });
+
+      tourSkip.addEventListener('click', () => {
+        closeTour();
+      });
+
+      tourClose.addEventListener('click', () => {
+        closeTour();
       });
     }
 
