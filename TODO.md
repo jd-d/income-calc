@@ -129,6 +129,7 @@ To be executed after the sprint planning
 - [ ] Investigate auto-detecting locale number formatting for placeholders and examples.
 
 # DONE
+- [x] Add guided overlay tour to illustrate the planner workflow. (2025-11-03)
 - [x] Sprint 3: Utility: aggregate **fixed monthly**, **per-hour**, **per-travel-day** costs. (2025-11-01)
 - [x] Sprint 3: Display monthly and annual totals from that one function. (2025-11-01)
 - [x] Sprint 3: Add **tax reserve percent** input that feeds Net calculation. (2025-11-01)
